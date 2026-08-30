@@ -1,0 +1,11 @@
+dist/
+node_modules/
+.DS_Store
+.vercel/
+db/*.sqlite
+db/*.sqlite-shm
+db/*.sqlite-wal
+.agents/
+skills-lock.json
+.vercel
+.env*

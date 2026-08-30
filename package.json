@@ -1,0 +1,22 @@
+{
+  "name": "circular-kids-epic1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Circular Kids Epic 1 investigation experience",
+  "scripts": {
+    "start": "node server.js",
+    "build": "node scripts/build.mjs",
+    "db:build": "python3 scripts/build_database.py",
+    "db:migrate": "node scripts/migrate_to_neon.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "better-sqlite3": "^12.11.1",
+    "pg": "^8.23.0",
+    "pg-copy-streams": "^7.0.0"
+  }
+}
