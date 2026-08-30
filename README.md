@@ -2,4 +2,5 @@
 
 Investigate Before I Throw It Away.
 
-A child-friendly project that explores whether everyday items may still be useful.
+Vue 3 + Vite + Bootstrap 5 on the front, one shared rules module on the back.
+
