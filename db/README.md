@@ -87,6 +87,32 @@ The production website at `https://circular-kids-epic1.vercel.app` uses Neon Pos
 - This export contains no Neon passwords, access tokens, or connection strings.
 - Repair and recall results are educational evidence and do not replace guidance from a trusted adult or qualified professional.
 
+## Seeding Neon from the SQLite export
+
+`scripts/migrate_to_neon.js` copies the knowledge tables out of
+`db/circular_kids.sqlite` and into the hosted Neon database. It is a one-off
+local tool — no deployment ever runs it.
+
+Its three dependencies are deliberately not listed in `package.json`. One of
+them, `better-sqlite3`, is a native module compiled at install time, and putting
+that in the deployment's install path risks failing every production build for
+the sake of a script production never executes. Install them only when needed:
+
+```bash
+npm install --no-save better-sqlite3 pg pg-copy-streams
+```
+
+Then create `.env.local` in the project root (it is git-ignored) containing the
+Neon connection string, and run the migration:
+
+```bash
+echo "DATABASE_URL=<your Neon connection string>" > .env.local
+npm run db:migrate
+```
+
+Create the tables from `postgres.sql` first — the migration copies rows into
+tables that must already exist.
+
 ## Opening the Database
 
 Open `circular_kids.sqlite` with DB Browser for SQLite, or run:

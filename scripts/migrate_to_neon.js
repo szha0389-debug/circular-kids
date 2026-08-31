@@ -1,13 +1,43 @@
-const fs = require("node:fs");
-const path = require("node:path");
-const { Readable } = require("node:stream");
-const { pipeline } = require("node:stream/promises");
-const Database = require("better-sqlite3");
-const { Client } = require("pg");
-const { from: copyFrom } = require("pg-copy-streams");
+// Seeds Neon from the local SQLite export. This is a one-off local tool: it
+// never runs on Vercel, and nothing in the app imports it.
+//
+// Its three heavy dependencies are deliberately NOT in package.json. One of
+// them, better-sqlite3, is a native module compiled at install time, and
+// shipping that into every deployment build is a needless risk for a script the
+// deployment never executes. Install them just before running:
+//
+//   npm install --no-save better-sqlite3 pg pg-copy-streams
+//   npm run db:migrate
 
-const root = path.resolve(__dirname, "..");
-for (const line of fs.readFileSync(path.join(root, ".env.local"), "utf8").split(/\r?\n/)) {
+import fs from "node:fs";
+import path from "node:path";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
+import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+
+let Database, Client, copyFrom;
+try {
+  Database = require("better-sqlite3");
+  ({ Client } = require("pg"));
+  ({ from: copyFrom } = require("pg-copy-streams"));
+} catch {
+  console.error("Missing migration dependencies. They are not installed by default:");
+  console.error("better-sqlite3 needs native compilation, and no deployment runs this script.");
+  console.error("");
+  console.error("  npm install --no-save better-sqlite3 pg pg-copy-streams");
+  process.exit(1);
+}
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const envFile = path.join(root, ".env.local");
+if (!fs.existsSync(envFile)) {
+  console.error("No .env.local found. Create one containing DATABASE_URL=<your Neon connection string>.");
+  process.exit(1);
+}
+for (const line of fs.readFileSync(envFile, "utf8").split(/\r?\n/)) {
   if (!line || line.startsWith("#")) continue;
   const at = line.indexOf("=");
   if (at > 0 && !process.env[line.slice(0, at)]) process.env[line.slice(0, at)] = line.slice(at + 1).replace(/^['"]|['"]$/g, "");
