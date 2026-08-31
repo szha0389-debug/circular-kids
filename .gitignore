@@ -9,3 +9,8 @@ db/*.sqlite-wal
 skills-lock.json
 .vercel
 .env*
+
+# Local database working copies. The SQLite file is ~112 MB — over GitHub's
+# 100 MB hard limit — and is only needed to seed Neon via scripts/migrate_to_neon.js.
+Circular-Kids-Database/
+Circular-Kids-Database.zip

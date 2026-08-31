@@ -1,0 +1,44 @@
+table_name,column_name,data_type,description,source
+product_categories,id,INTEGER,Internal product category identifier,System generated
+product_categories,canonical_name,TEXT,Normalized category name used for matching,System normalization
+product_categories,display_name,TEXT,Category name shown in interfaces and reports,Multiple datasets
+product_categories,is_child_relevant,BOOLEAN,Indicates whether the category commonly relates to children,System rule
+repair_cases,id,TEXT,Unique repair case identifier,Open Repair Alliance
+repair_cases,product_category_id,INTEGER,Related normalized product category,System mapping
+repair_cases,data_provider,TEXT,Original record provider,Open Repair Alliance
+repair_cases,country_code,TEXT,Three-letter country code for the repair event,Open Repair Alliance
+repair_cases,brand,TEXT,Product brand,Open Repair Alliance
+repair_cases,manufacture_year,INTEGER,Product manufacture year,Open Repair Alliance
+repair_cases,product_age,REAL,Product age at the time of repair,Open Repair Alliance
+repair_cases,repair_status,TEXT,Fixed Repairable End of life or Unknown,Open Repair Alliance
+repair_cases,end_of_life_barrier,TEXT,Reason the item could not be repaired,Open Repair Alliance
+repair_cases,event_date,DATE,Repair event date,Open Repair Alliance
+repair_cases,problem_text,TEXT,Original problem description which may use multiple languages,Open Repair Alliance
+materials,id,INTEGER,Internal material identifier,System generated
+materials,wikidata_uri,TEXT,Wikidata material entity URI,Wikidata
+materials,name,TEXT,Material name,Wikidata
+product_materials,product_category_id,INTEGER,Product category identifier,System mapping
+product_materials,material_id,INTEGER,Material identifier,Wikidata
+product_materials,source_item_uri,TEXT,Original product entity URI,Wikidata
+safety_recalls,id,UUID,Unique recall identifier,ACCC
+safety_recalls,title,TEXT,Recalled product title,ACCC
+safety_recalls,product_category_id,INTEGER,Related normalized product category,System mapping
+safety_recalls,published_at,TEXT,Recall publication date,ACCC
+safety_recalls,description,TEXT,Recall reason hazards and consumer action,ACCC
+safety_recalls,recall_url,TEXT,Official ACCC recall page,ACCC
+image_annotations,image_id,TEXT,Open Images image identifier,Open Images
+image_annotations,label_mid,TEXT,Machine-readable category MID,Open Images
+image_annotations,confidence,REAL,Annotation confidence,Open Images
+image_annotations,x_min,REAL,Normalized left boundary coordinate,Open Images
+image_annotations,x_max,REAL,Normalized right boundary coordinate,Open Images
+image_annotations,y_min,REAL,Normalized top boundary coordinate,Open Images
+image_annotations,y_max,REAL,Normalized bottom boundary coordinate,Open Images
+investigations,id,UUID,Unique investigation identifier,Application
+investigations,item,JSON,Confirmed item information,Application
+investigations,suspected_problem,TEXT,Problem noticed by the participant,Application
+investigations,answers,JSON,Clue question answers,Application
+investigations,verdict,TEXT,Participant personal verdict,Application
+investigations,conclusion,TEXT,Evidence conclusion calculated from clues,Application
+investigations,uncertainty,JSON,Uncertain or skipped parts,Application
+investigations,danger_flag,BOOLEAN,Indicates a sign that should be checked by an adult,Application
+investigations,status,TEXT,Investigation workflow status,Application
