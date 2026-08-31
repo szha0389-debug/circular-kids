@@ -1,0 +1,197 @@
+// Font faces are pulled in from main.js (@fontsource ships plain CSS). They are
+// self-hosted, so no request ever leaves the origin and the production CSP can
+// stay at `default-src 'self'` with no font or style exceptions.
+@use "sass:color";
+@use "./tokens" as *;
+
+@import "bootstrap/scss/bootstrap";
+
+:root {
+  --ck-ground: #{$ck-ground};
+  --ck-surface: #{$ck-surface};
+  --ck-surface-warm: #{$ck-surface-warm};
+  --ck-border: #{$ck-border};
+  --ck-ink: #{$ck-ink};
+  --ck-muted: #{$ck-muted};
+
+  --ck-coral: #{$ck-coral};
+  --ck-coral-soft: #{$ck-coral-soft};
+  --ck-yellow: #{$ck-yellow};
+  --ck-yellow-soft: #{$ck-yellow-soft};
+  --ck-teal: #{$ck-teal};
+  --ck-teal-soft: #{$ck-teal-soft};
+  --ck-purple: #{$ck-purple};
+  --ck-purple-soft: #{$ck-purple-soft};
+  --ck-blue: #{$ck-blue};
+  --ck-blue-soft: #{$ck-blue-soft};
+  --ck-green: #{$ck-green};
+  --ck-green-soft: #{$ck-green-soft};
+
+  --ck-font-display: #{$ck-font-display};
+  --ck-font-body: #{$ck-font-body};
+
+  --ck-size-hero: #{$ck-size-hero};
+  --ck-size-h1: #{$ck-size-h1};
+  --ck-size-h2: #{$ck-size-h2};
+  --ck-size-body: #{$ck-size-body};
+  --ck-size-option: #{$ck-size-option};
+  --ck-size-small: #{$ck-size-small};
+  --ck-size-mini: #{$ck-size-mini};
+  --ck-size-micro: #{$ck-size-micro};
+
+  --ck-radius-card: #{$ck-radius-card};
+  --ck-radius-ctrl: #{$ck-radius-ctrl};
+  --ck-radius-pill: #{$ck-radius-pill};
+  --ck-card-accent: #{$ck-card-accent};
+  --ck-shadow-card: #{$ck-shadow-card};
+  --ck-shadow-lift: #{$ck-shadow-lift};
+
+  --ck-gap-xs: #{$ck-gap-xs};
+  --ck-gap-sm: #{$ck-gap-sm};
+  --ck-gap: #{$ck-gap};
+  --ck-gap-md: #{$ck-gap-md};
+  --ck-gap-lg: #{$ck-gap-lg};
+  --ck-gap-xl: #{$ck-gap-xl};
+
+  --ck-column: #{$ck-column};
+  --ck-header-h: #{$ck-header-h};
+  --ck-tap-min: #{$ck-tap-min};
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  min-height: 100svh;
+  background: $ck-ground;
+  color: $ck-ink;
+  font-family: $ck-font-body;
+  font-size: $ck-size-body;
+  line-height: 1.55;
+  overflow-x: hidden;   // the flow must never scroll sideways at 360 px
+}
+
+h1, h2, h3 {
+  font-family: $ck-font-display;
+  font-weight: $ck-weight-display;
+  color: $ck-ink;
+  line-height: 1.2;
+}
+
+// ── The content column ──────────────────────────────────────────────────────
+// Every band puts this on its inner element so they line up.
+//
+// A component styling one of these elements must use `margin-block` /
+// `margin-inline`, never the `margin` shorthand: scoped styles are injected
+// after this file, and a shorthand silently resets the auto margins.
+.ck-column {
+  max-width: $ck-column;
+  margin-inline: auto;
+  padding-inline: $ck-gap-md;
+}
+
+// ── Card: white, rounded, with a coloured accent along the top ──────────────
+.ck-card {
+  position: relative;
+  background: $ck-surface;
+  border-radius: $ck-radius-card;
+  box-shadow: $ck-shadow-card;
+  border-top: $ck-card-accent solid var(--ck-accent, #{$ck-coral});
+  padding: $ck-gap-md;
+}
+
+// ── Eyebrow label above a heading or inside a card ─────────────────────────
+.ck-eyebrow {
+  margin: 0 0 $ck-gap-sm;
+  font-size: $ck-size-micro;
+  font-weight: $ck-weight-strong;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: $ck-muted;
+}
+
+.ck-lead {
+  color: $ck-muted;
+  font-size: $ck-size-small;
+  line-height: 1.6;
+}
+
+// ── Buttons ────────────────────────────────────────────────────────────────
+.btn {
+  --bs-btn-font-weight: #{$ck-weight-bold};
+  min-height: $ck-tap-min;
+  border-radius: $ck-radius-ctrl;
+  transition: transform 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.btn-primary {
+  --bs-btn-bg: #{$ck-coral};
+  --bs-btn-border-color: #{$ck-coral};
+  --bs-btn-color: #fff;
+  --bs-btn-hover-bg: #{color.adjust($ck-coral, $lightness: -7%)};
+  --bs-btn-hover-border-color: #{color.adjust($ck-coral, $lightness: -7%)};
+  --bs-btn-hover-color: #fff;
+  --bs-btn-disabled-bg: #{rgba($ck-coral, 0.45)};
+  --bs-btn-disabled-border-color: transparent;
+  --bs-btn-disabled-color: #fff;
+}
+
+.btn-quiet {
+  background: $ck-surface;
+  border: 2px solid $ck-border;
+  color: $ck-ink;
+  font-weight: $ck-weight-bold;
+}
+.btn-quiet:hover { border-color: $ck-coral; color: $ck-ink; }
+
+.btn:not(:disabled):hover { transform: translateY(-1px); }
+.btn:not(:disabled):active { transform: translateY(0); }
+
+.btn:focus-visible,
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid $ck-coral;
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+// ── The Back / Continue pair that closes most screens ──────────────────────
+.ck-actions {
+  display: flex;
+  gap: $ck-gap-sm;
+  margin-top: $ck-gap-md;
+}
+.ck-actions .btn { flex: 1 1 0; }
+.ck-actions .btn--wide { flex: 1.6 1 0; }
+
+// ── A tinted note. Never used to warn: Epic 1 reports, Epic 2 warns. ───────
+.ck-note {
+  display: flex;
+  gap: $ck-gap-sm;
+  padding: $ck-gap $ck-gap-md;
+  border-radius: $ck-radius-ctrl;
+  border-left: 4px solid var(--ck-accent, #{$ck-yellow});
+  background: var(--ck-accent-soft, #{$ck-yellow-soft});
+  font-size: $ck-size-small;
+  color: $ck-ink;
+}
+.ck-note p { margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.ck-visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
