@@ -40,9 +40,12 @@ async function startOver() {
   <a class="ck-skip" href="#main">Skip to the main part</a>
 
   <header class="ck-header">
+    <!-- The header carries the product identity, not the name of this activity.
+         Epic 2 and Epic 3 are different activities under the same product, so
+         this stays put while the welcome screen's heading changes with them. -->
     <RouterLink to="/" class="ck-brand" aria-label="Circular Kids home">
-      <span class="ck-brand__mark" aria-hidden="true">🔍</span>
-      <span class="ck-brand__text">Investigate Before I Throw It Away</span>
+      <span class="ck-brand__mark" aria-hidden="true">↻</span>
+      <span class="ck-brand__text">Circular <b>Kids</b></span>
     </RouterLink>
 
     <!-- US-1.5 requires a visible way back to the beginning that closes the
@@ -123,7 +126,19 @@ async function startOver() {
   font-weight: 900;
   font-size: 15px;
 }
-.ck-brand__mark { flex: 0 0 auto; font-size: 15px; line-height: 1; }
+.ck-brand__mark {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ck-coral-soft);
+  color: var(--ck-coral);
+  font-size: 13px;
+  line-height: 1;
+}
+.ck-brand__text b { color: var(--ck-coral); }
 .ck-brand__text {
   min-width: 0;
   overflow: hidden;
