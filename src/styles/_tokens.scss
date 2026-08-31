@@ -1,0 +1,115 @@
+// ============================================================================
+//  DESIGN TOKENS — taken from the Figma prototype
+//  "Complete High-level Prototype Design" (Figma Make, file ajRbdldMoRpx5MRqyNXJfI)
+// ============================================================================
+//
+//  Every value below was read off the rendered prototype, not eyeballed from a
+//  screenshot. Components read these; none of them hardcodes a colour or size.
+// ============================================================================
+
+// ── Palette ─────────────────────────────────────────────────────────────────
+$ck-ground:        #FFF8ED;   // page background
+$ck-surface:       #FFFFFF;   // cards, header, option rows
+$ck-surface-warm:  #F5F0E8;   // neutral pills, wells
+$ck-border:        #E8E0D4;   // hairlines and option borders
+
+$ck-ink:           #1A1A2E;   // headings and body text
+$ck-muted:         #7A7585;   // captions, inactive step numbers
+
+$ck-coral:         #FF6B47;   // primary action, active accents
+$ck-coral-soft:    #FFE8E4;
+$ck-yellow:        #FFE66D;
+$ck-yellow-soft:   #FFF8DC;
+$ck-teal:          #4ECDC4;
+$ck-teal-soft:     #E4F7F5;
+$ck-purple:        #B17BEA;
+$ck-purple-soft:   #F1E9FC;
+$ck-blue:          #3D84F7;
+$ck-blue-soft:     #E3EDFE;
+$ck-green:         #52C77C;
+$ck-green-soft:    #E4F5EA;
+
+// ── Typography ──────────────────────────────────────────────────────────────
+// Fraunces carries every heading; Nunito carries everything else.
+$ck-font-display: "Fraunces", Georgia, "Times New Roman", serif;
+$ck-font-body:    "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+$ck-size-hero:    30px;   // welcome h1
+$ck-size-h1:      26px;   // screen heading
+$ck-size-h2:      20px;
+$ck-size-body:    16px;
+$ck-size-option:  15px;   // option row label
+$ck-size-small:   14px;
+$ck-size-mini:    13px;   // step numbers, answer pills
+$ck-size-micro:   11px;   // step labels, eyebrow labels
+
+$ck-weight-display: 900;
+$ck-weight-strong:  800;
+$ck-weight-bold:    700;
+$ck-weight-medium:  600;
+
+// ── Shape & depth ───────────────────────────────────────────────────────────
+$ck-radius-card:   20px;
+$ck-radius-ctrl:   14px;   // buttons and option rows
+$ck-radius-pill:   20px;
+$ck-radius-sm:     10px;
+
+$ck-card-accent:   4px;    // the coloured top border every card carries
+$ck-shadow-card:   0 4px 24px rgba(26, 26, 46, 0.07);
+$ck-shadow-lift:   0 8px 28px rgba(26, 26, 46, 0.10);
+
+// ── Spacing & layout ────────────────────────────────────────────────────────
+$ck-gap-xs:  6px;
+$ck-gap-sm:  10px;
+$ck-gap:     14px;
+$ck-gap-md:  20px;
+$ck-gap-lg:  28px;
+$ck-gap-xl:  40px;
+
+$ck-column:      540px;  // the content column in the prototype
+$ck-header-h:    51px;
+$ck-step-dot:    30px;
+
+// The Definition of Done requires the flow to work at 360 px on a touch screen.
+$ck-tap-min: 48px;
+
+// ============================================================================
+//  Bootstrap overrides — derived from the tokens, never restated
+// ============================================================================
+
+$primary:   $ck-coral;
+$secondary: $ck-muted;
+$success:   $ck-green;
+$info:      $ck-teal;
+$warning:   $ck-yellow;
+$light:     $ck-surface-warm;
+$dark:      $ck-ink;
+
+$body-bg:    $ck-ground;
+$body-color: $ck-ink;
+
+$font-family-sans-serif: $ck-font-body;
+$font-size-base:         1rem;
+$headings-font-family:   $ck-font-display;
+$headings-color:         $ck-ink;
+$headings-font-weight:   $ck-weight-display;
+
+$border-radius:    $ck-radius-ctrl;
+$border-radius-lg: $ck-radius-card;
+$border-radius-xl: $ck-radius-card;
+$border-color:     $ck-border;
+
+$btn-padding-y:     13px;
+$btn-padding-x:     24px;
+$btn-font-size:     $ck-size-body;
+$btn-font-weight:   $ck-weight-bold;
+$btn-border-radius: $ck-radius-ctrl;
+
+$card-border-radius: $ck-radius-card;
+$card-border-color:  $ck-border;
+$card-bg:            $ck-surface;
+
+$focus-ring-width: 0.25rem;
+$focus-ring-color: rgba($ck-coral, 0.4);
+
+$container-max-widths: (sm: 540px, md: 540px, lg: 540px, xl: 540px, xxl: 540px);
