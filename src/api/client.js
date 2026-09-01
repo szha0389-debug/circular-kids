@@ -1,6 +1,5 @@
-// Same-origin API client. Nothing here sends image bytes: recognition receives
-// the file's name, type and size only, and the photo stays in the browser as an
-// object URL for the length of the session.
+// Same-origin API client. Image recognition runs locally in the browser in
+// services/imageRecognition.js, so no image bytes are sent through this API.
 
 const TIMEOUT_MS = 12000;
 
@@ -42,18 +41,6 @@ export const api = {
   patch: (id, patch) => request(`/api/investigations/${id}`, { method: "PATCH", body: patch }),
 
   caseView: id => request(`/api/investigations/${id}/case`),
-
-  /**
-   * US-1.1 requires a result or progress within 8 seconds. The caller treats a
-   * timeout exactly like a no-match: the child goes to the item list and is told
-   * the photo did not work, never that an error occurred.
-   */
-  recognise: (id, file, timeout) =>
-    request(`/api/investigations/${id}/recognise`, {
-      method: "POST",
-      body: { name: file.name, type: file.type, size: file.size },
-      timeout
-    }),
 
   reveal: id => request(`/api/investigations/${id}/reveal`, { method: "POST" }),
 

@@ -61,6 +61,7 @@ async function identify() {
 function messageFor(reason) {
   if (reason === "unsupported") return "That kind of picture did not work. Pick your item below instead.";
   if (reason === "timeout") return "The picture is taking too long. Pick your item below instead.";
+  if (reason === "unavailable") return "The image model could not load. Pick your item below instead.";
   return "I could not tell what that is from the photo. Pick your item below instead.";
 }
 
@@ -155,7 +156,10 @@ async function confirmItem() {
       <div class="ck-looking">
         <span class="ck-looking__badge" aria-hidden="true">🔍</span>
         <h1>Looking at your image…</h1>
-        <p class="ck-lead">I’m checking what kind of item this might be.</p>
+        <p class="ck-lead">
+          {{ store.recognitionProgress || "I’m checking what kind of item this might be." }}
+        </p>
+        <p class="ck-model-note">This uses the small CNN trained for Circular Kids.</p>
       </div>
     </template>
 
@@ -302,6 +306,7 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 6px; }
 }
 
 .ck-looking { text-align: center; padding-block: var(--ck-gap-xl); }
+.ck-model-note { color: var(--ck-muted); font-size: var(--ck-size-mini); }
 .ck-looking__badge {
   display: grid;
   place-items: center;

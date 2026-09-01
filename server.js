@@ -47,7 +47,7 @@ function readBody(req) {
     let raw = "";
     req.on("data", chunk => {
       raw += chunk;
-      // No image bytes are ever posted, so a request this large is a mistake.
+      // API requests contain structured investigation data, never image bytes.
       if (raw.length > 1_000_000) {
         reject(Object.assign(new Error("That request was too large."), { status: 413 }));
       }

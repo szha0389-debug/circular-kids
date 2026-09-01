@@ -8,9 +8,9 @@
 //     when the case closes or the page unloads.
 
 import { defineStore } from "pinia";
-import { api, ApiError } from "@/api/client";
+import { api } from "@/api/client";
+import { recogniseImage } from "@/services/imageRecognition";
 
-const RECOGNITION_TIMEOUT_MS = 8000;
 export const MAX_IMAGE_BYTES = 6_000_000;
 export const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -28,6 +28,7 @@ export const useInvestigation = defineStore("investigation", {
     // Recognition
     suggestion: null,
     recognitionReason: null,
+    recognitionProgress: "",
     attempts: 0,
 
     // Case
@@ -105,9 +106,22 @@ export const useInvestigation = defineStore("investigation", {
       this.busy = true;
       this.attempts += 1;
       try {
-        const result = await api.recognise(this.id, this._file, RECOGNITION_TIMEOUT_MS);
+        const result = await recogniseImage(this._file, message => {
+          this.recognitionProgress = message;
+        });
         if (result.suggestion) {
-          this.suggestion = result.suggestion;
+          const category = this.categories.find(group =>
+            group.items.some(item => item.id === result.suggestion.itemId)
+          );
+          const item = category?.items.find(entry => entry.id === result.suggestion.itemId);
+          if (!category || !item) throw new Error("The recognised item is not in the catalogue.");
+
+          this.suggestion = {
+            ...result.suggestion,
+            name: item.name,
+            icon: item.icon,
+            category: category.id
+          };
           this.recognitionReason = null;
           return { suggested: true };
         }
@@ -115,12 +129,13 @@ export const useInvestigation = defineStore("investigation", {
         this.recognitionReason = result.reason || "no-match";
         return { suggested: false };
       } catch (error) {
-        // A timeout is not an error the child needs to hear about.
+        console.error("Image recognition failed", error);
         this.suggestion = null;
-        this.recognitionReason = error instanceof ApiError ? "no-match" : "timeout";
+        this.recognitionReason = "unavailable";
         return { suggested: false };
       } finally {
         this.busy = false;
+        this.recognitionProgress = "";
       }
     },
 

@@ -5,8 +5,7 @@
 // takes a plain request description and returns `{ status, body }`.
 
 import { caseView, reveal, transferPayload } from "./investigation.js";
-import { CATEGORIES, itemsInCategory, findItem } from "./catalogue.js";
-import { recognise, REASONS } from "./recognition.js";
+import { CATEGORIES, itemsInCategory } from "./catalogue.js";
 import { randomUUID } from "node:crypto";
 
 const NOT_FOUND = {
@@ -56,7 +55,7 @@ export async function handle({ method, path, body = {} }, store) {
   }
 
   const match = path.match(
-    /^\/api\/investigations\/([^/]+)(?:\/(recognise|case|reveal|complete|transfer))?$/
+    /^\/api\/investigations\/([^/]+)(?:\/(case|reveal|complete|transfer))?$/
   );
   if (!match) return { status: 404, body: { message: "API route not found." } };
 
@@ -80,25 +79,6 @@ export async function handle({ method, path, body = {} }, store) {
   }
 
   if (method !== "POST") return METHOD_NOT_ALLOWED;
-
-  if (action === "recognise") {
-    const result = recognise(body);
-    // Resolve the item here so the client never has to know the catalogue shape
-    // to render a suggestion.
-    if (result.suggestion) {
-      const item = findItem(result.suggestion.itemId);
-      if (!item) {
-        return { status: 200, body: { available: true, suggestion: null, reason: REASONS.NO_MATCH } };
-      }
-      result.suggestion = {
-        ...result.suggestion,
-        name: item.name,
-        icon: item.icon,
-        category: item.category
-      };
-    }
-    return { status: 200, body: result };
-  }
 
   if (action === "reveal") {
     // POST rather than GET: the reveal is a commitment point, not a lookup.
