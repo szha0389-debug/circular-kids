@@ -23,7 +23,7 @@ def arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train the 23-class Circular Kids CNN")
     parser.add_argument("--data-dir", type=Path, default=Path(__file__).with_name("data"))
     parser.add_argument("--output-dir", type=Path, default=ROOT / "public" / "model")
-    parser.add_argument("--epochs", type=int, default=25)
+    parser.add_argument("--epochs", type=int, default=40)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--minimum-images", type=int, default=30)
     parser.add_argument("--seed", type=int, default=42)
@@ -61,23 +61,46 @@ def make_model(class_count: int):
 
     # This entire network starts with random parameters. Only standard layers
     # are kept here so the trained model converts cleanly to TensorFlow.js.
+    #
+    # GlobalAveragePooling2D (instead of Flatten) keeps the head small on
+    # purpose: Flatten-ing a 16x16x64 feature map straight into Dense(128)
+    # costs ~2.1M parameters, which overfits badly on a dataset of only a few
+    # hundred images per class. BatchNormalization speeds up and stabilises
+    # convergence from random init, and the light L2 term plus dropout curb
+    # overfitting further on a small, from-scratch training set.
+    l2 = tf.keras.regularizers.l2(1e-4)
     return tf.keras.Sequential(
         [
             tf.keras.layers.Input(shape=(*IMAGE_SIZE, 3)),
             tf.keras.layers.Rescaling(1.0 / 255),
-            tf.keras.layers.Conv2D(16, 3, padding="same", activation="relu"),
+            tf.keras.layers.Conv2D(32, 3, padding="same", activation="relu", kernel_regularizer=l2),
+            tf.keras.layers.BatchNormalization(),
             tf.keras.layers.MaxPooling2D(),
-            tf.keras.layers.Conv2D(32, 3, padding="same", activation="relu"),
+            tf.keras.layers.Conv2D(64, 3, padding="same", activation="relu", kernel_regularizer=l2),
+            tf.keras.layers.BatchNormalization(),
             tf.keras.layers.MaxPooling2D(),
-            tf.keras.layers.Conv2D(64, 3, padding="same", activation="relu"),
+            tf.keras.layers.Conv2D(128, 3, padding="same", activation="relu", kernel_regularizer=l2),
+            tf.keras.layers.BatchNormalization(),
             tf.keras.layers.MaxPooling2D(),
-            tf.keras.layers.Flatten(),
-            tf.keras.layers.Dense(128, activation="relu"),
-            tf.keras.layers.Dropout(0.3),
+            tf.keras.layers.GlobalAveragePooling2D(),
+            tf.keras.layers.Dense(128, activation="relu", kernel_regularizer=l2),
+            tf.keras.layers.Dropout(0.4),
             tf.keras.layers.Dense(class_count, activation="softmax"),
         ],
         name="circular_kids_cnn",
     )
+
+
+def class_weights(data_dir: Path, class_ids: list[str]) -> dict[int, float]:
+    """Inverse-frequency weights so an unevenly photographed class doesn't get
+    drowned out. Balanced folders make every weight ~1.0, so this is a no-op
+    in the ideal case and a safety net otherwise."""
+    counts = [
+        sum(1 for path in (data_dir / class_id).rglob("*") if path.suffix.lower() in IMAGE_EXTENSIONS)
+        for class_id in class_ids
+    ]
+    mean_count = sum(counts) / len(counts)
+    return {index: mean_count / count for index, count in enumerate(counts)}
 
 
 def main() -> None:
@@ -108,15 +131,28 @@ def main() -> None:
         seed=args.seed,
         image_size=IMAGE_SIZE,
         batch_size=args.batch_size,
+        # A plain resize squashes non-square photos (a tall water bottle or a
+        # towel gets warped). Padding to the target aspect ratio instead keeps
+        # object shape intact; the browser side pads the same way so training
+        # and inference see the same kind of image.
+        pad_to_aspect_ratio=True,
     )
     train_data = tf.keras.utils.image_dataset_from_directory(subset="training", **common)
     validation_data = tf.keras.utils.image_dataset_from_directory(subset="validation", **common)
+    weights = class_weights(args.data_dir, class_ids)
+    print(
+        "Class weights (1.0 = average sample count; higher means fewer photos):\n  "
+        + ", ".join(f"{class_id}={weights[i]:.2f}" for i, class_id in enumerate(class_ids))
+    )
     autotune = tf.data.AUTOTUNE
     augmentation = tf.keras.Sequential(
         [
             tf.keras.layers.RandomFlip("horizontal", seed=args.seed),
             tf.keras.layers.RandomRotation(0.05, seed=args.seed + 1),
             tf.keras.layers.RandomZoom(0.1, seed=args.seed + 2),
+            tf.keras.layers.RandomTranslation(0.1, 0.1, seed=args.seed + 3),
+            tf.keras.layers.RandomContrast(0.15, seed=args.seed + 4),
+            tf.keras.layers.RandomBrightness(0.15, seed=args.seed + 5),
         ]
     )
     train_data = train_data.map(
@@ -138,6 +174,7 @@ def main() -> None:
         train_data,
         validation_data=validation_data,
         epochs=args.epochs,
+        class_weight=weights,
         callbacks=[
             tf.keras.callbacks.ModelCheckpoint(
                 best_weights_path,
@@ -147,10 +184,10 @@ def main() -> None:
                 save_weights_only=True,
             ),
             tf.keras.callbacks.EarlyStopping(
-                monitor="val_accuracy", mode="max", patience=8, restore_best_weights=True
+                monitor="val_accuracy", mode="max", patience=12, restore_best_weights=True
             ),
             tf.keras.callbacks.ReduceLROnPlateau(
-                monitor="val_loss", factor=0.5, patience=2, min_lr=0.00005
+                monitor="val_loss", factor=0.5, patience=3, min_lr=0.00005
             ),
         ],
     )
