@@ -27,6 +27,7 @@ def main() -> None:
         seed=42,
         image_size=(128, 128),
         batch_size=32,
+        pad_to_aspect_ratio=True,
     )
     model = tf.keras.models.load_model(args.model)
     probability_batches = []
@@ -57,6 +58,28 @@ def main() -> None:
             "samples": int(mask.sum()),
             "top1Accuracy": float(correct[mask].mean()) if mask.any() else 0.0,
         }
+
+    # Which class does each class get mistaken for most often? This tells you
+    # where to add more (or more distinct) photos, rather than just knowing
+    # the overall accuracy is low.
+    confusions = []
+    for true_index, class_id in enumerate(class_ids):
+        mask = (labels == true_index) & ~correct
+        if not mask.any():
+            continue
+        wrong_predictions = predictions[mask]
+        guessed_index, count = np.unique(wrong_predictions, return_counts=True)
+        top = guessed_index[np.argmax(count)]
+        confusions.append(
+            {
+                "true": class_id,
+                "predictedInstead": class_ids[top],
+                "count": int(count.max()),
+                "ofMisclassified": int(mask.sum()),
+            }
+        )
+    confusions.sort(key=lambda entry: entry["count"], reverse=True)
+
     result = {
         "samples": int(len(labels)),
         "top1Accuracy": float(correct.mean()),
@@ -65,6 +88,7 @@ def main() -> None:
         "meanTopConfidence": float(probabilities.max(axis=1).mean()),
         "confidenceBands": confidence_bands,
         "perClass": per_class,
+        "topConfusions": confusions[:10],
     }
     output = Path("training/artifacts/evaluation.json")
     output.write_text(json.dumps(result, indent=2), encoding="utf-8")

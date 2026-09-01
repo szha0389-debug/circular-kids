@@ -55,6 +55,28 @@ export function chooseSuggestion(scores = []) {
   };
 }
 
+/**
+ * Resize onto a square canvas without distorting the subject, matching
+ * `pad_to_aspect_ratio=True` in training/train.py: scale to fit inside
+ * `size`, then centre on a black square. A plain stretch-to-square resize
+ * would warp tall or wide items (a water bottle, a towel) in a way the
+ * training data never saw.
+ */
+function resizeWithPad(tf, pixels, size) {
+  const [height, width] = pixels.shape;
+  const scale = Math.min(size / width, size / height);
+  const scaledWidth = Math.round(width * scale);
+  const scaledHeight = Math.round(height * scale);
+  const resized = tf.image.resizeBilinear(pixels, [scaledHeight, scaledWidth]);
+  const top = Math.floor((size - scaledHeight) / 2);
+  const left = Math.floor((size - scaledWidth) / 2);
+  return resized.pad([
+    [top, size - scaledHeight - top],
+    [left, size - scaledWidth - left],
+    [0, 0]
+  ]);
+}
+
 /** Classify the actual image pixels. No file name is read or sent anywhere. */
 export async function recogniseImage(file, onProgress) {
   onProgress?.("Loading our trained image model…");
@@ -67,8 +89,8 @@ export async function recogniseImage(file, onProgress) {
   try {
     const scores = tf.tidy(() => {
       const pixels = tf.browser.fromPixels(bitmap);
-      const resized = tf.image.resizeBilinear(pixels, [INPUT_SIZE, INPUT_SIZE]);
-      const batch = resized.expandDims(0);
+      const padded = resizeWithPad(tf, pixels, INPUT_SIZE);
+      const batch = padded.expandDims(0);
       return model.predict(batch).dataSync();
     });
     return chooseSuggestion(Array.from(scores));
