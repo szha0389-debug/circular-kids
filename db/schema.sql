@@ -76,6 +76,9 @@ CREATE TABLE IF NOT EXISTS investigations (
   child_verdict TEXT,
   evidence_conclusion TEXT,
   danger_flag INTEGER NOT NULL DEFAULT 0 CHECK (danger_flag IN (0, 1)),
+  safety_response TEXT,
+  comparison_response TEXT,
+  safety_boundary TEXT CHECK (safety_boundary IN ('safe-to-try', 'ask-an-adult', 'do-not-touch') OR safety_boundary IS NULL),
   uncertainty_json TEXT NOT NULL DEFAULT '[]',
   current_stage TEXT NOT NULL DEFAULT 'image',
   status TEXT NOT NULL DEFAULT 'in_progress',
@@ -124,4 +127,3 @@ SELECT
 FROM product_categories c
 LEFT JOIN repair_cases r ON r.product_category_id = c.id
 GROUP BY c.id, c.display_name;
-
