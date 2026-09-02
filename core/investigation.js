@@ -6,8 +6,17 @@
 import { breakdownFor, findItem, problemsFor } from "./catalogue.js";
 import { MAX_QUESTIONS, questionsFor, SKIPPED } from "./clues.js";
 import { compare, reason, VERDICTS } from "./reasoning.js";
+import {
+  BOUNDARIES,
+  boundaryFor,
+  sanitiseComparisonResponse,
+  sanitiseSafetyResponse
+} from "./safety.js";
 
-export const STAGES = ["identify", "breakdown", "clues", "verdict", "reveal", "handover"];
+export const STAGES = [
+  "identify", "breakdown", "clues", "verdict", "reveal", "handover",
+  "safety-activity", "safety-reveal", "safety-comparison", "safety-boundary"
+];
 
 /** Cases are held for this long; a photo is never part of one. */
 export const TTL_MS = 30 * 60 * 1000;
@@ -18,7 +27,9 @@ const VALID_VERDICTS = new Set(VERDICTS.map(v => v.value));
  * Fields a client may write. `conclusion`, `reasoning`, `uncertainty` and
  * `dangerFlag` are deliberately absent — all four are derived.
  */
-const WRITABLE = new Set(["stage", "itemId", "problems", "answers", "verdict"]);
+const WRITABLE = new Set([
+  "stage", "itemId", "problems", "answers", "verdict", "safetyResponse", "comparisonResponse"
+]);
 
 export function createRecord(id, now = Date.now()) {
   return {
@@ -28,6 +39,9 @@ export function createRecord(id, now = Date.now()) {
     problems: [],
     answers: [],
     verdict: null,
+    safetyResponse: null,
+    comparisonResponse: null,
+    safetyBoundary: null,
     completed: false,
     // Recorded so the client and any auditor can see the claim the UI makes.
     // Nothing in this module ever sets it true.
@@ -99,9 +113,21 @@ export function applyUpdate(record, input = {}, now = Date.now()) {
     record.verdict = VALID_VERDICTS.has(patch.verdict) ? patch.verdict : null;
   }
 
+  if ("safetyResponse" in patch) {
+    record.safetyResponse = sanitiseSafetyResponse(patch.safetyResponse);
+    record.comparisonResponse = null;
+    record.safetyBoundary = null;
+  }
+
+  if ("comparisonResponse" in patch) {
+    record.comparisonResponse = sanitiseComparisonResponse(patch.comparisonResponse);
+  }
+
   if ("stage" in patch && STAGES.includes(patch.stage)) {
     record.stage = patch.stage;
   }
+
+  if (record.safetyResponse) record.safetyBoundary = boundaryFor(record);
 
   record.updatedAt = now;
   return record;
@@ -197,6 +223,18 @@ export function transferPayload(record) {
       // Restated in the payload so Epic 2 never has to ask for a photo.
       imageTransferred: false
     }
+  };
+}
+
+export function safetyStatus(record) {
+  if (!record) return null;
+  const boundary = record.safetyResponse ? boundaryFor(record) : null;
+  return {
+    stage: record.stage,
+    safetyResponse: record.safetyResponse || null,
+    comparisonResponse: record.comparisonResponse || null,
+    safetyBoundary: boundary,
+    restricted: boundary === BOUNDARIES.STOP
   };
 }
 
