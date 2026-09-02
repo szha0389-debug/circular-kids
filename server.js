@@ -15,6 +15,7 @@ const root = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(root, "dist");
 const publicDir = path.join(root, "public");
 const port = Number(process.env.PORT || 5121);
+const aiInferenceUrl = process.env.AI_INFERENCE_URL || "http://127.0.0.1:8000";
 const store = createStore();
 
 const MIME = {
@@ -63,6 +64,53 @@ function readBody(req) {
   });
 }
 
+/** Read one bounded multipart request without writing the image to disk. */
+function readBinaryBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let size = 0;
+    req.on("data", chunk => {
+      size += chunk.length;
+      if (size > 6_250_000) {
+        reject(Object.assign(new Error("That image is too large."), { status: 413 }));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on("end", () => resolve(Buffer.concat(chunks)));
+    req.on("error", reject);
+  });
+}
+
+/** Forward only image-recognition routes to the local PyTorch service. */
+async function proxyAi(req, res, url) {
+  try {
+    const hasBody = !["GET", "HEAD"].includes(req.method);
+    const body = hasBody ? await readBinaryBody(req) : undefined;
+    const response = await fetch(new URL(url.pathname + url.search, aiInferenceUrl), {
+      method: req.method,
+      headers: {
+        ...(req.headers["content-type"] ? { "Content-Type": req.headers["content-type"] } : {}),
+        ...(req.headers.accept ? { Accept: req.headers.accept } : {})
+      },
+      body
+    });
+    const payload = Buffer.from(await response.arrayBuffer());
+    res.writeHead(response.status, {
+      "Content-Type": response.headers.get("content-type") || "application/json; charset=utf-8",
+      "Cache-Control": "no-store"
+    });
+    res.end(payload);
+  } catch (error) {
+    console.error("AI inference proxy failed", error);
+    if (error.status) {
+      return sendJson(res, error.status, { message: error.message });
+    }
+    sendJson(res, 503, { message: "The image-recognition service is unavailable." });
+  }
+}
+
 /** Resolve a URL path to a file inside one of the served directories. */
 function resolveFile(urlPath) {
   const clean = path.normalize(decodeURIComponent(urlPath)).replace(/^(\.\.[/\\])+/, "");
@@ -77,6 +125,10 @@ function resolveFile(urlPath) {
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+
+    if (url.pathname === "/api/image-recognition" || url.pathname === "/api/ai/health") {
+      return proxyAi(req, res, url);
+    }
 
     if (url.pathname.startsWith("/api/")) {
       const body = ["POST", "PATCH", "PUT"].includes(req.method) ? await readBody(req) : {};

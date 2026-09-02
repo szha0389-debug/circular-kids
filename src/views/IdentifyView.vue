@@ -61,7 +61,7 @@ async function identify() {
 function messageFor(reason) {
   if (reason === "unsupported") return "That kind of picture did not work. Pick your item below instead.";
   if (reason === "timeout") return "The picture is taking too long. Pick your item below instead.";
-  if (reason === "unavailable") return "The image model could not load. Pick your item below instead.";
+  if (reason === "unavailable") return "The picture-recognition service is unavailable. Pick your item below instead.";
   return "I could not tell what that is from the photo. Pick your item below instead.";
 }
 
@@ -159,7 +159,7 @@ async function confirmItem() {
         <p class="ck-lead">
           {{ store.recognitionProgress || "I’m checking what kind of item this might be." }}
         </p>
-        <p class="ck-model-note">This uses the small CNN trained for Circular Kids.</p>
+        <p class="ck-model-note">This checks the picture with the trained Circular Kids model.</p>
       </div>
     </template>
 

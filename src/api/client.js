@@ -1,5 +1,5 @@
-// Same-origin API client. Image recognition runs locally in the browser in
-// services/imageRecognition.js, so no image bytes are sent through this API.
+// Same-origin JSON API client. Image recognition uses its own multipart request
+// in services/imageRecognition.js.
 
 const TIMEOUT_MS = 12000;
 

@@ -1,4 +1,4 @@
-"""Evaluate the trained CNN with the same deterministic validation split."""
+"""Evaluate a PyTorch checkpoint once on the independent test split."""
 
 from __future__ import annotations
 
@@ -6,93 +6,67 @@ import argparse
 import json
 from pathlib import Path
 
-import numpy as np
-import tensorflow as tf
+import matplotlib.pyplot as plt
+import torch
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
+from torch.utils.data import DataLoader
+
+from pytorch_model import ClassFolderDataset, eval_transform, load_checkpoint, resolve_device
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=Path, default=Path("training/artifacts/circular-kids.keras"))
-    parser.add_argument("--data", type=Path, default=Path("training/data"))
+    parser = argparse.ArgumentParser(description="Evaluate on data-pytorch/test only")
+    parser.add_argument("--checkpoint", type=Path, default=ROOT / "training" / "artifacts" / "best_model.pth")
+    parser.add_argument("--data-dir", type=Path, default=ROOT / "training" / "data-pytorch")
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "training" / "artifacts")
+    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--num-workers", type=int, default=0)
+    parser.add_argument("--device", default="auto")
     args = parser.parse_args()
-    classes = json.loads(Path("training/classes.json").read_text(encoding="utf-8"))
-    class_ids = [entry["itemId"] for entry in classes]
-    dataset = tf.keras.utils.image_dataset_from_directory(
-        args.data,
-        labels="inferred",
-        label_mode="int",
-        class_names=class_ids,
-        validation_split=0.2,
-        subset="validation",
-        seed=42,
-        image_size=(128, 128),
-        batch_size=32,
-        pad_to_aspect_ratio=True,
-    )
-    model = tf.keras.models.load_model(args.model)
-    probability_batches = []
-    label_batches = []
-    for images, batch_labels in dataset:
-        probability_batches.append(model(images, training=False).numpy())
-        label_batches.append(batch_labels.numpy())
-    probabilities = np.concatenate(probability_batches)
-    labels = np.concatenate(label_batches)
-    ranking = np.argsort(probabilities, axis=1)[:, ::-1]
-    predictions = ranking[:, 0]
-    correct = predictions == labels
-    top_confidence = probabilities.max(axis=1)
-    top_margin = probabilities[np.arange(len(labels)), ranking[:, 0]] - probabilities[
-        np.arange(len(labels)), ranking[:, 1]
-    ]
-    confidence_bands = {}
-    for threshold in (0.2, 0.3, 0.4, 0.5, 0.6):
-        accepted = (top_confidence >= threshold) & (top_margin >= 0.05)
-        confidence_bands[str(threshold)] = {
-            "coverage": float(accepted.mean()),
-            "accuracyWhenAccepted": float(correct[accepted].mean()) if accepted.any() else None,
-        }
-    per_class = {}
-    for index, class_id in enumerate(class_ids):
-        mask = labels == index
-        per_class[class_id] = {
-            "samples": int(mask.sum()),
-            "top1Accuracy": float(correct[mask].mean()) if mask.any() else 0.0,
-        }
-
-    # Which class does each class get mistaken for most often? This tells you
-    # where to add more (or more distinct) photos, rather than just knowing
-    # the overall accuracy is low.
-    confusions = []
-    for true_index, class_id in enumerate(class_ids):
-        mask = (labels == true_index) & ~correct
-        if not mask.any():
-            continue
-        wrong_predictions = predictions[mask]
-        guessed_index, count = np.unique(wrong_predictions, return_counts=True)
-        top = guessed_index[np.argmax(count)]
-        confusions.append(
-            {
-                "true": class_id,
-                "predictedInstead": class_ids[top],
-                "count": int(count.max()),
-                "ofMisclassified": int(mask.sum()),
-            }
-        )
-    confusions.sort(key=lambda entry: entry["count"], reverse=True)
-
+    device = resolve_device(args.device)
+    model, checkpoint = load_checkpoint(args.checkpoint, device)
+    class_names = checkpoint["class_names"]
+    dataset = ClassFolderDataset(args.data_dir / "test", class_names, eval_transform())
+    loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False,
+                        num_workers=args.num_workers, pin_memory=device.type == "cuda",
+                        persistent_workers=args.num_workers > 0)
+    labels: list[int] = []
+    predictions: list[int] = []
+    with torch.inference_mode():
+        for images, batch_labels in loader:
+            predicted = model(images.to(device)).argmax(dim=1).cpu()
+            labels.extend(batch_labels.tolist())
+            predictions.extend(predicted.tolist())
+    indices = list(range(len(class_names)))
+    precision, recall, f1, support = precision_recall_fscore_support(
+        labels, predictions, labels=indices, zero_division=0)
+    matrix = confusion_matrix(labels, predictions, labels=indices)
     result = {
-        "samples": int(len(labels)),
-        "top1Accuracy": float(correct.mean()),
-        "top3Accuracy": float(np.any(ranking[:, :3] == labels[:, None], axis=1).mean()),
-        "top5Accuracy": float(np.any(ranking[:, :5] == labels[:, None], axis=1).mean()),
-        "meanTopConfidence": float(probabilities.max(axis=1).mean()),
-        "confidenceBands": confidence_bands,
-        "perClass": per_class,
-        "topConfusions": confusions[:10],
+        "checkpoint": str(args.checkpoint), "split": "test", "samples": len(labels),
+        "overall_accuracy": float(accuracy_score(labels, predictions)),
+        "per_class": {name: {"precision": float(precision[i]), "recall": float(recall[i]),
+                             "f1": float(f1[i]), "support": int(support[i])}
+                      for i, name in enumerate(class_names)},
+        "confusion_matrix": matrix.tolist(), "class_names": class_names,
     }
-    output = Path("training/artifacts/evaluation.json")
-    output.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    json_path = args.output_dir / "evaluation.json"
+    json_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    figure_size = max(10, len(class_names) * 0.55)
+    fig, ax = plt.subplots(figsize=(figure_size, figure_size))
+    image = ax.imshow(matrix, interpolation="nearest", cmap="Blues")
+    fig.colorbar(image, ax=ax, fraction=0.046, pad=0.04)
+    ax.set(xticks=indices, yticks=indices, xticklabels=class_names, yticklabels=class_names,
+           xlabel="Predicted label", ylabel="True label", title="Test confusion matrix")
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+    fig.tight_layout()
+    figure_path = args.output_dir / "confusion_matrix.png"
+    fig.savefig(figure_path, dpi=180)
+    plt.close(fig)
     print(json.dumps(result, indent=2))
+    print(f"Saved {json_path} and {figure_path}")
 
 
 if __name__ == "__main__":

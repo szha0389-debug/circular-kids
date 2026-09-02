@@ -3,6 +3,7 @@ node_modules/
 .venv/
 .venv311/
 .tools/
+__pycache__/
 .DS_Store
 .vercel/
 db/*.sqlite
@@ -18,8 +19,11 @@ Circular-Kids-Database/
 Circular-Kids-Database.zip
 
 training/data/
+training/data-pytorch/
+training/data-pytorch-smoke/
 training/candidates/
 training/artifacts/
 public/model/model.json
 public/model/*.bin
+public/model/*.onnx
 public/model/metadata.json

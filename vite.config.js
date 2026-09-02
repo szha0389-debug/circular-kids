@@ -2,8 +2,8 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 
-// The dev server proxies /api to the local Node API (server.js) so the browser
-// always talks to a same-origin API, matching the production CSP (connect-src 'self').
+// The dev server proxies every same-origin API route through the existing Node
+// server, which forwards only AI inference requests to the Python service.
 export default defineConfig({
   plugins: [vue()],
   resolve: {
