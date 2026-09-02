@@ -21,6 +21,9 @@ function shape(row) {
     problems: row.problems || [],
     answers: row.answers || [],
     verdict: row.verdict,
+    safetyResponse: row.safety_response,
+    comparisonResponse: row.comparison_response,
+    safetyBoundary: row.safety_boundary,
     completed: row.status === "completed",
     imageStored: false,
     createdAt: new Date(row.created_at).getTime(),
@@ -52,6 +55,9 @@ export function createDbStore() {
           problems = ${JSON.stringify(next.problems)},
           answers = ${JSON.stringify(next.answers)},
           verdict = ${next.verdict},
+          safety_response = ${next.safetyResponse},
+          comparison_response = ${next.comparisonResponse},
+          safety_boundary = ${next.safetyBoundary},
           stage = ${next.stage},
           updated_at = NOW()
         WHERE id = ${id} RETURNING *`;
