@@ -24,7 +24,7 @@ const sources = [
         </template>
       </p>
       <p class="ck-footer__privacy">
-        Your photo stays on this device and is never uploaded or saved.
+        Your photo is only used to recognise your item, and is never saved or shared.
       </p>
     </div>
   </footer>
