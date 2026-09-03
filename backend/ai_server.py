@@ -5,6 +5,7 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from io import BytesIO
 import logging
+import os
 from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
@@ -19,13 +20,16 @@ CHECKPOINT_PATH = ROOT / "training" / "artifacts" / "best_model.pth"
 MAX_IMAGE_BYTES = 6_000_000
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/webp"}
 ALLOWED_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
-logger = logging.getLogger("circular_kids.ai")
+# Reuse Uvicorn's configured handlers so model lifecycle logs are visible in
+# local terminals and container log collectors without extra logging setup.
+logger = logging.getLogger("uvicorn.error")
+DEVICE_REQUEST = os.environ.get("AI_DEVICE", "auto")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.model = None
-    app.state.device = resolve_device("auto")
+    app.state.device = resolve_device(DEVICE_REQUEST)
     app.state.class_names = []
     app.state.classes_by_id = {}
     app.state.model_error = None
@@ -39,9 +43,10 @@ async def lifespan(app: FastAPI):
         app.state.model = model
         app.state.class_names = class_names
         app.state.classes_by_id = classes_by_id
-        logger.info("AI model loaded")
+        logger.info("AI model loaded successfully")
         logger.info("Model: %s", checkpoint["model_architecture"])
         logger.info("Classes: %d", len(class_names))
+        logger.info("Requested AI device: %s", DEVICE_REQUEST)
         logger.info("AI inference device: %s", app.state.device)
     except Exception as error:  # Keep health available so startup faults are diagnosable.
         app.state.model_error = str(error)
@@ -71,10 +76,12 @@ def decode_image(payload: bytes) -> Image.Image:
 def health() -> JSONResponse:
     loaded = app.state.model is not None
     body = {
+        "service": "ok",
         "status": "ok" if loaded else "unavailable",
         "modelLoaded": loaded,
         "device": str(app.state.device),
         "classes": len(app.state.class_names),
+        "modelError": app.state.model_error,
     }
     return JSONResponse(status_code=200 if loaded else 503, content=body)
 

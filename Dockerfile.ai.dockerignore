@@ -1,0 +1,9 @@
+**
+!backend/
+!backend/ai_server.py
+!backend/requirements-inference.txt
+!training/
+!training/pytorch_model.py
+!training/classes.json
+!training/artifacts/
+!training/artifacts/best_model.pth

@@ -1,0 +1,10 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# CPU-only inference runtime. These versions match the checkpoint's verified environment.
+torch==2.13.0+cpu
+torchvision==0.28.0+cpu
+numpy==2.5.2
+Pillow==12.3.0
+fastapi==0.141.1
+uvicorn==0.52.4
+python-multipart==0.0.32
