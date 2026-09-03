@@ -1,4 +1,26 @@
 <script setup>
+import { onMounted } from "vue";
+
+const AI_WARMUP_SESSION_KEY = "circular-kids-ai-warmup-triggered";
+let aiWarmupTriggered = false;
+
+onMounted(() => {
+  if (aiWarmupTriggered) return;
+
+  try {
+    if (sessionStorage.getItem(AI_WARMUP_SESSION_KEY)) {
+      aiWarmupTriggered = true;
+      return;
+    }
+    sessionStorage.setItem(AI_WARMUP_SESSION_KEY, "true");
+  } catch {
+    // The in-memory flag still prevents repeats if session storage is unavailable.
+  }
+
+  aiWarmupTriggered = true;
+  void fetch("/api/ai/health").catch(() => {});
+});
+
 const steps = [
   { icon: "📷", text: "Take a photo or upload a picture of your item" },
   { icon: "🔍", text: "Look at the parts or qualities of the item" },

@@ -21,7 +21,7 @@ export function chooseSuggestion(scores = []) {
 }
 
 /** Upload one image to the local backend classifier. */
-export async function recogniseImage(file, onProgress, timeout = 8000) {
+export async function recogniseImage(file, onProgress, timeout = 90000) {
   onProgress?.("Sending your picture to our trained model…");
   const formData = new FormData();
   formData.append("image", file);
