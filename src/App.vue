@@ -3,6 +3,7 @@ import { computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 import StepBar from "@/components/StepBar.vue";
+import SafetyStepBar from "@/components/SafetyStepBar.vue";
 import BackdropShapes from "@/components/BackdropShapes.vue";
 import AppFooter from "@/components/AppFooter.vue";
 
@@ -10,7 +11,7 @@ const store = useInvestigation();
 const route = useRoute();
 const router = useRouter();
 
-const inFlow = computed(() => Boolean(route.meta?.step));
+const inFlow = computed(() => Boolean(route.meta?.step || route.meta?.safetyStep));
 
 onMounted(async () => {
   try {
@@ -55,7 +56,8 @@ async function startOver() {
     </button>
   </header>
 
-  <StepBar v-if="inFlow" :current="route.meta.step" />
+  <StepBar v-if="route.meta.step" :current="route.meta.step" />
+  <SafetyStepBar v-if="route.meta.safetyStep" :current="route.meta.safetyStep" />
 
   <main id="main" class="ck-main">
     <div class="ck-column">

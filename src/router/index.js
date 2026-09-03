@@ -12,6 +12,10 @@ const routes = [
   { path: "/verdict", name: "verdict", component: () => import("@/views/VerdictView.vue"), meta: { step: 4, needs: "problems" } },
   { path: "/reveal", name: "reveal", component: () => import("@/views/RevealView.vue"), meta: { step: 5, needs: "verdict" } },
   { path: "/handover", name: "handover", component: () => import("@/views/HandoverView.vue"), meta: { step: 5, needs: "handover" } },
+  { path: "/safety", name: "safety-activity", component: () => import("@/views/SafetyActivityView.vue"), meta: { safetyStep: 1, needs: "safetyReady" } },
+  { path: "/safety/reveal", name: "safety-reveal", component: () => import("@/views/SafetyRevealView.vue"), meta: { safetyStep: 2, needs: "safetyAnswered" } },
+  { path: "/safety/compare", name: "safety-comparison", component: () => import("@/views/SafetyComparisonView.vue"), meta: { safetyStep: 3, needs: "safetyAnswered" } },
+  { path: "/safety/boundary", name: "safety-boundary", component: () => import("@/views/SafetyBoundaryView.vue"), meta: { safetyStep: 4, needs: "comparisonAnswered" } },
   { path: "/:pathMatch(.*)*", redirect: "/" }
 ];
 
@@ -28,20 +32,29 @@ const GATES = {
   item: store => store.itemChosen,
   problems: store => store.problemsChosen,
   verdict: store => store.verdictRecorded,
-  handover: store => Boolean(store.handover)
+  handover: store => Boolean(store.handover),
+  safetyReady: store => store.safetyReady,
+  safetyAnswered: store => store.safetyAnswered,
+  comparisonAnswered: store => store.comparisonAnswered
 };
 
 const FALLBACK = {
   item: "identify",
   problems: "problem",
   verdict: "clues",
-  handover: "reveal"
+  handover: "reveal",
+  safetyReady: "identify",
+  safetyAnswered: "safety-activity",
+  comparisonAnswered: "safety-comparison"
 };
 
-router.beforeEach(to => {
+router.beforeEach(async to => {
+  const store = useInvestigation();
+  if (!store.ready) {
+    try { await store.start(); } catch { return { name: "welcome" }; }
+  }
   const needs = to.meta?.needs;
   if (!needs) return true;
-  const store = useInvestigation();
   if (GATES[needs](store)) return true;
   return { name: FALLBACK[needs] };
 });

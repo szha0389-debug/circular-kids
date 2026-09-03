@@ -39,6 +39,8 @@ export const api = {
 
   open: () => request("/api/investigations", { method: "POST" }),
 
+  get: id => request(`/api/investigations/${id}`),
+
   patch: (id, patch) => request(`/api/investigations/${id}`, { method: "PATCH", body: patch }),
 
   caseView: id => request(`/api/investigations/${id}/case`),
@@ -58,6 +60,16 @@ export const api = {
   reveal: id => request(`/api/investigations/${id}/reveal`, { method: "POST" }),
 
   transfer: id => request(`/api/investigations/${id}/transfer`, { method: "POST" }),
+
+  safetyActivity: id => request(`/api/investigations/${id}/safety-activity`),
+
+  safetyReveal: id => request(`/api/investigations/${id}/safety-reveal`, { method: "POST" }),
+
+  safetyComparison: id => request(`/api/investigations/${id}/safety-comparison`),
+
+  safetyBoundary: id => request(`/api/investigations/${id}/safety-boundary`, { method: "POST" }),
+
+  safetyStatus: id => request(`/api/investigations/${id}/safety-status`),
 
   complete: id => request(`/api/investigations/${id}/complete`, { method: "POST" })
 };
