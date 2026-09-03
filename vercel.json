@@ -8,6 +8,14 @@
     "api/**/*.js": { "maxDuration": 30 }
   },
   "rewrites": [
+    {
+      "source": "/api/image-recognition",
+      "destination": "https://circular-kids-ai.onrender.com/api/image-recognition"
+    },
+    {
+      "source": "/api/ai/health",
+      "destination": "https://circular-kids-ai.onrender.com/api/ai/health"
+    },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
