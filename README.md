@@ -36,12 +36,13 @@ structure, and training command.
 
 ## Vercel production
 
-The project uses Vercel Services so the Vite frontend, existing JavaScript API
-Functions, and containerized FastAPI service deploy atomically under one domain.
+The project uses three Vercel Services so the Vite frontend, existing JavaScript
+API Functions, and containerized FastAPI service deploy atomically under one domain.
 In the Vercel project's Build and Deployment settings, set **Framework Preset**
 to **Services**. No `AI_INFERENCE_URL` is required in production.
 
 Top-level service routing sends `/api/image-recognition` and `/api/ai/health`
-directly to the `ai` container. All other `/api/*` requests remain owned by the
-existing JavaScript API, while browser routes remain owned by the Vite service.
+directly to the `ai` container. All other `/api/*` requests go to a dedicated
+Node service that deploys the existing file-based Functions under `api/`, while
+browser routes remain owned by the Vite-only frontend service.
 The AI container installs CPU-only PyTorch and listens on Vercel's `PORT`.
