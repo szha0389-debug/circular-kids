@@ -26,4 +26,5 @@ training/artifacts/
 public/model/model.json
 public/model/*.bin
 public/model/*.onnx
+!public/model/circular-kids.onnx
 public/model/metadata.json
