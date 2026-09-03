@@ -4,8 +4,15 @@
 // It knows nothing about Node's http, Vercel's req/res, or the Fetch API — it
 // takes a plain request description and returns `{ status, body }`.
 
-import { caseView, reveal, transferPayload } from "./investigation.js";
-import { CATEGORIES, itemsInCategory } from "./catalogue.js";
+import { caseView, reveal, safetyStatus, transferPayload } from "./investigation.js";
+import { CATEGORIES, itemsInCategory, findItem } from "./catalogue.js";
+import { recognise, REASONS } from "./recognition.js";
+import {
+  comparisonActivity,
+  finalSafetyResult,
+  safetyActivity,
+  safetyReveal
+} from "./safety.js";
 import { randomUUID } from "node:crypto";
 
 const NOT_FOUND = {
@@ -55,7 +62,7 @@ export async function handle({ method, path, body = {} }, store) {
   }
 
   const match = path.match(
-    /^\/api\/investigations\/([^/]+)(?:\/(case|reveal|complete|transfer))?$/
+    /^\/api\/investigations\/([^/]+)(?:\/(recognise|case|reveal|complete|transfer|safety-activity|safety-reveal|safety-comparison|safety-boundary|safety-status))?$/
   );
   if (!match) return { status: 404, body: { message: "API route not found." } };
 
@@ -78,6 +85,21 @@ export async function handle({ method, path, body = {} }, store) {
     return { status: 200, body: caseView(record) || { item: null } };
   }
 
+  if (action === "safety-activity") {
+    if (method !== "GET") return METHOD_NOT_ALLOWED;
+    return { status: 200, body: safetyActivity(record) };
+  }
+
+  if (action === "safety-comparison") {
+    if (method !== "GET") return METHOD_NOT_ALLOWED;
+    return { status: 200, body: comparisonActivity() };
+  }
+
+  if (action === "safety-status") {
+    if (method !== "GET") return METHOD_NOT_ALLOWED;
+    return { status: 200, body: safetyStatus(record) };
+  }
+
   if (method !== "POST") return METHOD_NOT_ALLOWED;
 
   if (action === "reveal") {
@@ -98,6 +120,20 @@ export async function handle({ method, path, body = {} }, store) {
   if (action === "transfer") {
     const result = transferPayload(record);
     if (result.ok) await store.complete(id);
+    return { status: result.ok ? 200 : 409, body: result };
+  }
+
+
+  if (action === "safety-reveal") {
+    const result = safetyReveal(record);
+    return { status: result.ok ? 200 : 409, body: result };
+  }
+
+  if (action === "safety-boundary") {
+    const result = finalSafetyResult(record);
+    if (result.ok) {
+      await store.update(id, { stage: "safety-boundary" });
+    }
     return { status: result.ok ? 200 : 409, body: result };
   }
 

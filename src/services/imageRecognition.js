@@ -21,21 +21,31 @@ export function chooseSuggestion(scores = []) {
 }
 
 /** Upload one image to the local backend classifier. */
-export async function recogniseImage(file, onProgress) {
+export async function recogniseImage(file, onProgress, timeout = 8000) {
   onProgress?.("Sending your picture to our trained model…");
   const formData = new FormData();
   formData.append("image", file);
-  const response = await fetch("/api/image-recognition", { method: "POST", body: formData });
-  const body = await response.json().catch(() => ({}));
-  if (!response.ok || !body.success || !body.prediction) {
-    throw new Error(body.detail || body.message || "Image recognition is unavailable.");
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch("/api/image-recognition", {
+      method: "POST",
+      body: formData,
+      signal: controller.signal
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok || !body.success || !body.prediction) {
+      throw new Error(body.detail || body.message || "Image recognition is unavailable.");
+    }
+    const matchingClass = IMAGE_LABELS.find(entry => entry.itemId === body.prediction.itemId);
+    if (!matchingClass) throw new Error("The recognition service returned an unknown item.");
+    return {
+      available: true,
+      suggestion: { itemId: matchingClass.itemId, confidence: body.prediction.confidence },
+      topPredictions: body.topPredictions || [],
+      reason: null
+    };
+  } finally {
+    clearTimeout(timer);
   }
-  const matchingClass = IMAGE_LABELS.find(entry => entry.itemId === body.prediction.itemId);
-  if (!matchingClass) throw new Error("The recognition service returned an unknown item.");
-  return {
-    available: true,
-    suggestion: { itemId: matchingClass.itemId, confidence: body.prediction.confidence },
-    topPredictions: body.topPredictions || [],
-    reason: null
-  };
 }

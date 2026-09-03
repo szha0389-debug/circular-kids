@@ -47,12 +47,18 @@ CREATE TABLE IF NOT EXISTS investigations (
   problems JSONB NOT NULL DEFAULT '[]',
   answers JSONB NOT NULL DEFAULT '[]',
   verdict TEXT,
+  safety_response TEXT,
+  comparison_response TEXT,
+  safety_boundary TEXT,
   stage TEXT NOT NULL DEFAULT 'identify',
   status TEXT NOT NULL DEFAULT 'in_progress',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   completed_at TIMESTAMPTZ
 );
+ALTER TABLE investigations ADD COLUMN IF NOT EXISTS safety_response TEXT;
+ALTER TABLE investigations ADD COLUMN IF NOT EXISTS comparison_response TEXT;
+ALTER TABLE investigations ADD COLUMN IF NOT EXISTS safety_boundary TEXT;
 CREATE INDEX IF NOT EXISTS idx_repair_cases_category_status ON repair_cases(product_category_id, repair_status);
 CREATE INDEX IF NOT EXISTS idx_repair_cases_event_date ON repair_cases(event_date);
 CREATE INDEX IF NOT EXISTS idx_product_materials_category ON product_materials(product_category_id);
@@ -67,4 +73,3 @@ SELECT c.id AS product_category_id, c.display_name, COUNT(r.id)::INTEGER AS tota
   COUNT(r.id) FILTER (WHERE r.repair_status='End of life')::INTEGER AS end_of_life_cases
 FROM product_categories c LEFT JOIN repair_cases r ON r.product_category_id=c.id
 GROUP BY c.id, c.display_name;
-
