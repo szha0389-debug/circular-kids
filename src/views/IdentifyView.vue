@@ -132,9 +132,15 @@ async function confirmItem() {
 
       <div class="ck-note ck-note--teal">
         <span aria-hidden="true">🔒</span>
+        <!-- Accurate as of the move to server-side recognition: the picture is
+             uploaded, because a classifier cannot work without it. Everything
+             after that is unchanged — it is held only for the length of that one
+             request, never written to disk, never stored, and never sent to
+             anyone else. Do not restore the old "never uploaded" wording. -->
         <p>
-          <strong>Privacy:</strong> your picture stays on this device for this investigation
-          only. It is never uploaded or saved.
+          <strong>Privacy:</strong> your picture is sent to our own computer just long
+          enough to work out what your item is, and is then thrown away. It is never
+          saved, and nobody else ever sees it.
         </p>
       </div>
 
