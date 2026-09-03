@@ -6,16 +6,12 @@
       "framework": "vite",
       "buildCommand": "vite build",
       "outputDirectory": "dist",
+      "functions": {
+        "api/**/*.js": { "maxDuration": 30 }
+      },
       "rewrites": [
         { "source": "/((?!api/).*)", "destination": "/index.html" }
       ]
-    },
-    "api": {
-      "root": ".",
-      "framework": "node",
-      "functions": {
-        "api/**/*.js": { "maxDuration": 30 }
-      }
     },
     "ai": {
       "root": ".",
@@ -28,7 +24,7 @@
   "rewrites": [
     { "source": "/api/image-recognition", "destination": { "service": "ai" } },
     { "source": "/api/ai/health", "destination": { "service": "ai" } },
-    { "source": "/api/(.*)", "destination": { "service": "api" } },
+    { "source": "/api/(.*)", "destination": { "service": "frontend" } },
     { "source": "/(.*)", "destination": { "service": "frontend" } }
   ],
   "headers": [
