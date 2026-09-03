@@ -5,18 +5,7 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
-    "api/catalogue.js": { "maxDuration": 30 },
-    "api/investigations/**/*.js": { "maxDuration": 30 },
-    "api/image-recognition.js": {
-      "maxDuration": 60,
-      "includeFiles": "{public/model/circular-kids.onnx,training/classes.json,node_modules/onnxruntime-node/bin/napi-v6/linux/x64/**}",
-      "excludeFiles": "{backend/**,test/**,training/*.py,training/artifacts/**,training/candidates/**,training/data/**,training/data-pytorch/**,training/data-pytorch-smoke/**,public/model/*.bin,public/model/model.json,public/model/metadata.json,node_modules/onnxruntime-node/bin/napi-v6/darwin/**,node_modules/onnxruntime-node/bin/napi-v6/win32/**,node_modules/onnxruntime-node/bin/napi-v6/linux/arm64/**}"
-    },
-    "api/ai/health.js": {
-      "maxDuration": 60,
-      "includeFiles": "{public/model/circular-kids.onnx,training/classes.json,node_modules/onnxruntime-node/bin/napi-v6/linux/x64/**}",
-      "excludeFiles": "{backend/**,test/**,training/*.py,training/artifacts/**,training/candidates/**,training/data/**,training/data-pytorch/**,training/data-pytorch-smoke/**,public/model/*.bin,public/model/model.json,public/model/metadata.json,node_modules/onnxruntime-node/bin/napi-v6/darwin/**,node_modules/onnxruntime-node/bin/napi-v6/win32/**,node_modules/onnxruntime-node/bin/napi-v6/linux/arm64/**}"
-    }
+    "api/**/*.js": { "maxDuration": 30 }
   },
   "rewrites": [
     { "source": "/((?!api/).*)", "destination": "/index.html" }
