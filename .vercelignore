@@ -3,3 +3,13 @@ db/*.sqlite-*
 .env*
 .agents/
 test/
+node_modules/
+.venv/
+.venv311/
+.tools/
+training/data/
+training/data-pytorch/
+training/data-pytorch-smoke/
+training/candidates/
+training/artifacts/*
+!training/artifacts/best_model.pth

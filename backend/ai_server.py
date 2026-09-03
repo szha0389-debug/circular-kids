@@ -16,7 +16,7 @@ from training.pytorch_model import load_checkpoint, load_classes, predict_image,
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKPOINT_PATH = ROOT / "training" / "artifacts" / "best_model.pth"
-MAX_IMAGE_BYTES = 6_000_000
+MAX_IMAGE_BYTES = 4_000_000
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/webp"}
 ALLOWED_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
 logger = logging.getLogger("circular_kids.ai")
@@ -89,7 +89,7 @@ async def image_recognition(image: UploadFile = File(...)) -> dict:
     if not payload:
         raise HTTPException(status_code=400, detail="The uploaded image is empty.")
     if len(payload) > MAX_IMAGE_BYTES:
-        raise HTTPException(status_code=400, detail="Use an image smaller than 6 MB.")
+        raise HTTPException(status_code=400, detail="Use an image smaller than 4 MB.")
     decoded = decode_image(payload)
     try:
         predictions = predict_image(

@@ -22,7 +22,8 @@ training/data/
 training/data-pytorch/
 training/data-pytorch-smoke/
 training/candidates/
-training/artifacts/
+training/artifacts/*
+!training/artifacts/best_model.pth
 public/model/model.json
 public/model/*.bin
 public/model/*.onnx

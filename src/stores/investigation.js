@@ -13,7 +13,7 @@ import { recogniseImage } from "@/services/imageRecognition";
 
 const RECOGNITION_TIMEOUT_MS = 8000;
 const CASE_KEY = "circularKidsInvestigationId";
-export const MAX_IMAGE_BYTES = 6_000_000;
+export const MAX_IMAGE_BYTES = 4_000_000;
 export const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export const useInvestigation = defineStore("investigation", {
@@ -126,7 +126,7 @@ export const useInvestigation = defineStore("investigation", {
         return "That kind of picture does not work here. Try a JPEG, PNG or WebP.";
       }
       if (file.size === 0) return "That picture looks empty. Try another one.";
-      if (file.size > MAX_IMAGE_BYTES) return "That picture is a bit too big. Try one under 6 MB.";
+      if (file.size > MAX_IMAGE_BYTES) return "That picture is a bit too big. Try one under 4 MB.";
 
       this.releasePhoto();
       this.photoUrl = URL.createObjectURL(file);

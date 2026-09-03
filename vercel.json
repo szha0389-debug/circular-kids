@@ -1,14 +1,31 @@
 {
-  "framework": "vite",
-  "buildCommand": "vite build",
-  "outputDirectory": "dist",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "frontend": {
+      "root": ".",
+      "framework": "vite",
+      "buildCommand": "vite build",
+      "outputDirectory": "dist",
+      "functions": {
+        "api/**/*.js": { "maxDuration": 30 }
+      },
+      "rewrites": [
+        { "source": "/((?!api/).*)", "destination": "/index.html" }
+      ]
+    },
+    "ai": {
+      "root": ".",
+      "runtime": "container",
+      "entrypoint": "Dockerfile.vercel"
+    }
+  },
   "cleanUrls": true,
   "trailingSlash": false,
-  "functions": {
-    "api/**/*.js": { "maxDuration": 30 }
-  },
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/api/image-recognition", "destination": { "service": "ai" } },
+    { "source": "/api/ai/health", "destination": { "service": "ai" } },
+    { "source": "/api/(.*)", "destination": { "service": "frontend" } },
+    { "source": "/(.*)", "destination": { "service": "frontend" } }
   ],
   "headers": [
     {

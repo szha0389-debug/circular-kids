@@ -15,7 +15,10 @@ const root = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(root, "dist");
 const publicDir = path.join(root, "public");
 const port = Number(process.env.PORT || 5121);
-const aiInferenceUrl = process.env.AI_INFERENCE_URL || "http://127.0.0.1:8000";
+// Vercel Services routes AI endpoints directly to the container. This fallback
+// exists only for the local `npm run dev` workflow.
+const aiInferenceUrl =
+  process.env.AI_INFERENCE_URL || (process.env.VERCEL ? null : "http://127.0.0.1:8000");
 const store = createStore();
 
 const MIME = {
@@ -71,7 +74,7 @@ function readBinaryBody(req) {
     let size = 0;
     req.on("data", chunk => {
       size += chunk.length;
-      if (size > 6_250_000) {
+      if (size > 4_250_000) {
         reject(Object.assign(new Error("That image is too large."), { status: 413 }));
         req.destroy();
         return;
@@ -86,6 +89,9 @@ function readBinaryBody(req) {
 /** Forward only image-recognition routes to the local PyTorch service. */
 async function proxyAi(req, res, url) {
   try {
+    if (!aiInferenceUrl) {
+      return sendJson(res, 503, { message: "The image-recognition service is unavailable." });
+    }
     const hasBody = !["GET", "HEAD"].includes(req.method);
     const body = hasBody ? await readBinaryBody(req) : undefined;
     const response = await fetch(new URL(url.pathname + url.search, aiInferenceUrl), {
