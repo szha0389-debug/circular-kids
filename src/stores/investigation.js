@@ -11,6 +11,7 @@ import { defineStore } from "pinia";
 import { api, ApiError } from "@/api/client";
 
 const RECOGNITION_TIMEOUT_MS = 8000;
+const CASE_KEY = "circularKidsInvestigationId";
 export const MAX_IMAGE_BYTES = 6_000_000;
 export const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -43,6 +44,15 @@ export const useInvestigation = defineStore("investigation", {
     reveal: null,
     handover: null,
 
+    // Epic 2 — persisted answers are loaded from the API after refresh.
+    safetyActivity: null,
+    safetyResponse: null,
+    safetyReveal: null,
+    safetyComparison: null,
+    comparisonResponse: null,
+    safetyResult: null,
+    safetyStage: null,
+
     busy: false,
     notice: "",
     noticeTone: "info"
@@ -53,6 +63,10 @@ export const useInvestigation = defineStore("investigation", {
     itemChosen: state => Boolean(state.item),
     problemsChosen: state => state.problems.length > 0,
     verdictRecorded: state => Boolean(state.verdict),
+    safetyReady: state => Boolean(state.id && state.item),
+    safetyAnswered: state => Boolean(state.safetyResponse),
+    comparisonAnswered: state => Boolean(state.comparisonResponse),
+    safetyBoundarySet: state => Boolean(state.safetyResult?.boundary || state.safetyResult?.safetyBoundary),
     /** US-1.3: a case where every clue was skipped still proceeds, flagged. */
     allSkipped: state =>
       state.questions.length > 0 &&
@@ -67,9 +81,39 @@ export const useInvestigation = defineStore("investigation", {
 
     async start() {
       if (this.ready) return;
-      const [catalogue, opened] = await Promise.all([api.catalogue(), api.open()]);
+      const catalogue = await api.catalogue();
       this.categories = catalogue.categories;
+
+      const savedId = localStorage.getItem(CASE_KEY);
+      if (savedId) {
+        try {
+          const record = await api.get(savedId);
+          this.id = record.id;
+          this.problems = record.problems || [];
+          this.answers = record.answers || [];
+          this.verdict = record.verdict || null;
+          const view = record.itemId ? await api.caseView(record.id) : null;
+          if (view?.item) {
+            this.item = view.item;
+            this.breakdown = view.breakdown;
+            this.problemOptions = view.problems;
+            this.questions = view.questions;
+          }
+          const status = await api.safetyStatus(record.id);
+          this.safetyStage = status.stage;
+          this.safetyResponse = status.safetyResponse;
+          this.comparisonResponse = status.comparisonResponse;
+          if (status.safetyBoundary) this.safetyResult = status;
+          this.ready = true;
+          return;
+        } catch {
+          localStorage.removeItem(CASE_KEY);
+        }
+      }
+
+      const opened = await api.open();
       this.id = opened.id;
+      localStorage.setItem(CASE_KEY, opened.id);
       this.ready = true;
     },
 
@@ -202,6 +246,53 @@ export const useInvestigation = defineStore("investigation", {
       }
     },
 
+    async loadSafetyActivity() {
+      this.busy = true;
+      try {
+        this.safetyActivity = await api.safetyActivity(this.id);
+        return this.safetyActivity;
+      } finally {
+        this.busy = false;
+      }
+    },
+
+    async recordSafetyResponse(value) {
+      this.busy = true;
+      try {
+        await api.patch(this.id, { safetyResponse: value, stage: "safety-reveal" });
+        this.safetyResponse = value;
+        this.safetyReveal = await api.safetyReveal(this.id);
+        this.safetyStage = "safety-reveal";
+        return this.safetyReveal;
+      } finally {
+        this.busy = false;
+      }
+    },
+
+    async loadSafetyComparison() {
+      this.safetyComparison = await api.safetyComparison(this.id);
+      return this.safetyComparison;
+    },
+
+    async recordComparisonResponse(value) {
+      this.busy = true;
+      try {
+        await api.patch(this.id, { comparisonResponse: value, stage: "safety-boundary" });
+        this.comparisonResponse = value;
+        this.safetyResult = await api.safetyBoundary(this.id);
+        this.safetyStage = "safety-boundary";
+        return this.safetyResult;
+      } finally {
+        this.busy = false;
+      }
+    },
+
+    async restoreSafetyResult() {
+      if (!this.safetyResponse || !this.comparisonResponse) return null;
+      this.safetyResult = await api.safetyBoundary(this.id);
+      return this.safetyResult;
+    },
+
     async closeCase() {
       try {
         if (this.id) await api.complete(this.id);
@@ -209,6 +300,7 @@ export const useInvestigation = defineStore("investigation", {
         // Closing is best-effort; the photo is released either way.
       }
       this.releasePhoto();
+      localStorage.removeItem(CASE_KEY);
       this.$reset();
     }
   }

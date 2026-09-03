@@ -38,6 +38,10 @@ async function again() {
   await store.start();
   router.push({ name: "welcome" });
 }
+
+function beginSafety() {
+  router.push({ name: "safety-activity" });
+}
 </script>
 
 <template>
@@ -67,12 +71,15 @@ async function again() {
       <p class="ck-eyebrow">Coming next</p>
       <h2>What is safe for me to do?</h2>
       <p>
-        The next part looks at warning signs, and when to ask a grown-up. It has not been
-        built yet.
+        Look for warning signs, choose what you would do first, and learn when a trusted
+        adult needs to help.
       </p>
     </article>
 
-    <button type="button" class="btn btn-primary w-100" @click="again">
+    <button type="button" class="btn btn-primary w-100" @click="beginSafety">
+      Start the safety activity →
+    </button>
+    <button type="button" class="btn btn-quiet w-100 ck-again" @click="again">
       Investigate something else
     </button>
   </section>
@@ -139,4 +146,5 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 6px; }
 }
 .ck-next h2 { font-size: var(--ck-size-h2); margin-bottom: 4px; }
 .ck-next p { margin: 0; font-size: var(--ck-size-small); color: var(--ck-muted); }
+.ck-again { margin-top: 10px; }
 </style>
