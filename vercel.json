@@ -8,17 +8,17 @@
     "api/**/*.js": { "maxDuration": 30 }
   },
   "rewrites": [
-    { "source": "/identify", "destination": "/index.html" },
-    { "source": "/breakdown", "destination": "/index.html" },
-    { "source": "/problem", "destination": "/index.html" },
-    { "source": "/clues", "destination": "/index.html" },
-    { "source": "/verdict", "destination": "/index.html" },
-    { "source": "/reveal", "destination": "/index.html" },
-    { "source": "/handover", "destination": "/index.html" },
-    { "source": "/safety", "destination": "/index.html" },
-    { "source": "/safety/reveal", "destination": "/index.html" },
-    { "source": "/safety/compare", "destination": "/index.html" },
-    { "source": "/safety/boundary", "destination": "/index.html" }
+    { "source": "/identify", "destination": "/" },
+    { "source": "/breakdown", "destination": "/" },
+    { "source": "/problem", "destination": "/" },
+    { "source": "/clues", "destination": "/" },
+    { "source": "/verdict", "destination": "/" },
+    { "source": "/reveal", "destination": "/" },
+    { "source": "/handover", "destination": "/" },
+    { "source": "/safety", "destination": "/" },
+    { "source": "/safety/reveal", "destination": "/" },
+    { "source": "/safety/compare", "destination": "/" },
+    { "source": "/safety/boundary", "destination": "/" }
   ],
   "headers": [
     {
