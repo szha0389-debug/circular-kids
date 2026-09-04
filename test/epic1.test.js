@@ -163,6 +163,13 @@ test("US-1.2 a problem that was never offered is rejected", () => {
   assert.deepEqual(record.problems, ["cracked"], "a mug has no battery");
 });
 
+test("US-1.2 no visible problem is accepted and produces neutral clue questions", () => {
+  const record = createRecord("no-problem");
+  applyUpdate(record, { itemId: "mug", problems: ["no-problem"] });
+  assert.deepEqual(record.problems, ["no-problem"]);
+  assert.ok(questionsFor(record.problems).length > 0);
+});
+
 // ─────────────────────────────────────────────────── US-1.3  the clues
 
 test("US-1.3 there are never more than three questions", () => {
@@ -178,6 +185,14 @@ test("US-1.3 every question is answerable by tapping, with no free text", () => 
       assert.equal(typeof option.label, "string");
       assert.notEqual(option.value, undefined);
     }
+  }
+});
+
+test("US-1.3 every clue question allows the child to report no visible problem", () => {
+  for (const question of questionsFor(["cracked"])) {
+    const option = question.options.find(entry => entry.value === "no-problem");
+    assert.equal(option?.label, "I cannot see a problem");
+    assert.equal(option?.weight, 0);
   }
 });
 

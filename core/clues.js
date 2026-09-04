@@ -339,7 +339,12 @@ export function questionsFor(problemIds = []) {
   }
   for (const question of GENERAL_QUESTIONS) take(question);
 
-  return chosen.slice(0, MAX_QUESTIONS);
+  return chosen.slice(0, MAX_QUESTIONS).map(question => ({
+    ...question,
+    options: question.options.some(option => option.value === "no-problem")
+      ? question.options
+      : [...question.options, { value: "no-problem", label: "I cannot see a problem", weight: 0 }]
+  }));
 }
 
 export function findOption(question, value) {

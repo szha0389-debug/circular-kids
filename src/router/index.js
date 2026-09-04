@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 
 // `step` drives the five-step indicator. Two screens share step 2 because the
@@ -20,7 +20,10 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  // Hash history keeps every client-side screen behind the real `/` document.
+  // Static hosts therefore never receive `/problem`, `/safety`, etc. as file
+  // requests when the child refreshes or opens a copied link.
+  history: createWebHashHistory(),
   routes,
   scrollBehavior: () => ({ top: 0, behavior: "smooth" })
 });

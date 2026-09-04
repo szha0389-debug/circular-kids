@@ -26,7 +26,7 @@ async function submit() {
 
 <template>
   <section v-if="store.safetyActivity" class="ck-safety">
-    <p class="ck-eyebrow">Epic 2 · Spot the warning sign</p>
+    <p class="ck-eyebrow">Spot the warning sign</p>
 
     <article v-if="store.safetyActivity.immediateStop" class="ck-stop" role="alert">
       <span aria-hidden="true">✋</span>
@@ -46,9 +46,14 @@ async function submit() {
     <p class="ck-lead">Choose your first idea before we explain the warning sign.</p>
     <OptionList v-model="choice" :options="store.safetyActivity.choices" name="safety-action" />
     <p v-if="error" class="ck-error" role="alert">{{ error }}</p>
-    <button class="btn btn-primary w-100 ck-submit" type="button" :disabled="store.busy" @click="submit">
-      Show me the warning sign →
-    </button>
+    <div class="ck-actions">
+      <button class="btn btn-quiet" type="button" @click="router.push({ name: 'handover' })">
+        ← Back
+      </button>
+      <button class="btn btn-primary btn--wide ck-submit" type="button" :disabled="store.busy" @click="submit">
+        Show me the warning sign →
+      </button>
+    </div>
   </section>
 </template>
 
@@ -63,8 +68,8 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: var(--ck-gap-md); }
 .ck-warning-scene h2 { margin: 0 0 4px; font-size: var(--ck-size-h2); }
 .ck-warning-scene p { margin: 0; color: var(--ck-muted); font-size: var(--ck-size-small); }
 .ck-question { margin-bottom: 4px; font-size: var(--ck-size-h2); }
-.ck-submit { margin-top: 20px; }
+.ck-actions { margin-top: 20px; }
+.ck-submit { margin-top: 0; }
 .ck-error { margin-top: 10px; color: var(--ck-coral); font-weight: 700; }
 @media (max-width: 420px) { .ck-warning-scene { align-items: flex-start; } .ck-warning-scene__icon { width: 58px; height: 58px; font-size: 29px; } }
 </style>
-

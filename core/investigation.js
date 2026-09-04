@@ -57,7 +57,7 @@ export function isExpired(record, now = Date.now()) {
 
 function sanitiseProblems(value, itemId) {
   if (!Array.isArray(value)) return [];
-  const offered = new Set([...problemsFor(itemId).map(p => p.id), "not-sure"]);
+  const offered = new Set([...problemsFor(itemId).map(p => p.id), "no-problem", "not-sure"]);
   // Multi-select is required by US-1.2; order is preserved so the first choice
   // still drives clue selection.
   return [...new Set(value.filter(id => typeof id === "string" && offered.has(id)))];
@@ -199,7 +199,11 @@ export function transferPayload(record) {
   const item = findItem(record.itemId);
   const reasoning = reason({ problems: record.problems, answers: record.answers });
   const questions = questionsFor(record.problems);
-  const offered = [...problemsFor(record.itemId), { id: "not-sure", label: "Not sure" }];
+  const offered = [
+    ...problemsFor(record.itemId),
+    { id: "no-problem", label: "No problem noticed" },
+    { id: "not-sure", label: "Not sure" }
+  ];
   const labelOf = id => offered.find(problem => problem.id === id)?.label || id;
 
   return {

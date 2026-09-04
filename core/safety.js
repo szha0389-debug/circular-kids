@@ -40,6 +40,7 @@ export const ACTION_CHOICES = Object.freeze([
   { value: "stop-and-tell", label: "Stop and tell a trusted adult", icon: "🙋" },
   { value: "look-only", label: "Keep looking without touching it", icon: "👀" },
   { value: "try-it", label: "Try to make it work myself", icon: "🛠️" },
+  { value: "no-warning", label: "I cannot see a warning sign", icon: "✅" },
   { value: "not-sure", label: "I’m not sure", icon: "💭" }
 ]);
 
@@ -108,6 +109,16 @@ function warningFrom(record, reasoning) {
       severity: "serious"
     };
   }
+  if (ids.has("no-problem")) {
+    return {
+      id: "no-visible-problem",
+      icon: item?.icon || "✅",
+      title: `No problem was noticed on the ${item?.name || "item"}`,
+      clue: "No visible damage or warning sign was selected.",
+      explanation: "It is okay to stop here. Keep an adult nearby and stop if you notice anything new.",
+      severity: "lower"
+    };
+  }
   if (reasoning.lowInformation || ids.has("not-sure") || !item) {
     return {
       id: "uncertain-item",
@@ -159,6 +170,11 @@ function baseBoundary(record) {
 
 export function boundaryFor(record) {
   let boundary = baseBoundary(record);
+  // A child saying that no warning is visible can confirm a lower-risk case,
+  // but it can never weaken a serious server-derived warning.
+  if (record?.safetyResponse === "no-warning" && boundary !== BOUNDARIES.STOP) {
+    boundary = BOUNDARIES.SAFE;
+  }
   if (record?.safetyResponse === "not-sure") boundary = moreRestrictive(boundary, BOUNDARIES.ADULT);
   if (record?.comparisonResponse === "damaged-cable" || record?.comparisonResponse === "not-sure") {
     boundary = moreRestrictive(boundary, BOUNDARIES.ADULT);

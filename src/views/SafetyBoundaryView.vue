@@ -1,8 +1,10 @@
 <script setup>
 import { computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 
 const store = useInvestigation();
+const router = useRouter();
 const boundary = computed(() => store.safetyResult?.boundary || store.safetyResult?.safetyBoundary);
 
 onMounted(async () => {
@@ -11,6 +13,12 @@ onMounted(async () => {
     catch { store.say("Your safety boundary could not load. Ask a trusted adult and do not continue with the item.", "warn"); }
   }
 });
+
+async function goHome() {
+  await store.closeCase();
+  await store.start();
+  router.push({ name: "welcome" });
+}
 </script>
 
 <template>
@@ -38,6 +46,15 @@ onMounted(async () => {
     </article>
 
     <p class="ck-finish-note">This boundary is saved with the investigation and cannot be bypassed by refreshing or opening a later page.</p>
+
+    <div class="ck-actions ck-final-actions">
+      <button type="button" class="btn btn-quiet" @click="router.push({ name: 'safety-comparison' })">
+        ← Back
+      </button>
+      <button type="button" class="btn btn-primary btn--wide" @click="goHome">
+        Return to Home →
+      </button>
+    </div>
   </section>
 </template>
 
@@ -59,5 +76,5 @@ onMounted(async () => {
 .ck-rule small, .ck-rule strong { display: block; }
 .ck-rule strong { font-family: var(--ck-font-display); }
 .ck-finish-note { color: var(--ck-muted); font-size: var(--ck-size-mini); }
+.ck-final-actions { margin-top: 20px; }
 </style>
-

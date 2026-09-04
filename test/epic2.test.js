@@ -62,6 +62,18 @@ test("AC2.1.2 an invented action is rejected", () => {
   assert.equal(record.safetyResponse, null);
 });
 
+test("AC2.1.2 no visible warning leads a lower-risk case to Safe to Try", () => {
+  const record = recordFor("toy-car", ["wheel-off"]);
+  applyUpdate(record, { safetyResponse: "no-warning" });
+  assert.equal(boundaryFor(record), BOUNDARIES.SAFE);
+});
+
+test("AC2.1.2 no visible warning cannot weaken a serious warning", () => {
+  const record = recordFor("phone", ["battery-odd"]);
+  applyUpdate(record, { safetyResponse: "no-warning" });
+  assert.equal(boundaryFor(record), BOUNDARIES.STOP);
+});
+
 test("AC2.1.3 the reveal explains the sign without marking the child wrong", () => {
   const record = recordFor("charger", ["cable-damaged"]);
   applyUpdate(record, { safetyResponse: "try-it" });

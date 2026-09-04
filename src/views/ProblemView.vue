@@ -16,13 +16,19 @@ const error = ref("");
 
 const options = computed(() => [
   ...store.problemOptions.map(p => ({ value: p.id, label: p.label })),
+  { value: "no-problem", label: "I cannot see a problem" },
   { value: "not-sure", label: "I’m not sure what the problem is" }
 ]);
 
 const chosen = computed({
   get: () => store.problems,
   set: value => {
-    store.problems = value;
+    // "No problem" is a complete answer, so it cannot be combined with a
+    // problem or uncertainty selection.
+    const latest = value.find(entry => !store.problems.includes(entry));
+    store.problems = latest === "no-problem"
+      ? ["no-problem"]
+      : value.filter(entry => entry !== "no-problem");
     if (value.length) error.value = "";
   }
 });

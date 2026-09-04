@@ -68,7 +68,7 @@ function back() {
 
     <OptionList v-model="current" :options="options" :name="`clue-${index}`" :key="question.id" />
 
-    <p class="ck-hint">Choose an answer, or tap Skip if you’re not sure.</p>
+    <p class="ck-hint">Choose an answer, choose no problem, or tap Skip.</p>
 
     <div class="ck-actions">
       <button type="button" class="btn btn-quiet" @click="back">← Back</button>
