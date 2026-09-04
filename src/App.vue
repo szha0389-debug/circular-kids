@@ -49,6 +49,12 @@ async function startOver() {
       <span class="ck-brand__text">Circular <b>Kids</b></span>
     </RouterLink>
 
+    <nav v-if="!inFlow" class="ck-site-nav" aria-label="Main navigation">
+      <a href="#how-it-works">How it works</a>
+      <a href="#safety-first">Safety first</a>
+      <RouterLink :to="{ name: 'identify' }">Investigate</RouterLink>
+    </nav>
+
     <!-- US-1.5 requires a visible way back to the beginning that closes the
          case. It is absolutely placed so the title stays optically centred. -->
     <button v-if="inFlow" type="button" class="ck-restart" @click="startOver">
@@ -105,17 +111,18 @@ async function startOver() {
      while the restart control has reserved space and can never sit on top of
      it — which it did at 360 px. */
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(180px, 1fr) auto minmax(180px, 1fr);
   align-items: center;
   gap: 8px;
-  min-height: var(--ck-header-h);
-  padding-inline: 12px;
+  min-height: 68px;
+  padding-inline: clamp(20px, 5vw, 72px);
   background: var(--ck-surface);
   border-bottom: 1px solid var(--ck-border);
 }
 
 .ck-brand {
-  grid-column: 2;
+  grid-column: 1;
+  justify-self: start;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -126,20 +133,34 @@ async function startOver() {
   color: var(--ck-ink);
   font-family: var(--ck-font-display);
   font-weight: 900;
-  font-size: 15px;
+  font-size: 18px;
 }
 .ck-brand__mark {
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: var(--ck-coral-soft);
   color: var(--ck-coral);
   font-size: 13px;
   line-height: 1;
 }
+.ck-site-nav {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 3vw, 38px);
+}
+.ck-site-nav a {
+  color: var(--ck-ink);
+  font-size: var(--ck-size-small);
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ck-site-nav a:hover { color: var(--ck-coral); }
 .ck-brand__text b { color: var(--ck-coral); }
 .ck-brand__text {
   min-width: 0;
@@ -195,8 +216,13 @@ async function startOver() {
 }
 
 @media (max-width: 480px) {
+  .ck-header { grid-template-columns: 1fr auto; min-height: 58px; padding-inline: 14px; }
   .ck-brand { font-size: 12px; }
   .ck-brand__mark { font-size: 13px; }
-  .ck-restart { font-size: 11px; padding-inline: 4px; }
+  .ck-restart { grid-column: 2; font-size: 11px; padding-inline: 4px; }
+}
+
+@media (max-width: 760px) {
+  .ck-site-nav { display: none; }
 }
 </style>

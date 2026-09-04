@@ -89,6 +89,27 @@ h1, h2, h3 {
   padding-inline: $ck-gap-md;
 }
 
+// Task screens stay focused inside the wider editorial frame. The white panel
+// echoes Tree-Nation's floating content surfaces while keeping our palette.
+.ck-main .ck-view:not(.ck-welcome) {
+  max-width: 680px;
+  margin-inline: auto;
+  padding: clamp(22px, 4vw, 42px);
+  background: $ck-surface;
+  border: 1px solid $ck-border;
+  border-radius: 26px;
+  box-shadow: $ck-shadow-card;
+}
+
+.ck-main:has(.ck-welcome) {
+  padding-block: 0;
+}
+
+.ck-main:has(.ck-welcome) > .ck-column {
+  max-width: none;
+  padding-inline: 0;
+}
+
 // ── Card: white, rounded, with a coloured accent along the top ──────────────
 .ck-card {
   position: relative;
@@ -134,6 +155,8 @@ h1, h2, h3 {
   --bs-btn-disabled-border-color: transparent;
   --bs-btn-disabled-color: #fff;
 }
+
+.btn-primary:not(:disabled) { border: 2px solid $ck-ink; }
 
 .btn-quiet {
   background: $ck-surface;
@@ -183,6 +206,13 @@ button:focus-visible,
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .ck-main .ck-view:not(.ck-welcome) {
+    padding: 22px 18px;
+    border-radius: 20px;
   }
 }
 

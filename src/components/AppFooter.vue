@@ -39,12 +39,12 @@ const sources = [
   padding-block: var(--ck-gap-lg);
   font-size: var(--ck-size-mini);
   color: var(--ck-muted);
-  text-align: center;
+  text-align: left;
 }
 
 .ck-footer__lead {
   max-width: 46ch;
-  margin: 0 auto var(--ck-gap-sm);
+  margin: 0 0 var(--ck-gap-sm);
   color: var(--ck-ink);
   font-size: var(--ck-size-small);
 }
@@ -57,4 +57,10 @@ const sources = [
 .ck-footer__sources a:hover { color: var(--ck-coral); }
 
 .ck-footer__privacy { margin: 0; }
+
+@media (min-width: 760px) {
+  .ck-footer .ck-column { display: grid; grid-template-columns: 1.2fr 1fr; column-gap: 50px; align-items: end; }
+  .ck-footer__lead { grid-row: 1 / 3; align-self: center; }
+  .ck-footer__sources { margin: 0; }
+}
 </style>
