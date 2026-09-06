@@ -69,8 +69,8 @@ body {
   line-height: 1.55;
   overflow-x: hidden;   // the flow must never scroll sideways at 360 px
   background-image:
-    radial-gradient(circle at 14% 8%, rgba(78, 205, 196, .09), transparent 24rem),
-    radial-gradient(circle at 88% 80%, rgba(177, 123, 234, .08), transparent 28rem);
+    radial-gradient(circle at 14% 8%, rgba(112, 185, 175, .08), transparent 24rem),
+    radial-gradient(circle at 88% 80%, rgba(158, 139, 196, .065), transparent 28rem);
   background-attachment: fixed;
 }
 
@@ -96,13 +96,13 @@ h1, h2, h3 {
 // Task screens stay focused inside the wider editorial frame. The white panel
 // echoes Tree-Nation's floating content surfaces while keeping our palette.
 .ck-main .ck-view:not(.ck-welcome) {
-  max-width: 680px;
+  max-width: 720px;
   margin-inline: auto;
   padding: clamp(22px, 4vw, 42px);
-  background: $ck-surface;
+  background: rgba($ck-surface, .92);
   border: 1px solid rgba(232, 224, 212, .82);
   border-radius: 30px;
-  box-shadow: 0 18px 55px rgba(26, 26, 46, .09), 0 2px 8px rgba(26, 26, 46, .03);
+  box-shadow: 0 20px 60px rgba(37, 49, 46, .07), 0 2px 10px rgba(37, 49, 46, .025);
   backdrop-filter: blur(10px);
 }
 
@@ -128,7 +128,7 @@ h1, h2, h3 {
   border-left: 1px solid rgba(232, 224, 212, .65);
   transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease;
 }
-.ck-card:hover { transform: translateY(-2px); box-shadow: $ck-shadow-lift; }
+.ck-card:hover { transform: translateY(-1px); box-shadow: $ck-shadow-lift; }
 
 // ── Eyebrow label above a heading or inside a card ─────────────────────────
 .ck-eyebrow {
@@ -168,7 +168,7 @@ h1, h2, h3 {
   --bs-btn-disabled-color: #fff;
 }
 
-.btn-primary:not(:disabled) { border: 2px solid $ck-ink; box-shadow: 3px 4px 0 $ck-ink; }
+.btn-primary:not(:disabled) { border: 1px solid rgba(37,49,46,.08); box-shadow: 0 8px 20px rgba(231,124,98,.22); }
 
 .btn-quiet {
   background: $ck-surface;
@@ -178,10 +178,10 @@ h1, h2, h3 {
 }
 .btn-quiet:hover { border-color: $ck-coral; color: $ck-ink; }
 
-.btn:not(:disabled):hover { transform: translateY(-3px); }
-.btn-primary:not(:disabled):hover { box-shadow: 5px 7px 0 $ck-ink; }
+.btn:not(:disabled):hover { transform: translateY(-2px); }
+.btn-primary:not(:disabled):hover { box-shadow: 0 12px 26px rgba(231,124,98,.28); }
 .btn:not(:disabled):active { transform: translateY(1px) scale(.99); }
-.btn-primary:not(:disabled):active { box-shadow: 1px 2px 0 $ck-ink; }
+.btn-primary:not(:disabled):active { box-shadow: 0 4px 12px rgba(231,124,98,.18); }
 
 .btn:focus-visible,
 a:focus-visible,

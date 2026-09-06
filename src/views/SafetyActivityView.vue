@@ -60,7 +60,7 @@ async function submit() {
 
 <style scoped>
 h1 { font-size: var(--ck-size-h1); margin-bottom: var(--ck-gap-md); }
-.ck-stop { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; padding: 16px; border-radius: var(--ck-radius-card); background: var(--ck-coral-soft); border: 3px solid var(--ck-coral); }
+.ck-stop { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; padding: 16px; border-radius: var(--ck-radius-card); background: var(--ck-coral-soft); border: 1px solid rgba(231,124,98,.3); box-shadow: inset 4px 0 0 var(--ck-coral); }
 .ck-stop > span { font-size: 34px; }
 .ck-stop strong { display: block; color: var(--ck-coral); font-family: var(--ck-font-display); font-size: 22px; }
 .ck-stop p { margin: 2px 0 0; }

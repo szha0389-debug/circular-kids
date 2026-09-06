@@ -40,7 +40,8 @@ const shapes = [
   position: absolute;
   width: var(--size);
   height: var(--size);
-  opacity: 0.5;
+  opacity: 0.18;
+  filter: blur(.3px);
   animation: ck-drift 7s ease-in-out infinite;
 }
 .ck-shape:nth-child(2n) { animation-duration: 9s; animation-direction: reverse; }
@@ -58,8 +59,8 @@ const shapes = [
 .tone-purple { background: var(--ck-purple); }
 
 .circle { border-radius: 50%; }
-.square { border-radius: 6px; transform: rotate(12deg); }
-.diamond { border-radius: 6px; transform: rotate(45deg); }
+.square { border-radius: 12px; transform: rotate(12deg); }
+.diamond { border-radius: 12px; transform: rotate(45deg); }
 .bar { width: 10px; height: var(--size); border-radius: 0 6px 6px 0; }
 
 .triangle {

@@ -8,26 +8,26 @@
 // ============================================================================
 
 // ── Palette ─────────────────────────────────────────────────────────────────
-$ck-ground:        #FFF8ED;   // page background
-$ck-surface:       #FFFFFF;   // cards, header, option rows
-$ck-surface-warm:  #F5F0E8;   // neutral pills, wells
-$ck-border:        #E8E0D4;   // hairlines and option borders
+$ck-ground:        #F7F5F0;   // page background
+$ck-surface:       #FFFEFC;   // cards, header, option rows
+$ck-surface-warm:  #F1EEE8;   // neutral pills, wells
+$ck-border:        #E4E0D8;   // hairlines and option borders
 
-$ck-ink:           #1A1A2E;   // headings and body text
-$ck-muted:         #7A7585;   // captions, inactive step numbers
+$ck-ink:           #25312E;   // headings and body text
+$ck-muted:         #747B77;   // captions, inactive step numbers
 
-$ck-coral:         #FF6B47;   // primary action, active accents
-$ck-coral-soft:    #FFE8E4;
-$ck-yellow:        #FFE66D;
-$ck-yellow-soft:   #FFF8DC;
-$ck-teal:          #4ECDC4;
-$ck-teal-soft:     #E4F7F5;
-$ck-purple:        #B17BEA;
-$ck-purple-soft:   #F1E9FC;
-$ck-blue:          #3D84F7;
-$ck-blue-soft:     #E3EDFE;
-$ck-green:         #52C77C;
-$ck-green-soft:    #E4F5EA;
+$ck-coral:         #E77C62;   // primary action, active accents
+$ck-coral-soft:    #F8EAE5;
+$ck-yellow:        #E8C968;
+$ck-yellow-soft:   #FAF5E3;
+$ck-teal:          #70B9AF;
+$ck-teal-soft:     #E8F2F0;
+$ck-purple:        #9E8BC4;
+$ck-purple-soft:   #F0EDF6;
+$ck-blue:          #709BC1;
+$ck-blue-soft:     #EAF0F5;
+$ck-green:         #78AE88;
+$ck-green-soft:    #EAF2EC;
 
 // ── Typography ──────────────────────────────────────────────────────────────
 // Fraunces carries every heading; Nunito carries everything else.
@@ -43,20 +43,20 @@ $ck-size-small:   14px;
 $ck-size-mini:    13px;   // step numbers, answer pills
 $ck-size-micro:   11px;   // step labels, eyebrow labels
 
-$ck-weight-display: 900;
+$ck-weight-display: 700;
 $ck-weight-strong:  800;
 $ck-weight-bold:    700;
 $ck-weight-medium:  600;
 
 // ── Shape & depth ───────────────────────────────────────────────────────────
-$ck-radius-card:   20px;
-$ck-radius-ctrl:   14px;   // buttons and option rows
+$ck-radius-card:   24px;
+$ck-radius-ctrl:   16px;   // buttons and option rows
 $ck-radius-pill:   20px;
 $ck-radius-sm:     10px;
 
 $ck-card-accent:   4px;    // the coloured top border every card carries
-$ck-shadow-card:   0 4px 24px rgba(26, 26, 46, 0.07);
-$ck-shadow-lift:   0 8px 28px rgba(26, 26, 46, 0.10);
+$ck-shadow-card:   0 10px 32px rgba(37, 49, 46, 0.055);
+$ck-shadow-lift:   0 18px 42px rgba(37, 49, 46, 0.09);
 
 // ── Spacing & layout ────────────────────────────────────────────────────────
 $ck-gap-xs:  6px;

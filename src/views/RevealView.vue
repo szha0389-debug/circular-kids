@@ -155,7 +155,7 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 6px; }
   margin: 0;
   font-family: var(--ck-font-display);
   font-size: var(--ck-size-body);
-  font-weight: 900;
+  font-weight: 700;
   color: var(--ck-ink);
   line-height: 1.3;
 }

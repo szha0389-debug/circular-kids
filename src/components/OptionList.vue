@@ -75,7 +75,7 @@ function choose(value) {
   padding: 14px 16px;
   text-align: left;
   background: var(--ck-surface);
-  border: 2px solid var(--ck-border);
+  border: 1px solid var(--ck-border);
   border-radius: var(--ck-radius-ctrl);
   color: var(--ck-ink);
   font-size: var(--ck-size-option);
@@ -84,15 +84,15 @@ function choose(value) {
   transition: border-color .2s ease, background-color .2s ease, transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease;
 }
 
-.ck-option:hover { border-color: var(--ck-coral); transform: translateY(-3px); box-shadow: 0 10px 24px rgba(26,26,46,.08); }
+.ck-option:hover { border-color: rgba(231,124,98,.55); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(37,49,46,.07); }
 .ck-option:focus-visible { outline: 3px solid var(--ck-coral); outline-offset: 3px; }
 
 /* One selection treatment for every option — see the note in <script>. */
 .ck-option.is-chosen {
   border-color: var(--ck-coral);
   background: var(--ck-coral-soft);
-  transform: translateX(4px);
-  box-shadow: -4px 0 0 var(--ck-coral);
+  transform: translateX(2px);
+  box-shadow: inset 3px 0 0 var(--ck-coral), 0 8px 20px rgba(37,49,46,.05);
 }
 
 .ck-option__icon { flex: 0 0 auto; font-size: 20px; line-height: 1; }

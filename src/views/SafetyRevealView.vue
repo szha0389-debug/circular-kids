@@ -41,7 +41,7 @@ onMounted(async () => {
 
 <style scoped>
 h1 { font-size: var(--ck-size-h1); margin-bottom: 18px; }
-.ck-clue-card { display: flex; gap: 18px; align-items: center; padding: 22px; margin-bottom: 16px; border-radius: var(--ck-radius-card); background: var(--ck-yellow-soft); border: 3px solid var(--ck-yellow); }
+.ck-clue-card { display: flex; gap: 18px; align-items: center; padding: 22px; margin-bottom: 16px; border-radius: var(--ck-radius-card); background: var(--ck-yellow-soft); border: 1px solid rgba(232,201,104,.35); box-shadow: inset 4px 0 0 var(--ck-yellow); }
 .ck-clue-card > span { font-size: 42px; }
 .ck-clue-card strong { display: block; font-family: var(--ck-font-display); font-size: 18px; }
 .ck-clue-card p { margin: 5px 0 0; }
@@ -51,6 +51,5 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 18px; }
 .ck-boundary-preview small, .ck-boundary-preview strong { display: block; }
 .ck-boundary-preview strong { font-family: var(--ck-font-display); font-size: 22px; }
 .ck-boundary-preview p { margin: 3px 0 0; font-size: var(--ck-size-small); }
-.ck-boundary-preview.is-do-not-touch { background: var(--ck-coral-soft); border: 2px solid var(--ck-coral); }
+.ck-boundary-preview.is-do-not-touch { background: var(--ck-coral-soft); border: 1px solid rgba(231,124,98,.35); box-shadow: inset 4px 0 0 var(--ck-coral); }
 </style>
-

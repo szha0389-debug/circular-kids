@@ -35,7 +35,8 @@ const sources = [
   position: relative;
   z-index: 2;
   border-top: 1px solid var(--ck-border);
-  background: var(--ck-surface);
+  background: rgba(255,254,252,.74);
+  backdrop-filter: blur(14px);
   padding-block: var(--ck-gap-lg);
   font-size: var(--ck-size-mini);
   color: var(--ck-muted);
