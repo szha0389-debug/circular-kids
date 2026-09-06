@@ -63,9 +63,9 @@ function sanitiseProblems(value, itemId) {
   return [...new Set(value.filter(id => typeof id === "string" && offered.has(id)))];
 }
 
-function sanitiseAnswers(value, problems) {
+function sanitiseAnswers(value, problems, itemId) {
   if (!Array.isArray(value)) return [];
-  const questions = questionsFor(problems);
+  const questions = questionsFor(problems, itemId);
   return questions.map((question, index) => {
     const answer = value[index];
     if (answer === SKIPPED) return SKIPPED;
@@ -105,7 +105,7 @@ export function applyUpdate(record, input = {}, now = Date.now()) {
   }
 
   if ("answers" in patch) {
-    record.answers = sanitiseAnswers(patch.answers, record.problems);
+    record.answers = sanitiseAnswers(patch.answers, record.problems, record.itemId);
   }
 
   if ("verdict" in patch) {
@@ -120,7 +120,7 @@ export function applyUpdate(record, input = {}, now = Date.now()) {
   }
 
   if ("comparisonResponse" in patch) {
-    record.comparisonResponse = sanitiseComparisonResponse(patch.comparisonResponse);
+    record.comparisonResponse = sanitiseComparisonResponse(patch.comparisonResponse, record);
   }
 
   if ("stage" in patch && STAGES.includes(patch.stage)) {
@@ -142,7 +142,7 @@ export function caseView(record) {
     item: { id: item.id, name: item.name, icon: item.icon, category: item.category },
     breakdown: breakdownFor(item.id),
     problems: problemsFor(item.id),
-    questions: questionsFor(record.problems).map(question => ({
+    questions: questionsFor(record.problems, record.itemId).map(question => ({
       id: question.id,
       text: question.text,
       // `weight` and `danger` are stripped: the clue screen must give no
@@ -160,7 +160,7 @@ export function reveal(record) {
   if (!record?.verdict) {
     return { ok: false, message: "Record your own verdict first." };
   }
-  const reasoning = reason({ problems: record.problems, answers: record.answers });
+  const reasoning = reason({ itemId: record.itemId, problems: record.problems, answers: record.answers });
   return {
     ok: true,
     verdict: record.verdict,
@@ -197,8 +197,8 @@ export function transferPayload(record) {
   }
 
   const item = findItem(record.itemId);
-  const reasoning = reason({ problems: record.problems, answers: record.answers });
-  const questions = questionsFor(record.problems);
+  const reasoning = reason({ itemId: record.itemId, problems: record.problems, answers: record.answers });
+  const questions = questionsFor(record.problems, record.itemId);
   const offered = [
     ...problemsFor(record.itemId),
     { id: "no-problem", label: "No problem noticed" },

@@ -100,6 +100,38 @@ test("AC2.2.1 comparison uses a clear lower-risk and higher-risk pair", () => {
   assert.doesNotMatch(JSON.stringify(comparison), /physically test|plug it in/i);
 });
 
+test("item-aware comparison uses a can-specific lower and higher risk pair", () => {
+  const record = recordFor("aluminium-can", ["no-problem"], ["no", "no", "no"]);
+  const comparison = comparisonActivity(record);
+  assert.match(comparison.question, /can/i);
+  assert.deepEqual(comparison.situations.map(x => x.title), [
+    "An intact empty can",
+    "A can with a sharp broken edge"
+  ]);
+  assert.ok(comparison.choices.some(x => x.value === comparison.lowerRiskId));
+  assert.ok(comparison.choices.some(x => x.value === "not-sure"));
+  assert.doesNotMatch(JSON.stringify(comparison), /loose toy wheel|damaged electrical cable/i);
+});
+
+test("a can with no visible warning sign receives cautious Safe to Try wording", () => {
+  const record = recordFor("aluminium-can", ["no-problem"], ["no", "no", "no"]);
+  applyUpdate(record, { safetyResponse: "no-warning" });
+  const comparison = comparisonActivity(record);
+  applyUpdate(record, { comparisonResponse: comparison.lowerRiskId });
+  const result = finalSafetyResult(record);
+  assert.equal(result.boundary, BOUNDARIES.SAFE);
+  assert.match(result.instruction, /No visible warning sign was observed/i);
+  assert.doesNotMatch(result.instruction, /completely safe|guaranteed safe/i);
+});
+
+test("a can sharp edge escalates the final boundary", () => {
+  const record = recordFor("aluminium-can", ["can-sharp-edge"], ["yes", "one"]);
+  applyUpdate(record, { safetyResponse: "stop-and-tell" });
+  const comparison = comparisonActivity(record);
+  applyUpdate(record, { comparisonResponse: comparison.higherRiskId });
+  assert.equal(finalSafetyResult(record).boundary, BOUNDARIES.STOP);
+});
+
 test("AC2.2.2 exactly one of the three safety boundaries is returned", () => {
   const safe = recordFor("toy-car", ["wheel-off"], ["yes", "all", "yes"]);
   applyUpdate(safe, { safetyResponse: "look-only", comparisonResponse: "loose-wheel" });

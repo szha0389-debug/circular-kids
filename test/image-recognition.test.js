@@ -9,7 +9,7 @@ import { CATEGORIES, itemsInCategory } from "../core/catalogue.js";
 
 test("the model candidates exactly cover every concrete catalogue item", () => {
   const catalogueIds = CATEGORIES.flatMap(category =>
-    itemsInCategory(category.id).filter(item => !item.isGeneral).map(item => item.id)
+    itemsInCategory(category.id).filter(item => !item.isGeneral && item.recognisable !== false).map(item => item.id)
   ).sort();
   const modelIds = IMAGE_LABELS.map(item => item.itemId).sort();
 

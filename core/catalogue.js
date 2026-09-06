@@ -357,6 +357,25 @@ const ITEMS = [
 
   // ----------------------------------------------------- household items
   {
+    id: "aluminium-can", name: "aluminium can", icon: "🥫", category: "household",
+    mode: "sections",
+    // Selectable from the catalogue; the current image checkpoint was not
+    // trained on cans, so recognition still falls back to manual selection.
+    recognisable: false,
+    elements: [
+      { id: "body", name: "Can body", material: "aluminium" },
+      { id: "rim", name: "Top rim", material: "aluminium" },
+      { id: "opening", name: "Opening tab", material: "aluminium" }
+    ],
+    problems: [
+      { id: "can-dented", label: "It is dented", elementId: "body" },
+      { id: "can-sharp-edge", label: "It has a sharp or broken edge", elementId: "rim" },
+      { id: "can-leaking", label: "It is leaking", elementId: "body" },
+      { id: "can-unknown-substance", label: "It has an unknown substance inside", elementId: "opening" },
+      { id: "can-dirty", label: "It is dirty", elementId: "body" }
+    ]
+  },
+  {
     id: "mug", name: "mug", icon: "☕", category: "household",
     mode: "components",
     elements: [

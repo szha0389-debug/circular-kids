@@ -233,12 +233,47 @@ const ASK_FIT = {
   ]
 };
 
+const CAN_NO_PROBLEM_QUESTIONS = [
+  {
+    id: "can-sharp-edge-visible",
+    text: "Can you see a sharp or broken edge?",
+    options: [
+      { value: "no", label: "No", weight: 0 },
+      { value: "yes", label: "Yes", weight: 2, danger: true },
+      { value: "not-sure", label: "I’m not sure", weight: null }
+    ]
+  },
+  {
+    id: "can-liquid-visible",
+    text: "Can you see any liquid leaking?",
+    options: [
+      { value: "no", label: "No", weight: 0 },
+      { value: "yes", label: "Yes", weight: 2, danger: true },
+      { value: "not-sure", label: "I’m not sure", weight: null }
+    ]
+  },
+  {
+    id: "can-crushed-visible",
+    text: "Is the can badly crushed or split?",
+    options: [
+      { value: "no", label: "No", weight: 0 },
+      { value: "yes", label: "Yes", weight: 2, danger: true },
+      { value: "not-sure", label: "I’m not sure", weight: null }
+    ]
+  }
+];
+
 /**
  * Candidate questions per problem id, most specific first. Problem ids repeat
  * across items on purpose — "hole" means the same thing on a T-shirt and a
  * backpack, so the same clues apply.
  */
 const BY_PROBLEM = {
+  "can-dented": [ASK_SHAPE, ASK_SAFETY_SIGNS],
+  "can-sharp-edge": [CAN_NO_PROBLEM_QUESTIONS[0], ASK_SAFETY_SIGNS],
+  "can-leaking": [CAN_NO_PROBLEM_QUESTIONS[1], ASK_SAFETY_SIGNS],
+  "can-unknown-substance": [CAN_NO_PROBLEM_QUESTIONS[1], ASK_SAFETY_SIGNS],
+  "can-dirty": [ASK_STAIN_AREA, ASK_SAFETY_SIGNS],
   "no-sound": [ASK_CRACK_SIZE, ASK_CHARGE_AREA],
   "one-side": [ASK_CABLE_COVER, ASK_CHARGE_AREA],
   "cable-damaged": [ASK_CABLE_COVER, ASK_WIRE_VISIBLE],
@@ -319,7 +354,7 @@ const GENERAL_QUESTIONS = [ASK_SHAPE, ASK_SAFETY_SIGNS, ASK_STILL_WORKS];
  * for each chosen problem in order, then top up from that problem's second
  * choice, then from the general set. Duplicates are dropped by question id.
  */
-export function questionsFor(problemIds = []) {
+export function questionsFor(problemIds = [], itemId = null) {
   const chosen = [];
   const seen = new Set();
 
@@ -330,6 +365,9 @@ export function questionsFor(problemIds = []) {
   };
 
   const ids = Array.isArray(problemIds) ? problemIds.filter(Boolean) : [];
+  if (itemId === "aluminium-can" && ids.includes("no-problem")) {
+    return CAN_NO_PROBLEM_QUESTIONS.map(question => ({ ...question, options: [...question.options] }));
+  }
   const specific = ids.map(id => BY_PROBLEM[id]).filter(Boolean);
 
   // One pass per rank, so two chosen problems each contribute before either

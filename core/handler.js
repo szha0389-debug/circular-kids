@@ -92,7 +92,7 @@ export async function handle({ method, path, body = {} }, store) {
 
   if (action === "safety-comparison") {
     if (method !== "GET") return METHOD_NOT_ALLOWED;
-    return { status: 200, body: comparisonActivity() };
+    return { status: 200, body: comparisonActivity(record) };
   }
 
   if (action === "safety-status") {

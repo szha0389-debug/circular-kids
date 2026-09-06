@@ -44,11 +44,43 @@ export const ACTION_CHOICES = Object.freeze([
   { value: "not-sure", label: "I’m not sure", icon: "💭" }
 ]);
 
-export const COMPARISON_CHOICES = Object.freeze([
-  { value: "loose-wheel", label: "The toy with a loose wheel", icon: "🚗" },
-  { value: "damaged-cable", label: "The item with a damaged cable", icon: "🔌" },
-  { value: "not-sure", label: "I’m not sure", icon: "💭" }
-]);
+const COMPARISON_RISKS = Object.freeze({
+  "aluminium-can": {
+    lowTitle: "An intact empty can", lowDetail: "No sharp edge, leaking liquid or serious damage is visible.",
+    highTitle: "A can with a sharp broken edge", highDetail: "The damaged edge may cause a cut.",
+    question: "Which can may be reasonable for a child to look at from the outside?",
+    explanation: "An intact empty can may be looked at from the outside. A can with a sharp broken edge needs an adult because it may cause a cut."
+  },
+  "water-bottle": {
+    lowTitle: "An intact water bottle", lowDetail: "No crack, leak or unusual substance is visible.",
+    highTitle: "A split or leaking bottle", highDetail: "A split edge or unknown liquid needs an adult check.",
+    explanation: "An intact bottle may be looked at from the outside. A split or leaking bottle needs an adult check."
+  },
+  "toy-car": {
+    lowTitle: "A toy with a loose wheel", lowDetail: "No battery, heat, liquid or sharp edge is visible.",
+    highTitle: "A toy with a sharp broken part", highDetail: "The broken part may cause a cut.",
+    explanation: "A loose wheel may be looked at from the outside. A sharp broken toy part needs an adult."
+  },
+  charger: {
+    lowTitle: "A charger with an ordinary surface mark", lowDetail: "The cable cover and plug look intact.",
+    highTitle: "A charger with a split cable", highDetail: "The damaged cover may expose an electrical part.",
+    explanation: "An ordinary surface mark may be observed. A split charger cable must be left for an adult."
+  },
+  mug: {
+    lowTitle: "An intact mug with a small mark", lowDetail: "No crack, chip or sharp edge is visible.",
+    highTitle: "A chipped or cracked mug", highDetail: "A damaged edge may be sharp.",
+    explanation: "An intact mug may be looked at from the outside. A chipped or cracked mug needs an adult because an edge may cut."
+  }
+});
+
+const CATEGORY_RISKS = Object.freeze({
+  electronics: { highTitle: "An item with a damaged electrical part", highDetail: "Damaged electrical parts may cause harm before it is easy to see.", highIcon: "⚡" },
+  clothes: { highTitle: "Fabric with an unknown substance", highDetail: "An unknown liquid or powder should be checked by an adult.", highIcon: "⚠️" },
+  furniture: { highTitle: "Furniture with a cracked support", highDetail: "A broken support can move or collapse unexpectedly.", highIcon: "⚠️" },
+  school: { highTitle: "A school item with a sharp or leaking part", highDetail: "A sharp edge or unknown liquid needs an adult check.", highIcon: "⚠️" },
+  household: { highTitle: "A household item with a sharp broken part", highDetail: "A broken edge may cause a cut.", highIcon: "⚠️" },
+  toys: { highTitle: "A toy with a sharp or leaking part", highDetail: "A sharp edge or leaking battery needs an adult.", highIcon: "⚠️" }
+});
 
 const ELECTRICAL = new Set(["cable-damaged", "battery-odd", "gets-hot", "screen-cracked"]);
 const SHARP = new Set(["cracked", "screen-cracked"]);
@@ -110,11 +142,12 @@ function warningFrom(record, reasoning) {
     };
   }
   if (ids.has("no-problem")) {
+    const isCan = item?.id === "aluminium-can";
     return {
       id: "no-visible-problem",
       icon: item?.icon || "✅",
       title: `No problem was noticed on the ${item?.name || "item"}`,
-      clue: "No visible damage or warning sign was selected.",
+      clue: isCan ? "No visible warning sign was observed." : "No visible damage or warning sign was selected.",
       explanation: "It is okay to stop here. Keep an adult nearby and stop if you notice anything new.",
       severity: "lower"
     };
@@ -150,7 +183,7 @@ function warningFrom(record, reasoning) {
 }
 
 export function safetyActivity(record) {
-  const reasoning = reason({ problems: record?.problems, answers: record?.answers });
+  const reasoning = reason({ itemId: record?.itemId, problems: record?.problems, answers: record?.answers });
   const warning = warningFrom(record || {}, reasoning);
   return {
     ok: true,
@@ -176,7 +209,8 @@ export function boundaryFor(record) {
     boundary = BOUNDARIES.SAFE;
   }
   if (record?.safetyResponse === "not-sure") boundary = moreRestrictive(boundary, BOUNDARIES.ADULT);
-  if (record?.comparisonResponse === "damaged-cable" || record?.comparisonResponse === "not-sure") {
+  const comparison = comparisonActivity(record);
+  if (record?.comparisonResponse === comparison.higherRiskId || record?.comparisonResponse === "damaged-cable" || record?.comparisonResponse === "not-sure") {
     boundary = moreRestrictive(boundary, BOUNDARIES.ADULT);
   }
   return boundary;
@@ -190,8 +224,10 @@ export function sanitiseSafetyResponse(value) {
   return ACTION_CHOICES.some(choice => choice.value === value) ? value : null;
 }
 
-export function sanitiseComparisonResponse(value) {
-  return COMPARISON_CHOICES.some(choice => choice.value === value) ? value : null;
+export function sanitiseComparisonResponse(value, record = null) {
+  // Keep investigations created before item-aware comparisons deployable.
+  if (value === "loose-wheel" || value === "damaged-cable") return value;
+  return comparisonActivity(record).choices.some(choice => choice.value === value) ? value : null;
 }
 
 export function safetyReveal(record) {
@@ -214,15 +250,53 @@ export function safetyReveal(record) {
   };
 }
 
-export function comparisonActivity() {
+export function comparisonActivity(record = null) {
+  const item = findItem(record?.itemId);
+  if (!item) {
+    return {
+      ok: true,
+      itemId: null,
+      lowerRiskId: "loose-wheel",
+      higherRiskId: "damaged-cable",
+      question: "Which situation may be reasonable for a child to look at from the outside?",
+      situations: [
+        { id: "loose-wheel", icon: "🚗", title: "A loose toy wheel", detail: "No battery, heat, glass, liquid or sharp edge is visible." },
+        { id: "damaged-cable", icon: "🔌", title: "A damaged electrical cable", detail: "The outside cover is split." }
+      ],
+      choices: [
+        { value: "loose-wheel", label: "The toy with a loose wheel", icon: "🚗" },
+        { value: "damaged-cable", label: "The item with a damaged cable", icon: "🔌" },
+        { value: "not-sure", label: "I’m not sure", icon: "💭" }
+      ],
+      explanation: "A loose toy wheel can be looked at from the outside. A damaged cable needs an adult because electricity can hurt before a problem is easy to see."
+    };
+  }
+  const exact = COMPARISON_RISKS[item?.id] || {};
+  const category = CATEGORY_RISKS[item?.category] || CATEGORY_RISKS.household;
+  const itemName = item?.name || "item";
+  const icon = item?.icon || "📦";
+  const lowerRiskId = `${item?.id || "general"}-lower-risk`;
+  const higherRiskId = `${item?.id || "general"}-higher-risk`;
+  const lowTitle = exact.lowTitle || `An intact ${itemName}`;
+  const lowDetail = exact.lowDetail || "No sharp edge, heat, leaking liquid or serious damage is visible.";
+  const highTitle = exact.highTitle || category.highTitle;
+  const highDetail = exact.highDetail || category.highDetail;
   return {
     ok: true,
-    question: "Which situation may be reasonable for a child to look at from the outside?",
+    itemId: item?.id || null,
+    lowerRiskId,
+    higherRiskId,
+    question: exact.question || `Which ${itemName} situation may be reasonable for a child to look at from the outside?`,
     situations: [
-      { id: "loose-wheel", icon: "🚗", title: "A loose toy wheel", detail: "No battery, heat, glass, liquid or sharp edge is visible." },
-      { id: "damaged-cable", icon: "🔌", title: "A damaged electrical cable", detail: "The outside cover is split." }
+      { id: lowerRiskId, icon, title: lowTitle, detail: lowDetail },
+      { id: higherRiskId, icon: exact.highIcon || category.highIcon || "⚠️", title: highTitle, detail: highDetail }
     ],
-    choices: COMPARISON_CHOICES
+    choices: [
+      { value: lowerRiskId, label: lowTitle, icon },
+      { value: higherRiskId, label: highTitle, icon: exact.highIcon || category.highIcon || "⚠️" },
+      { value: "not-sure", label: "I’m not sure", icon: "💭" }
+    ],
+    explanation: exact.explanation || `${lowTitle} may be looked at from the outside. ${highTitle} needs a trusted adult.`
   };
 }
 
@@ -231,6 +305,7 @@ export function finalSafetyResult(record) {
     return { ok: false, message: "Complete both safety activities first." };
   }
   const activity = safetyActivity(record);
+  const comparison = comparisonActivity(record);
   const boundary = boundaryFor(record);
   const details = BOUNDARY_DETAILS[boundary];
   return {
@@ -238,11 +313,12 @@ export function finalSafetyResult(record) {
     boundary,
     label: details.label,
     icon: details.icon,
-    instruction: details.instruction,
+    instruction: record.itemId === "aluminium-can" && boundary === BOUNDARIES.SAFE
+      ? "No visible warning sign was observed. The can may be suitable for a simple recycling activity. Stop and ask an adult if you notice a sharp edge, leaking liquid or anything unusual."
+      : details.instruction,
     rule: details.rule,
     warning: activity.warning,
-    comparisonExplanation:
-      "A loose toy wheel can be looked at from the outside. A damaged cable needs an adult because electricity can hurt before a problem is easy to see.",
+    comparisonExplanation: comparison.explanation,
     pathways: {
       childLed: boundary === BOUNDARIES.SAFE,
       adultRequired: boundary !== BOUNDARIES.SAFE,

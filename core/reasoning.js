@@ -38,8 +38,8 @@ function bandOf(mean) {
  * @returns {{conclusion: string, band: number|null, lowInformation: boolean,
  *            dangerFlag: boolean, uncertainty: string[], answered: object[]}}
  */
-export function reason({ problems = [], answers = [] } = {}) {
-  const questions = questionsFor(problems);
+export function reason({ itemId = null, problems = [], answers = [] } = {}) {
+  const questions = questionsFor(problems, itemId);
   const uncertainty = [];
   const answered = [];
   let dangerFlag = false;
