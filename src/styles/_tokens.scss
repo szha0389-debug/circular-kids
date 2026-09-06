@@ -8,26 +8,26 @@
 // ============================================================================
 
 // ── Palette ─────────────────────────────────────────────────────────────────
-$ck-ground:        #FFFDF8;   // near-white sunlit page background
+$ck-ground:        #FFFFFF;   // clean daylight canvas
 $ck-surface:       #FFFFFF;   // cards, header, option rows
-$ck-surface-warm:  #FBFAF5;   // neutral pills, wells
-$ck-border:        #EEECE5;   // hairlines and option borders
+$ck-surface-warm:  #FAFCFD;   // cool-white neutral pills and wells
+$ck-border:        #E8EFF0;   // airy hairlines and option borders
 
 $ck-ink:           #334047;   // clear text without a heavy navy cast
 $ck-muted:         #7F888B;   // captions, inactive step numbers
 
-$ck-coral:         #FFE16A;   // luminous lemon yellow
-$ck-coral-soft:    #FFFBE2;
-$ck-yellow:        #FFD95A;
-$ck-yellow-soft:   #FFF9DA;
-$ck-teal:          #72D5CA;
-$ck-teal-soft:     #ECFCF9;
-$ck-purple:        #BEA4ED;
-$ck-purple-soft:   #F7F1FF;
-$ck-blue:          #82BFE8;
+$ck-coral:         #FFAAA5;   // soft coral primary, no longer yellow
+$ck-coral-soft:    #FFF1F0;
+$ck-yellow:        #FFE277;
+$ck-yellow-soft:   #FFFBE7;
+$ck-teal:          #7ADDD0;
+$ck-teal-soft:     #EDFCFA;
+$ck-purple:        #C6B3F2;
+$ck-purple-soft:   #F7F3FF;
+$ck-blue:          #93CFF2;
 $ck-blue-soft:     #EFF9FF;
-$ck-green:         #98CE7C;
-$ck-green-soft:    #F1FBEA;
+$ck-green:         #A8D98F;
+$ck-green-soft:    #F2FBEF;
 
 // ── Typography ──────────────────────────────────────────────────────────────
 // Fraunces carries every heading; Nunito carries everything else.
