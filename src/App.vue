@@ -39,7 +39,18 @@ async function goToHomeSection(sectionId) {
     await router.push({ name: "welcome" });
     await nextTick();
   }
-  document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  await nextTick();
+  requestAnimationFrame(() => {
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+    const header = document.querySelector(".ck-header");
+    const headerHeight = header?.getBoundingClientRect().height ?? 0;
+    const top = window.scrollY + target.getBoundingClientRect().top - headerHeight - 20;
+    window.scrollTo({
+      top: Math.max(0, top),
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+    });
+  });
 }
 </script>
 
@@ -176,6 +187,7 @@ async function goToHomeSection(sectionId) {
   border: 0;
   padding: 0;
   background: transparent;
+  cursor: pointer;
 }
 .ck-site-nav a::after,
 .ck-site-nav button::after { content: ""; position: absolute; left: 0; right: 100%; bottom: -7px; height: 2px; border-radius: 2px; background: var(--ck-coral); transition: right .25s ease; }
