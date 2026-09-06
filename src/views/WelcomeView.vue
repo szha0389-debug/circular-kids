@@ -104,8 +104,8 @@ const highlights = [
 
 <style scoped>
 .ck-welcome { text-align: left; }
-.ck-welcome__hero { display: grid; grid-template-columns: 0.92fr 1.08fr; min-height: 560px; background: var(--ck-surface); overflow: hidden; }
-.ck-welcome__copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(44px, 7vw, 96px); padding-right: clamp(28px, 4vw, 60px); }
+.ck-welcome__hero { display: grid; grid-template-columns: 0.92fr 1.08fr; min-height: 560px; background: linear-gradient(125deg, #fffdf7 0%, var(--ck-teal-soft) 45%, var(--ck-blue-soft) 100%); overflow: hidden; }
+.ck-welcome__copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(44px, 7vw, 96px); padding-right: clamp(28px, 4vw, 60px); background: radial-gradient(circle at 18% 22%, rgba(243,216,111,.22), transparent 15rem), radial-gradient(circle at 75% 82%, rgba(243,170,165,.15), transparent 17rem); }
 
 .ck-welcome__title {
   margin: 0 0 22px;
@@ -164,17 +164,20 @@ const highlights = [
   justify-content: center;
   padding-inline: 28px;
   border: 1px solid rgba(37,49,46,.08);
-  box-shadow: 0 12px 30px rgba(201,166,38,.23);
+  box-shadow: 0 12px 30px rgba(104,169,185,.22);
 }
 .ck-welcome__safety { max-width: 48ch; margin: 18px 0 0; font-size: var(--ck-size-mini); color: var(--ck-muted); }
 .ck-welcome__metrics { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 920px; margin: -42px auto 80px; position: relative; z-index: 2; overflow: hidden; background: var(--ck-surface); border-radius: 20px; box-shadow: var(--ck-shadow-lift); }
 .ck-welcome__metrics::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: linear-gradient(90deg, var(--ck-yellow), var(--ck-teal), var(--ck-blue), var(--ck-purple), var(--ck-green)); }
 .ck-welcome__metrics div { padding: 24px; text-align: center; border-right: 1px solid var(--ck-border); }
+.ck-welcome__metrics div:nth-child(1) { background: var(--ck-yellow-soft); }
+.ck-welcome__metrics div:nth-child(2) { background: var(--ck-teal-soft); }
+.ck-welcome__metrics div:nth-child(3) { background: var(--ck-purple-soft); }
 .ck-welcome__metrics div:last-child { border: 0; }
 .ck-welcome__metrics strong, .ck-welcome__metrics span { display: block; }
 .ck-welcome__metrics strong { font-family: var(--ck-font-display); font-size: 28px; }
 .ck-welcome__metrics span { color: var(--ck-muted); font-size: 12px; font-weight: 800; }
-.ck-welcome__section { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(32px, 7vw, 90px); align-items: center; padding: 20px clamp(24px, 7vw, 96px) 90px; }
+.ck-welcome__section { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(32px, 7vw, 90px); align-items: center; padding: 58px clamp(24px, 7vw, 96px) 90px; background: linear-gradient(145deg, rgba(255,245,244,.62), rgba(244,249,252,.78)); }
 .ck-welcome__section-copy h2, .ck-welcome__safety-band h2 { font-size: clamp(30px, 3vw, 44px); }
 .ck-welcome__section-copy > p:last-child { color: var(--ck-muted); max-width: 36ch; }
 .ck-welcome__safety-band { display: grid; grid-template-columns: auto 1fr 1fr; gap: 26px; align-items: center; margin: 0 clamp(24px, 7vw, 96px) 80px; padding: 34px; background: linear-gradient(120deg, var(--ck-teal-soft), var(--ck-purple-soft)); border-radius: 26px; }
