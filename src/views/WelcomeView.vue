@@ -135,7 +135,7 @@ const highlights = [
   object-position: center;
 }
 .ck-welcome__feature { width: min(290px, 60%); padding: 28px; background: rgba(255,255,255,.94); border-radius: 28px; box-shadow: var(--ck-shadow-lift); transform: rotate(-2deg); animation: card-float 4.5s ease-in-out infinite; }
-.ck-welcome__feature > span { display: grid; place-items: center; width: 70px; height: 70px; margin-bottom: 24px; border-radius: 50%; background: var(--ck-yellow); font-size: 34px; }
+.ck-welcome__feature > span { display: grid; place-items: center; width: 70px; height: 70px; margin-bottom: 24px; border-radius: 50%; background: linear-gradient(145deg, #ffe878, var(--ck-yellow)); box-shadow: 0 8px 22px rgba(255,220,82,.28); font-size: 34px; }
 .ck-welcome__feature p { margin: 0 0 5px; color: var(--ck-muted); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }
 .ck-welcome__feature strong { display: block; font-family: var(--ck-font-display); font-size: 27px; line-height: 1.2; }
 .ck-welcome__visual-orbit { position: absolute; display: grid; place-items: center; border-radius: 50%; box-shadow: var(--ck-shadow-card); }

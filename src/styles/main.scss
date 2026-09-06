@@ -185,7 +185,7 @@ h1, h2, h3 {
 .btn-primary:not(:disabled) {
   border: 1px solid rgba(51,64,71,.05);
   background-image: linear-gradient(110deg, $ck-teal 0%, $ck-blue 52%, $ck-purple 100%);
-  box-shadow: 0 8px 22px rgba(107, 154, 166, .14);
+  box-shadow: 0 9px 24px rgba(86, 176, 199, .22);
 }
 
 .btn-quiet {
@@ -197,7 +197,7 @@ h1, h2, h3 {
 .btn-quiet:hover { border-color: $ck-coral; color: $ck-ink; }
 
 .btn:not(:disabled):hover { transform: translateY(-2px); }
-.btn-primary:not(:disabled):hover { box-shadow: 0 11px 26px rgba(107, 154, 166, .20); }
+.btn-primary:not(:disabled):hover { box-shadow: 0 12px 28px rgba(86, 176, 199, .30); }
 .btn:not(:disabled):active { transform: translateY(1px) scale(.99); }
 .btn-primary:not(:disabled):active { box-shadow: 0 4px 12px rgba(107, 184, 203, .18); }
 
