@@ -80,7 +80,12 @@ defineEmits(["update:modelValue"]);
   box-shadow: 0 12px 26px rgba(201,166,38,.14);
 }
 
-.ck-tile__icon { font-size: 38px; line-height: 1; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.ck-tile__icon { display: grid; place-items: center; width: 62px; height: 62px; border-radius: 20px; background: var(--ck-yellow-soft); font-size: 34px; line-height: 1; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.ck-tiles li:nth-child(2) .ck-tile__icon { background: var(--ck-blue-soft); }
+.ck-tiles li:nth-child(3) .ck-tile__icon { background: var(--ck-green-soft); }
+.ck-tiles li:nth-child(4) .ck-tile__icon { background: var(--ck-purple-soft); }
+.ck-tiles li:nth-child(5) .ck-tile__icon { background: var(--ck-teal-soft); }
+.ck-tiles li:nth-child(6) .ck-tile__icon { background: #fbecef; }
 .ck-tile:hover .ck-tile__icon { transform: scale(1.13) rotate(4deg); }
 .ck-tile__label { font-size: var(--ck-size-body); }
 .ck-tiles--compact .ck-tile__label { font-size: var(--ck-size-option); }

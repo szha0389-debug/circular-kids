@@ -8,26 +8,26 @@
 // ============================================================================
 
 // ── Palette ─────────────────────────────────────────────────────────────────
-$ck-ground:        #F6F3EA;   // sun-warmed page background
-$ck-surface:       #FFFEFA;   // cards, header, option rows
-$ck-surface-warm:  #EFEEE7;   // neutral pills, wells
-$ck-border:        #DFE2DA;   // hairlines and option borders
+$ck-ground:        #FFFCF3;   // bright sun-warmed page background
+$ck-surface:       #FFFFFF;   // cards, header, option rows
+$ck-surface-warm:  #F7F5EE;   // neutral pills, wells
+$ck-border:        #EAE9E2;   // hairlines and option borders
 
 $ck-ink:           #20363D;   // deep blue-green from the recycling bins
-$ck-muted:         #6F7977;   // captions, inactive step numbers
+$ck-muted:         #76817E;   // captions, inactive step numbers
 
 $ck-coral:         #F2D35B;   // bright, refined sunshine yellow
 $ck-coral-soft:    #FFF8D9;
 $ck-yellow:        #E9C64A;
 $ck-yellow-soft:   #FFF6D6;
-$ck-teal:          #4F8F8B;
-$ck-teal-soft:     #E5F0ED;
-$ck-purple:        #9E8BC4;
-$ck-purple-soft:   #F0EDF6;
-$ck-blue:          #497B9A;
-$ck-blue-soft:     #E5EDF2;
-$ck-green:         #78915A;
-$ck-green-soft:    #EBF0E3;
+$ck-teal:          #67B8AE;
+$ck-teal-soft:     #ECF8F5;
+$ck-purple:        #AA98D2;
+$ck-purple-soft:   #F5F1FB;
+$ck-blue:          #6FA6C7;
+$ck-blue-soft:     #EDF6FB;
+$ck-green:         #8DBA72;
+$ck-green-soft:    #F0F7EA;
 
 // ── Typography ──────────────────────────────────────────────────────────────
 // Fraunces carries every heading; Nunito carries everything else.
@@ -55,8 +55,8 @@ $ck-radius-pill:   20px;
 $ck-radius-sm:     10px;
 
 $ck-card-accent:   4px;    // the coloured top border every card carries
-$ck-shadow-card:   0 10px 32px rgba(37, 49, 46, 0.055);
-$ck-shadow-lift:   0 18px 42px rgba(37, 49, 46, 0.09);
+$ck-shadow-card:   0 10px 32px rgba(37, 49, 46, 0.04);
+$ck-shadow-lift:   0 18px 42px rgba(37, 49, 46, 0.065);
 
 // ── Spacing & layout ────────────────────────────────────────────────────────
 $ck-gap-xs:  6px;

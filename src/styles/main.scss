@@ -69,8 +69,10 @@ body {
   line-height: 1.55;
   overflow-x: hidden;   // the flow must never scroll sideways at 360 px
   background-image:
-    radial-gradient(circle at 14% 8%, rgba(79, 143, 139, .08), transparent 24rem),
-    radial-gradient(circle at 88% 80%, rgba(158, 139, 196, .065), transparent 28rem);
+    radial-gradient(circle at 14% 8%, rgba(103, 184, 174, .1), transparent 24rem),
+    radial-gradient(circle at 88% 18%, rgba(111, 166, 199, .08), transparent 25rem),
+    radial-gradient(circle at 82% 82%, rgba(170, 152, 210, .09), transparent 28rem),
+    radial-gradient(circle at 20% 88%, rgba(242, 211, 91, .09), transparent 24rem);
   background-attachment: fixed;
 }
 
@@ -96,14 +98,25 @@ h1, h2, h3 {
 // Task screens stay focused inside the wider editorial frame. The white panel
 // echoes Tree-Nation's floating content surfaces while keeping our palette.
 .ck-main .ck-view:not(.ck-welcome) {
+  position: relative;
   max-width: 720px;
   margin-inline: auto;
   padding: clamp(22px, 4vw, 42px);
-  background: rgba($ck-surface, .92);
+  background: rgba($ck-surface, .97);
   border: 1px solid rgba(232, 224, 212, .82);
   border-radius: 30px;
-  box-shadow: 0 20px 60px rgba(37, 49, 46, .07), 0 2px 10px rgba(37, 49, 46, .025);
+  box-shadow: 0 20px 60px rgba(37, 49, 46, .045), 0 2px 10px rgba(37, 49, 46, .018);
   backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.ck-main .ck-view:not(.ck-welcome)::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, $ck-yellow, $ck-teal, $ck-blue, $ck-purple, $ck-green);
+  opacity: .78;
 }
 
 .ck-main:has(.ck-welcome) {

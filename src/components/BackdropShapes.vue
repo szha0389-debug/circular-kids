@@ -40,7 +40,7 @@ const shapes = [
   position: absolute;
   width: var(--size);
   height: var(--size);
-  opacity: 0.18;
+  opacity: 0.24;
   filter: blur(.3px);
   animation: ck-drift 7s ease-in-out infinite;
 }
