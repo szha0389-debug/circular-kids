@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onBeforeUnmount, watch } from "vue";
+import { computed, nextTick, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 import StepBar from "@/components/StepBar.vue";
@@ -33,6 +33,14 @@ async function startOver() {
   await store.start();
   router.push({ name: "welcome" });
 }
+
+async function goToHomeSection(sectionId) {
+  if (route.name !== "welcome") {
+    await router.push({ name: "welcome" });
+    await nextTick();
+  }
+  document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 </script>
 
 <template>
@@ -50,9 +58,9 @@ async function startOver() {
     </RouterLink>
 
     <nav v-if="!inFlow" class="ck-site-nav" aria-label="Main navigation">
-      <a href="#how-it-works">How it works</a>
-      <a href="#safety-first">Safety first</a>
-      <RouterLink :to="{ name: 'identify' }">Investigate</RouterLink>
+      <button type="button" @click="goToHomeSection('how-it-works')">How it works</button>
+      <button type="button" @click="goToHomeSection('safety-first')">Safety first</button>
+      <RouterLink :to="{ name: 'identify' }" class="ck-site-nav__action">Investigate →</RouterLink>
     </nav>
 
     <!-- US-1.5 requires a visible way back to the beginning that closes the
@@ -157,17 +165,35 @@ async function startOver() {
   align-items: center;
   gap: clamp(18px, 3vw, 38px);
 }
-.ck-site-nav a {
+.ck-site-nav a,
+.ck-site-nav button {
   color: var(--ck-ink);
   font-size: var(--ck-size-small);
   font-weight: 800;
   text-decoration: none;
   white-space: nowrap;
   position: relative;
+  border: 0;
+  padding: 0;
+  background: transparent;
 }
-.ck-site-nav a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: -7px; height: 2px; border-radius: 2px; background: var(--ck-coral); transition: right .25s ease; }
-.ck-site-nav a:hover::after { right: 0; }
-.ck-site-nav a:hover { color: var(--ck-coral); }
+.ck-site-nav a::after,
+.ck-site-nav button::after { content: ""; position: absolute; left: 0; right: 100%; bottom: -7px; height: 2px; border-radius: 2px; background: var(--ck-coral); transition: right .25s ease; }
+.ck-site-nav a:hover::after,
+.ck-site-nav button:hover::after { right: 0; }
+.ck-site-nav a:hover,
+.ck-site-nav button:hover { color: var(--ck-coral); }
+.ck-site-nav .ck-site-nav__action {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 18px;
+  border-radius: 14px;
+  background: linear-gradient(110deg, var(--ck-teal), var(--ck-blue), var(--ck-purple));
+  box-shadow: 0 7px 18px rgba(86,176,199,.18);
+}
+.ck-site-nav .ck-site-nav__action::after { display: none; }
+.ck-site-nav .ck-site-nav__action:hover { color: var(--ck-ink); transform: translateY(-1px); }
 .ck-brand__text b { color: var(--ck-coral); }
 .ck-brand__text {
   min-width: 0;
