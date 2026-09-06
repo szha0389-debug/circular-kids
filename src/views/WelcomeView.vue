@@ -158,7 +158,7 @@ const highlights = [
   justify-content: center;
   padding-inline: 28px;
   border: 1px solid rgba(37,49,46,.08);
-  box-shadow: 0 12px 28px rgba(183,148,48,.2);
+  box-shadow: 0 12px 30px rgba(201,166,38,.23);
 }
 .ck-welcome__safety { max-width: 48ch; margin: 18px 0 0; font-size: var(--ck-size-mini); color: var(--ck-muted); }
 .ck-welcome__metrics { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 920px; margin: -42px auto 80px; position: relative; z-index: 2; background: var(--ck-surface); border-radius: 20px; box-shadow: var(--ck-shadow-lift); }

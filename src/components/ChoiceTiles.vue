@@ -68,7 +68,7 @@ defineEmits(["update:modelValue"]);
   border-radius: var(--ck-radius-ctrl);
 }
 
-.ck-tile:hover { border-color: rgba(183,148,48,.5); transform: translateY(-3px); box-shadow: 0 16px 34px rgba(32,54,61,.075); }
+.ck-tile:hover { border-color: rgba(201,166,38,.5); transform: translateY(-3px); box-shadow: 0 16px 34px rgba(32,54,61,.075); }
 .ck-tile:focus-visible { outline: 3px solid var(--ck-coral); outline-offset: 3px; }
 
 /* A quiet tinted selection keeps the page soft while remaining unmistakable. */
@@ -77,7 +77,7 @@ defineEmits(["update:modelValue"]);
   border-color: var(--ck-coral);
   color: var(--ck-ink);
   transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(183,148,48,.12);
+  box-shadow: 0 12px 26px rgba(201,166,38,.14);
 }
 
 .ck-tile__icon { font-size: 38px; line-height: 1; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
