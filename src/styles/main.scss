@@ -69,10 +69,10 @@ body {
   line-height: 1.55;
   overflow-x: hidden;   // the flow must never scroll sideways at 360 px
   background-image:
-    radial-gradient(circle at 10% 8%, rgba(139, 203, 195, .11), transparent 23rem),
-    radial-gradient(circle at 90% 14%, rgba(155, 194, 216, .10), transparent 25rem),
-    radial-gradient(circle at 84% 84%, rgba(190, 177, 218, .10), transparent 27rem),
-    radial-gradient(circle at 17% 90%, rgba(236, 169, 164, .09), transparent 24rem),
+    radial-gradient(circle at 10% 8%, rgba(139, 203, 195, .08), transparent 23rem),
+    radial-gradient(circle at 90% 14%, rgba(155, 194, 216, .075), transparent 25rem),
+    radial-gradient(circle at 84% 84%, rgba(190, 177, 218, .075), transparent 27rem),
+    radial-gradient(circle at 17% 90%, rgba(236, 169, 164, .065), transparent 24rem),
     radial-gradient(circle at 52% 48%, rgba(235, 212, 125, .05), transparent 22rem);
   background-attachment: fixed;
 }
