@@ -94,6 +94,25 @@ const highlights = [
       </div>
     </div>
 
+    <section class="ck-welcome__data" aria-labelledby="waste-data-title">
+      <div class="ck-welcome__data-heading">
+        <p class="ck-eyebrow">The bigger picture</p>
+        <h2 id="waste-data-title">Plastic waste across Australia</h2>
+        <p>These two views show where plastic waste was sent to disposal and how the amount changed over time.</p>
+      </div>
+      <div class="ck-welcome__charts">
+        <figure class="ck-welcome__chart ck-welcome__chart--map">
+          <img src="/assets/waste-disposal-map.png" alt="Map of plastic waste sent to disposal by Australian state and territory in 2022–23" loading="lazy" />
+          <figcaption><strong>Where it goes</strong><span>Plastic waste disposal by state, 2022–23.</span></figcaption>
+        </figure>
+        <figure class="ck-welcome__chart">
+          <img src="/assets/waste-disposal-trends.png" alt="Line chart of plastic waste disposal by Australian state and territory over time" loading="lazy" />
+          <figcaption><strong>How it changed</strong><span>Plastic waste disposal trends over time.</span></figcaption>
+        </figure>
+      </div>
+      <p class="ck-welcome__data-source">Source: National Waste and Resource Recovery Database 2024. Map boundaries: ABS ASGS 2016.</p>
+    </section>
+
     <div id="safety-first" class="ck-welcome__safety-band">
       <span aria-hidden="true">🛡️</span>
       <div><p class="ck-eyebrow">Safety first</p><h2>Unsure is always a valid answer.</h2></div>
@@ -192,6 +211,18 @@ const highlights = [
 }
 .ck-welcome__section-copy h2, .ck-welcome__safety-band h2 { font-size: clamp(30px, 3vw, 44px); }
 .ck-welcome__section-copy > p:last-child { color: var(--ck-muted); max-width: 36ch; }
+.ck-welcome__data { padding: 84px clamp(24px, 6vw, 96px); background: linear-gradient(135deg, var(--ck-yellow-soft), #fff, var(--ck-teal-soft)); }
+.ck-welcome__data-heading { max-width: 720px; margin: 0 auto 34px; text-align: center; }
+.ck-welcome__data-heading h2 { margin-bottom: 12px; font-size: clamp(30px, 3vw, 44px); }
+.ck-welcome__data-heading > p:last-child { margin: 0; color: var(--ck-muted); }
+.ck-welcome__charts { display: grid; grid-template-columns: .9fr 1.1fr; gap: 24px; max-width: 1320px; margin-inline: auto; align-items: stretch; }
+.ck-welcome__chart { display: flex; flex-direction: column; margin: 0; overflow: hidden; background: #fff; border: 1px solid var(--ck-border); border-radius: 26px; box-shadow: var(--ck-shadow-card); }
+.ck-welcome__chart img { display: block; width: 100%; aspect-ratio: 1.72 / 1; object-fit: contain; background: #fff; }
+.ck-welcome__chart--map img { aspect-ratio: 1.2 / 1; }
+.ck-welcome__chart figcaption { display: flex; flex-direction: column; gap: 3px; padding: 18px 22px 22px; border-top: 1px solid var(--ck-border); }
+.ck-welcome__chart figcaption strong { font-family: var(--ck-font-display); font-size: 18px; }
+.ck-welcome__chart figcaption span, .ck-welcome__data-source { color: var(--ck-muted); font-size: var(--ck-size-mini); }
+.ck-welcome__data-source { max-width: 1320px; margin: 18px auto 0; text-align: center; }
 .ck-welcome__safety-band {
   scroll-margin-top: 68px;
   display: grid;
@@ -218,6 +249,8 @@ const highlights = [
   .ck-welcome__metrics { margin: -22px 16px 60px; }
   .ck-welcome__metrics div { padding: 18px 8px; }
   .ck-welcome__section { min-height: 0; margin-top: 42px; padding: 58px 20px; }
+  .ck-welcome__data { padding: 58px 20px; }
+  .ck-welcome__charts { grid-template-columns: 1fr; }
   .ck-welcome__safety-band { grid-template-columns: auto 1fr; min-height: 0; margin: 0; padding: 52px 24px; }
   .ck-welcome__safety-band > p { grid-column: 1 / -1; }
 }

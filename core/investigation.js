@@ -60,7 +60,10 @@ function sanitiseProblems(value, itemId) {
   const offered = new Set([...problemsFor(itemId).map(p => p.id), "no-problem", "not-sure"]);
   // Multi-select is required by US-1.2; order is preserved so the first choice
   // still drives clue selection.
-  return [...new Set(value.filter(id => typeof id === "string" && offered.has(id)))];
+  const selected = [...new Set(value.filter(id => typeof id === "string" && offered.has(id)))];
+  if (selected.includes("not-sure")) return ["not-sure"];
+  if (selected.includes("no-problem")) return ["no-problem"];
+  return selected;
 }
 
 function sanitiseAnswers(value, problems, itemId) {

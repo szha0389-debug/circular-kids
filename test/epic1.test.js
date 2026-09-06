@@ -149,6 +149,16 @@ test("US-1.2 more than one problem can be selected", () => {
   assert.deepEqual(record.problems, ["no-sound", "cable-damaged"]);
 });
 
+test("US-1.2 uncertainty and no-problem choices cannot be combined with other problems", () => {
+  const unsure = createRecord("exclusive-unsure");
+  applyUpdate(unsure, { itemId: "headphones", problems: ["no-sound", "not-sure"] });
+  assert.deepEqual(unsure.problems, ["not-sure"]);
+
+  const none = createRecord("exclusive-none");
+  applyUpdate(none, { itemId: "headphones", problems: ["cable-damaged", "no-problem"] });
+  assert.deepEqual(none.problems, ["no-problem"]);
+});
+
 test("US-1.2 selecting 'Not sure' flags the case and still produces clues", () => {
   const record = createRecord("unsure");
   applyUpdate(record, { itemId: "mug", problems: ["not-sure"] });

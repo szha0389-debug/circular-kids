@@ -23,12 +23,13 @@ const options = computed(() => [
 const chosen = computed({
   get: () => store.problems,
   set: value => {
-    // "No problem" is a complete answer, so it cannot be combined with a
-    // problem or uncertainty selection.
+    // Complete/uncertain answers are exclusive: choosing either clears every
+    // observation, while choosing an observation clears either special value.
     const latest = value.find(entry => !store.problems.includes(entry));
-    store.problems = latest === "no-problem"
-      ? ["no-problem"]
-      : value.filter(entry => entry !== "no-problem");
+    const exclusive = new Set(["no-problem", "not-sure"]);
+    store.problems = exclusive.has(latest)
+      ? [latest]
+      : value.filter(entry => !exclusive.has(entry));
     if (value.length) error.value = "";
   }
 });
