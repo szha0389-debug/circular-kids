@@ -20,6 +20,7 @@ import OptionList from "@/components/OptionList.vue";
 const store = useInvestigation();
 const router = useRouter();
 const index = ref(0);
+const showCheckpoint = ref(false);
 
 const total = computed(() => store.questions.length);
 const question = computed(() => store.questions[index.value]);
@@ -43,6 +44,12 @@ async function advance() {
     return;
   }
   await store.saveAnswers();
+  // A neutral checkpoint after the group of three. This changes presentation
+  // only: answers, scoring and the following verdict flow remain untouched.
+  showCheckpoint.value = true;
+}
+
+function continueToVerdict() {
   router.push({ name: "verdict" });
 }
 
@@ -53,7 +60,7 @@ function back() {
 </script>
 
 <template>
-  <section v-if="question">
+  <section v-if="question && !showCheckpoint">
     <div class="ck-clue__head">
       <p class="ck-eyebrow">Clue {{ index + 1 }} of {{ total }}</p>
       <div class="ck-bar" role="presentation"><i :style="{ width: `${progress}%` }"></i></div>
@@ -75,6 +82,24 @@ function back() {
       <button type="button" class="btn btn-primary btn--wide" :disabled="!current" @click="advance">
         {{ isLast ? "Finish Clues →" : "Next Clue →" }}
       </button>
+    </div>
+  </section>
+
+  <section v-else-if="showCheckpoint" class="ck-checkpoint">
+    <span class="ck-checkpoint__icon" aria-hidden="true">✓</span>
+    <p class="ck-eyebrow">3 clues completed</p>
+    <h1>Thanks — your answers are recorded.</h1>
+    <p class="ck-lead">
+      You have finished this short group of three questions. We have not marked any
+      answer right or wrong.
+    </p>
+    <div class="ck-note ck-note--teal">
+      <span aria-hidden="true">💬</span>
+      <p><strong>Your feedback:</strong> all {{ total }} clue responses are ready for your own verdict.</p>
+    </div>
+    <div class="ck-actions">
+      <button type="button" class="btn btn-quiet" @click="showCheckpoint = false">← Review answers</button>
+      <button type="button" class="btn btn-primary btn--wide" @click="continueToVerdict">Give My Verdict →</button>
     </div>
   </section>
 </template>
@@ -113,5 +138,23 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: var(--ck-gap); }
   text-align: center;
   font-size: var(--ck-size-mini);
   color: var(--ck-muted);
+}
+
+.ck-checkpoint { text-align: center; }
+.ck-checkpoint h1 { max-width: 16ch; margin-inline: auto; }
+.ck-checkpoint .ck-lead { max-width: 39ch; margin: 0 auto var(--ck-gap-md); }
+.ck-checkpoint .ck-note { text-align: left; }
+.ck-checkpoint__icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: var(--ck-green);
+  box-shadow: 0 0 0 10px rgba(82, 199, 124, .16);
+  color: white;
+  font-size: 28px;
+  font-weight: 900;
 }
 </style>
