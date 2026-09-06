@@ -8,26 +8,26 @@
 // ============================================================================
 
 // ── Palette ─────────────────────────────────────────────────────────────────
-$ck-ground:        #FFFCF3;   // bright sun-warmed page background
+$ck-ground:        #FFFDF8;   // near-white sunlit page background
 $ck-surface:       #FFFFFF;   // cards, header, option rows
-$ck-surface-warm:  #F7F5EE;   // neutral pills, wells
-$ck-border:        #EAE9E2;   // hairlines and option borders
+$ck-surface-warm:  #FBFAF5;   // neutral pills, wells
+$ck-border:        #EEECE5;   // hairlines and option borders
 
-$ck-ink:           #20363D;   // deep blue-green from the recycling bins
-$ck-muted:         #76817E;   // captions, inactive step numbers
+$ck-ink:           #334047;   // clear text without a heavy navy cast
+$ck-muted:         #7F888B;   // captions, inactive step numbers
 
-$ck-coral:         #F2D35B;   // bright, refined sunshine yellow
-$ck-coral-soft:    #FFF8D9;
-$ck-yellow:        #E9C64A;
-$ck-yellow-soft:   #FFF6D6;
-$ck-teal:          #67B8AE;
-$ck-teal-soft:     #ECF8F5;
-$ck-purple:        #AA98D2;
-$ck-purple-soft:   #F5F1FB;
-$ck-blue:          #6FA6C7;
-$ck-blue-soft:     #EDF6FB;
-$ck-green:         #8DBA72;
-$ck-green-soft:    #F0F7EA;
+$ck-coral:         #FFE16A;   // luminous lemon yellow
+$ck-coral-soft:    #FFFBE2;
+$ck-yellow:        #FFD95A;
+$ck-yellow-soft:   #FFF9DA;
+$ck-teal:          #72D5CA;
+$ck-teal-soft:     #ECFCF9;
+$ck-purple:        #BEA4ED;
+$ck-purple-soft:   #F7F1FF;
+$ck-blue:          #82BFE8;
+$ck-blue-soft:     #EFF9FF;
+$ck-green:         #98CE7C;
+$ck-green-soft:    #F1FBEA;
 
 // ── Typography ──────────────────────────────────────────────────────────────
 // Fraunces carries every heading; Nunito carries everything else.
@@ -55,8 +55,8 @@ $ck-radius-pill:   20px;
 $ck-radius-sm:     10px;
 
 $ck-card-accent:   4px;    // the coloured top border every card carries
-$ck-shadow-card:   0 10px 32px rgba(37, 49, 46, 0.04);
-$ck-shadow-lift:   0 18px 42px rgba(37, 49, 46, 0.065);
+$ck-shadow-card:   0 10px 32px rgba(51, 64, 71, 0.025);
+$ck-shadow-lift:   0 18px 42px rgba(51, 64, 71, 0.045);
 
 // ── Spacing & layout ────────────────────────────────────────────────────────
 $ck-gap-xs:  6px;

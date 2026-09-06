@@ -117,7 +117,7 @@ async function startOver() {
   gap: 8px;
   min-height: 68px;
   padding-inline: clamp(20px, 5vw, 72px);
-  background: rgba(255, 255, 255, .88);
+  background: rgba(255, 255, 255, .96);
   backdrop-filter: blur(18px) saturate(1.25);
   border-bottom: 1px solid var(--ck-border);
 }

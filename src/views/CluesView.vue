@@ -86,7 +86,14 @@ function back() {
   </section>
 
   <section v-else-if="showCheckpoint" class="ck-checkpoint">
-    <span class="ck-checkpoint__icon" aria-hidden="true">✓</span>
+    <div class="ck-checkpoint__visual" aria-hidden="true">
+      <span class="ck-checkpoint__spark ck-checkpoint__spark--one">✦</span>
+      <span class="ck-checkpoint__spark ck-checkpoint__spark--two">✦</span>
+      <span class="ck-checkpoint__card ck-checkpoint__card--one">🔍</span>
+      <span class="ck-checkpoint__card ck-checkpoint__card--two">💬</span>
+      <span class="ck-checkpoint__card ck-checkpoint__card--three">🌱</span>
+      <span class="ck-checkpoint__icon">✓</span>
+    </div>
     <p class="ck-eyebrow">3 clues completed</p>
     <h1>Thanks — your answers are recorded.</h1>
     <p class="ck-lead">
@@ -144,17 +151,72 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: var(--ck-gap); }
 .ck-checkpoint h1 { max-width: 16ch; margin-inline: auto; }
 .ck-checkpoint .ck-lead { max-width: 39ch; margin: 0 auto var(--ck-gap-md); }
 .ck-checkpoint .ck-note { text-align: left; }
+.ck-checkpoint__visual {
+  position: relative;
+  width: 230px;
+  height: 122px;
+  margin: 0 auto 14px;
+}
+.ck-checkpoint__visual::before {
+  content: "";
+  position: absolute;
+  inset: 20px 42px 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--ck-yellow-soft), transparent 68%);
+  animation: ck-glow 2.8s ease-in-out infinite;
+}
 .ck-checkpoint__icon {
+  position: absolute;
+  left: 50%;
+  top: 16px;
+  translate: -50% 0;
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 18px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   background: var(--ck-green);
-  box-shadow: 0 0 0 10px rgba(82, 199, 124, .16);
+  box-shadow: 0 0 0 11px var(--ck-green-soft), 0 14px 30px rgba(86,125,72,.16);
   color: white;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 900;
+  animation: ck-check-in .65s cubic-bezier(.2,1.45,.4,1) both;
+}
+.ck-checkpoint__card {
+  position: absolute;
+  top: 38px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(32,54,61,.06);
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 10px 26px rgba(32,54,61,.09);
+  font-size: 21px;
+  opacity: 0;
+  animation: ck-clue-in .55s cubic-bezier(.2,1.25,.4,1) forwards;
+}
+.ck-checkpoint__card--one { left: 12px; rotate: -9deg; background: var(--ck-blue-soft); animation-delay: .14s; }
+.ck-checkpoint__card--two { right: 12px; rotate: 9deg; background: var(--ck-purple-soft); animation-delay: .26s; }
+.ck-checkpoint__card--three { left: 36px; top: 78px; rotate: 5deg; background: var(--ck-teal-soft); animation-delay: .38s; }
+.ck-checkpoint__spark { position: absolute; z-index: 3; color: var(--ck-yellow); font-size: 18px; animation: ck-spark 2.2s ease-in-out infinite; }
+.ck-checkpoint__spark--one { left: 68px; top: 6px; }
+.ck-checkpoint__spark--two { right: 56px; top: 80px; animation-delay: -.8s; }
+
+@keyframes ck-check-in {
+  from { opacity: 0; transform: scale(.55) rotate(-12deg); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes ck-clue-in {
+  from { opacity: 0; transform: translateY(18px) scale(.8); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes ck-glow { 0%,100% { opacity: .55; transform: scale(.92); } 50% { opacity: 1; transform: scale(1.08); } }
+@keyframes ck-spark { 0%,100% { opacity: .35; transform: scale(.75) rotate(0); } 50% { opacity: 1; transform: scale(1.12) rotate(18deg); } }
+
+@media (max-width: 420px) {
+  .ck-checkpoint__visual { width: 205px; }
 }
 </style>
