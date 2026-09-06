@@ -259,7 +259,6 @@ export const useInvestigation = defineStore("investigation", {
       this.busy = true;
       try {
         this.handover = await api.transfer(this.id);
-        this.releasePhoto();
         return this.handover;
       } finally {
         this.busy = false;

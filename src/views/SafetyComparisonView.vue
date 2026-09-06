@@ -6,7 +6,8 @@ import OptionList from "@/components/OptionList.vue";
 
 const store = useInvestigation();
 const router = useRouter();
-const choice = ref(store.comparisonResponse);
+// Do not visually select anything until the child taps an answer.
+const choice = ref(null);
 const error = ref("");
 
 onMounted(async () => {
@@ -34,7 +35,7 @@ async function submit() {
     <p class="ck-lead">Choose your idea first. We will explain it calmly afterwards.</p>
     <OptionList v-model="choice" :options="store.safetyComparison.choices" name="safety-comparison" />
     <p v-if="error" class="ck-error" role="alert">{{ error }}</p>
-    <button type="button" class="btn btn-primary w-100 ck-submit" :disabled="store.busy" @click="submit">
+    <button type="button" class="btn btn-primary w-100 ck-submit" :disabled="!choice || store.busy" @click="submit">
       Show my safety boundary →
     </button>
   </section>
@@ -53,4 +54,3 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 18px; }
 .ck-error { margin-top: 10px; color: var(--ck-coral); font-weight: 700; }
 @media (max-width: 420px) { .ck-situations { grid-template-columns: 1fr; } }
 </style>
-

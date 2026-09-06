@@ -6,7 +6,8 @@ import OptionList from "@/components/OptionList.vue";
 
 const store = useInvestigation();
 const router = useRouter();
-const choice = ref(store.safetyResponse);
+// Do not carry an old response into a fresh visit to this question.
+const choice = ref(null);
 const error = ref("");
 
 onMounted(async () => {
@@ -50,7 +51,7 @@ async function submit() {
       <button class="btn btn-quiet" type="button" @click="router.push({ name: 'handover' })">
         ← Back
       </button>
-      <button class="btn btn-primary btn--wide ck-submit" type="button" :disabled="store.busy" @click="submit">
+      <button class="btn btn-primary btn--wide ck-submit" type="button" :disabled="!choice || store.busy" @click="submit">
         Show me the warning sign →
       </button>
     </div>

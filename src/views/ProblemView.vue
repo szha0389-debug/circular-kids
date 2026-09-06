@@ -59,7 +59,7 @@ async function next() {
       <button type="button" class="btn btn-quiet" @click="router.push({ name: 'breakdown' })">
         ← Back
       </button>
-      <button type="button" class="btn btn-primary btn--wide" :disabled="store.busy" @click="next">
+      <button type="button" class="btn btn-primary btn--wide" :disabled="!store.problems.length || store.busy" @click="next">
         Continue →
       </button>
     </div>

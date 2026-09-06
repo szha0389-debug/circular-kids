@@ -18,7 +18,8 @@ import OptionList from "@/components/OptionList.vue";
 
 const store = useInvestigation();
 const router = useRouter();
-const choice = ref(store.verdict);
+// A choice is never pre-filled: the child must actively make it on this screen.
+const choice = ref(null);
 
 // The icons name the option, never rank it: no ticks, crosses or traffic lights.
 const options = [

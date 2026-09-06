@@ -130,7 +130,7 @@ async function confirmItem() {
         📋 Choose from a list instead
       </button>
 
-      <div class="ck-note ck-note--teal">
+      <div v-if="store.hasPhoto" class="ck-note ck-note--teal">
         <span aria-hidden="true">🔒</span>
         <!-- Accurate as of the move to server-side recognition: the picture is
              uploaded, because a classifier cannot work without it. Everything
