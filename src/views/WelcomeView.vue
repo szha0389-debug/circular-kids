@@ -125,8 +125,7 @@ const highlights = [
   line-height: 1.5;
 }
 .ck-welcome__visual { position: relative; display: grid; place-items: end start; min-height: 500px; margin: 28px 28px 28px -5vw; padding: 0 0 32px 9vw; background: linear-gradient(145deg, var(--ck-teal-soft), var(--ck-yellow-soft)); border-radius: 34px; overflow: hidden; isolation: isolate; }
-.ck-welcome__hero-image { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: 60% center; filter: brightness(1.18) saturate(1.12); animation: hero-arrive .9s ease-out both; }
-.ck-welcome__visual::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(255,255,255,.38) 0%, transparent 48%); }
+.ck-welcome__hero-image { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: 60% center; animation: hero-arrive .9s ease-out both; }
 .ck-welcome__feature { width: min(290px, 60%); padding: 28px; background: rgba(255,255,255,.94); border-radius: 28px; box-shadow: var(--ck-shadow-lift); transform: rotate(-2deg); animation: card-float 4.5s ease-in-out infinite; }
 .ck-welcome__feature > span { display: grid; place-items: center; width: 70px; height: 70px; margin-bottom: 24px; border-radius: 50%; background: var(--ck-yellow); font-size: 34px; }
 .ck-welcome__feature p { margin: 0 0 5px; color: var(--ck-muted); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }

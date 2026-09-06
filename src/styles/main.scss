@@ -69,11 +69,11 @@ body {
   line-height: 1.55;
   overflow-x: hidden;   // the flow must never scroll sideways at 360 px
   background-image:
-    radial-gradient(circle at 10% 8%, rgba(122, 221, 208, .20), transparent 23rem),
-    radial-gradient(circle at 90% 14%, rgba(147, 207, 242, .19), transparent 25rem),
-    radial-gradient(circle at 84% 84%, rgba(198, 179, 242, .18), transparent 27rem),
-    radial-gradient(circle at 17% 90%, rgba(255, 170, 165, .17), transparent 24rem),
-    radial-gradient(circle at 52% 48%, rgba(255, 226, 119, .08), transparent 22rem);
+    radial-gradient(circle at 10% 8%, rgba(139, 203, 195, .11), transparent 23rem),
+    radial-gradient(circle at 90% 14%, rgba(155, 194, 216, .10), transparent 25rem),
+    radial-gradient(circle at 84% 84%, rgba(190, 177, 218, .10), transparent 27rem),
+    radial-gradient(circle at 17% 90%, rgba(236, 169, 164, .09), transparent 24rem),
+    radial-gradient(circle at 52% 48%, rgba(235, 212, 125, .05), transparent 22rem);
   background-attachment: fixed;
 }
 
@@ -185,7 +185,7 @@ h1, h2, h3 {
 .btn-primary:not(:disabled) {
   border: 1px solid rgba(51,64,71,.05);
   background-image: linear-gradient(110deg, $ck-teal 0%, $ck-blue 52%, $ck-purple 100%);
-  box-shadow: 0 9px 24px rgba(107, 184, 203, .20);
+  box-shadow: 0 8px 22px rgba(107, 154, 166, .14);
 }
 
 .btn-quiet {
@@ -197,7 +197,7 @@ h1, h2, h3 {
 .btn-quiet:hover { border-color: $ck-coral; color: $ck-ink; }
 
 .btn:not(:disabled):hover { transform: translateY(-2px); }
-.btn-primary:not(:disabled):hover { box-shadow: 0 13px 30px rgba(107, 184, 203, .27); }
+.btn-primary:not(:disabled):hover { box-shadow: 0 11px 26px rgba(107, 154, 166, .20); }
 .btn:not(:disabled):active { transform: translateY(1px) scale(.99); }
 .btn-primary:not(:disabled):active { box-shadow: 0 4px 12px rgba(107, 184, 203, .18); }
 
