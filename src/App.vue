@@ -6,6 +6,7 @@ import StepBar from "@/components/StepBar.vue";
 import SafetyStepBar from "@/components/SafetyStepBar.vue";
 import BackdropShapes from "@/components/BackdropShapes.vue";
 import AppFooter from "@/components/AppFooter.vue";
+import PageCompanion from "@/components/PageCompanion.vue";
 
 const store = useInvestigation();
 const route = useRoute();
@@ -95,6 +96,8 @@ async function goToHomeSection(sectionId) {
       >
         {{ store.notice }}
       </p>
+
+      <PageCompanion />
 
       <!-- A CSS entry animation, deliberately not a <Transition>: the view must
            mount the moment the route changes. A JS-driven transition needs
