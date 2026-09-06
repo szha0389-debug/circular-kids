@@ -103,7 +103,7 @@ const highlights = [
 </template>
 
 <style scoped>
-.ck-welcome { text-align: left; }
+.ck-welcome { text-align: left; background: var(--ck-surface); }
 .ck-welcome__hero { display: grid; grid-template-columns: 0.92fr 1.08fr; min-height: 560px; background: linear-gradient(125deg, #fffdf7 0%, var(--ck-teal-soft) 45%, var(--ck-blue-soft) 100%); overflow: hidden; }
 .ck-welcome__copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(44px, 7vw, 96px); padding-right: clamp(28px, 4vw, 60px); background: radial-gradient(circle at 18% 22%, rgba(243,216,111,.22), transparent 15rem), radial-gradient(circle at 75% 82%, rgba(243,170,165,.15), transparent 17rem); }
 
@@ -167,7 +167,7 @@ const highlights = [
   box-shadow: 0 12px 30px rgba(104,169,185,.22);
 }
 .ck-welcome__safety { max-width: 48ch; margin: 18px 0 0; font-size: var(--ck-size-mini); color: var(--ck-muted); }
-.ck-welcome__metrics { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 920px; margin: -42px auto 80px; position: relative; z-index: 2; overflow: hidden; background: var(--ck-surface); border-radius: 20px; box-shadow: var(--ck-shadow-lift); }
+.ck-welcome__metrics { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 920px; margin: -42px auto 0; position: relative; z-index: 2; overflow: hidden; background: var(--ck-surface); border-radius: 20px; box-shadow: var(--ck-shadow-lift); }
 .ck-welcome__metrics::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: linear-gradient(90deg, var(--ck-yellow), var(--ck-teal), var(--ck-blue), var(--ck-purple), var(--ck-green)); }
 .ck-welcome__metrics div { padding: 24px; text-align: center; border-right: 1px solid var(--ck-border); }
 .ck-welcome__metrics div:nth-child(1) { background: var(--ck-yellow-soft); }
@@ -177,10 +177,34 @@ const highlights = [
 .ck-welcome__metrics strong, .ck-welcome__metrics span { display: block; }
 .ck-welcome__metrics strong { font-family: var(--ck-font-display); font-size: 28px; }
 .ck-welcome__metrics span { color: var(--ck-muted); font-size: 12px; font-weight: 800; }
-.ck-welcome__section { scroll-margin-top: 92px; display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(32px, 7vw, 90px); align-items: center; padding: 58px clamp(24px, 7vw, 96px) 90px; background: linear-gradient(145deg, rgba(255,245,244,.62), rgba(244,249,252,.78)); }
+.ck-welcome__section {
+  scroll-margin-top: 68px;
+  display: grid;
+  grid-template-columns: .85fr 1.15fr;
+  gap: clamp(32px, 7vw, 90px);
+  align-items: center;
+  min-height: 520px;
+  margin-top: 64px;
+  padding: 84px clamp(24px, 7vw, 96px);
+  background: linear-gradient(135deg, #fff4f5 0%, #fffaf0 48%, #eef9ff 100%);
+  border-top: 2px solid rgba(255,146,156,.34);
+  border-bottom: 2px solid rgba(121,199,240,.30);
+}
 .ck-welcome__section-copy h2, .ck-welcome__safety-band h2 { font-size: clamp(30px, 3vw, 44px); }
 .ck-welcome__section-copy > p:last-child { color: var(--ck-muted); max-width: 36ch; }
-.ck-welcome__safety-band { scroll-margin-top: 92px; display: grid; grid-template-columns: auto 1fr 1fr; gap: 26px; align-items: center; margin: 0 clamp(24px, 7vw, 96px) 80px; padding: 34px; background: linear-gradient(120deg, var(--ck-teal-soft), var(--ck-purple-soft)); border-radius: 26px; }
+.ck-welcome__safety-band {
+  scroll-margin-top: 68px;
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: 32px;
+  align-items: center;
+  min-height: 330px;
+  margin: 0;
+  padding: 72px clamp(24px, 8vw, 130px);
+  background: linear-gradient(120deg, #eafbf8 0%, #eaf7fe 50%, #f3eeff 100%);
+  border-bottom: 2px solid rgba(181,156,240,.28);
+  border-radius: 0;
+}
 .ck-welcome__safety-band > span { font-size: 46px; }
 .ck-welcome__safety-band h2, .ck-welcome__safety-band p { margin: 0; }
 .ck-welcome__safety-band > p { color: var(--ck-muted); }
@@ -193,8 +217,8 @@ const highlights = [
   .ck-welcome__visual { min-height: 380px; margin: 0 16px 24px; padding: 0 20px 24px; border-radius: 26px; }
   .ck-welcome__metrics { margin: -22px 16px 60px; }
   .ck-welcome__metrics div { padding: 18px 8px; }
-  .ck-welcome__section { padding: 0 20px 64px; }
-  .ck-welcome__safety-band { grid-template-columns: auto 1fr; margin: 0 20px 60px; padding: 24px; }
+  .ck-welcome__section { min-height: 0; margin-top: 42px; padding: 58px 20px; }
+  .ck-welcome__safety-band { grid-template-columns: auto 1fr; min-height: 0; margin: 0; padding: 52px 24px; }
   .ck-welcome__safety-band > p { grid-column: 1 / -1; }
 }
 
