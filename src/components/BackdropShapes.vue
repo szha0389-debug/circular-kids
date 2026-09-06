@@ -41,6 +41,14 @@ const shapes = [
   width: var(--size);
   height: var(--size);
   opacity: 0.5;
+  animation: ck-drift 7s ease-in-out infinite;
+}
+.ck-shape:nth-child(2n) { animation-duration: 9s; animation-direction: reverse; }
+.ck-shape:nth-child(3n) { animation-delay: -3s; }
+
+@keyframes ck-drift {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -14px; }
 }
 
 .tone-teal { background: var(--ck-teal); }

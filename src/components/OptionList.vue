@@ -80,16 +80,19 @@ function choose(value) {
   color: var(--ck-ink);
   font-size: var(--ck-size-option);
   font-weight: 600;
-  transition: border-color 0.12s ease, background-color 0.12s ease, transform 0.12s ease;
+  box-shadow: 0 2px 0 rgba(26,26,46,.025);
+  transition: border-color .2s ease, background-color .2s ease, transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease;
 }
 
-.ck-option:hover { border-color: var(--ck-coral); transform: translateY(-1px); }
+.ck-option:hover { border-color: var(--ck-coral); transform: translateY(-3px); box-shadow: 0 10px 24px rgba(26,26,46,.08); }
 .ck-option:focus-visible { outline: 3px solid var(--ck-coral); outline-offset: 3px; }
 
 /* One selection treatment for every option — see the note in <script>. */
 .ck-option.is-chosen {
   border-color: var(--ck-coral);
   background: var(--ck-coral-soft);
+  transform: translateX(4px);
+  box-shadow: -4px 0 0 var(--ck-coral);
 }
 
 .ck-option__icon { flex: 0 0 auto; font-size: 20px; line-height: 1; }
@@ -114,5 +117,7 @@ function choose(value) {
   color: #fff;
   font-size: 12px;
   font-weight: 800;
+  animation: ck-pop .3s cubic-bezier(.2,1.4,.4,1);
 }
+@keyframes ck-pop { from { opacity: 0; transform: scale(.4) rotate(-20deg); } to { opacity: 1; transform: scale(1); } }
 </style>

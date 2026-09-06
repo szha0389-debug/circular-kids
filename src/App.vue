@@ -104,7 +104,8 @@ async function startOver() {
 .ck-skip:focus { left: 0; }
 
 .ck-header {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 5;
   /* Three columns rather than a centred flex row with an absolutely placed
      button: the outer columns are equal, so the title stays optically centred
@@ -116,7 +117,8 @@ async function startOver() {
   gap: 8px;
   min-height: 68px;
   padding-inline: clamp(20px, 5vw, 72px);
-  background: var(--ck-surface);
+  background: rgba(255, 255, 255, .88);
+  backdrop-filter: blur(18px) saturate(1.25);
   border-bottom: 1px solid var(--ck-border);
 }
 
@@ -146,7 +148,9 @@ async function startOver() {
   color: var(--ck-coral);
   font-size: 13px;
   line-height: 1;
+  transition: transform .45s cubic-bezier(.2,.8,.2,1), background-color .2s ease;
 }
+.ck-brand:hover .ck-brand__mark { transform: rotate(-32deg) scale(1.08); background: var(--ck-yellow-soft); }
 .ck-site-nav {
   grid-column: 2;
   display: flex;
@@ -159,7 +163,10 @@ async function startOver() {
   font-weight: 800;
   text-decoration: none;
   white-space: nowrap;
+  position: relative;
 }
+.ck-site-nav a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: -7px; height: 2px; border-radius: 2px; background: var(--ck-coral); transition: right .25s ease; }
+.ck-site-nav a:hover::after { right: 0; }
 .ck-site-nav a:hover { color: var(--ck-coral); }
 .ck-brand__text b { color: var(--ck-coral); }
 .ck-brand__text {
@@ -206,12 +213,12 @@ async function startOver() {
 .ck-view {
   /* No fill-mode: a frozen animation must leave the view visible, not stuck at
      the `from` keyframe. */
-  animation: ck-enter 0.2s ease;
+  animation: ck-enter .42s cubic-bezier(.2,.8,.2,1);
   display: block;
 }
 
 @keyframes ck-enter {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(16px) scale(.992); }
   to { opacity: 1; transform: none; }
 }
 

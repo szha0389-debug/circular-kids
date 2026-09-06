@@ -56,7 +56,8 @@ defineEmits(["update:modelValue"]);
   color: var(--ck-ink);
   font-weight: 700;
   text-align: center;
-  transition: background-color 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+  box-shadow: 0 3px 12px rgba(26,26,46,.035);
+  transition: background-color .2s ease, border-color .2s ease, transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease;
 }
 
 .ck-tiles--large .ck-tile { min-height: 132px; }
@@ -67,7 +68,7 @@ defineEmits(["update:modelValue"]);
   border-radius: var(--ck-radius-ctrl);
 }
 
-.ck-tile:hover { border-color: var(--ck-coral); transform: translateY(-1px); }
+.ck-tile:hover { border-color: var(--ck-coral); transform: translateY(-5px) rotate(-.4deg); box-shadow: 0 14px 28px rgba(26,26,46,.09); }
 .ck-tile:focus-visible { outline: 3px solid var(--ck-coral); outline-offset: 3px; }
 
 /* The prototype fills a chosen tile with ink and reverses the label. */
@@ -75,9 +76,12 @@ defineEmits(["update:modelValue"]);
   background: var(--ck-ink);
   border-color: var(--ck-ink);
   color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(26,26,46,.18);
 }
 
-.ck-tile__icon { font-size: 38px; line-height: 1; }
+.ck-tile__icon { font-size: 38px; line-height: 1; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.ck-tile:hover .ck-tile__icon { transform: scale(1.13) rotate(4deg); }
 .ck-tile__label { font-size: var(--ck-size-body); }
 .ck-tiles--compact .ck-tile__label { font-size: var(--ck-size-option); }
 

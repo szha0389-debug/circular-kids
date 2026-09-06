@@ -44,7 +44,10 @@ const steps = [
 
 <style scoped>
 .ck-steps {
-  background: var(--ck-surface);
+  position: relative;
+  z-index: 4;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--ck-border);
 }
 
@@ -76,6 +79,7 @@ const steps = [
   width: calc(100% - 40px);
   height: 2px;
   background: var(--ck-border);
+  transition: background-color .35s ease;
 }
 .ck-steps__rule.is-done { background: var(--ck-coral); }
 
@@ -90,17 +94,23 @@ const steps = [
   font-size: var(--ck-size-mini);
   font-weight: 800;
   line-height: 1;
+  transition: transform .3s cubic-bezier(.2,1.35,.4,1), background-color .3s ease, box-shadow .3s ease;
 }
 
 .ck-steps__item.is-done .ck-steps__dot {
   background: var(--ck-coral);
   color: #fff;
+  animation: ck-step-pop .38s cubic-bezier(.2,1.35,.4,1);
 }
 
 .ck-steps__item.is-current .ck-steps__dot {
   background: var(--ck-ink);
   color: #fff;
+  transform: scale(1.08);
+  box-shadow: 0 0 0 6px rgba(26,26,46,.08);
 }
+
+@keyframes ck-step-pop { from { transform: scale(.7); } to { transform: scale(1); } }
 
 .ck-steps__label {
   font-size: var(--ck-size-micro);

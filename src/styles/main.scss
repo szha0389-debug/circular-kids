@@ -58,7 +58,7 @@
   --ck-tap-min: #{$ck-tap-min};
 }
 
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 
 body {
   min-height: 100svh;
@@ -68,6 +68,10 @@ body {
   font-size: $ck-size-body;
   line-height: 1.55;
   overflow-x: hidden;   // the flow must never scroll sideways at 360 px
+  background-image:
+    radial-gradient(circle at 14% 8%, rgba(78, 205, 196, .09), transparent 24rem),
+    radial-gradient(circle at 88% 80%, rgba(177, 123, 234, .08), transparent 28rem);
+  background-attachment: fixed;
 }
 
 h1, h2, h3 {
@@ -96,9 +100,10 @@ h1, h2, h3 {
   margin-inline: auto;
   padding: clamp(22px, 4vw, 42px);
   background: $ck-surface;
-  border: 1px solid $ck-border;
-  border-radius: 26px;
-  box-shadow: $ck-shadow-card;
+  border: 1px solid rgba(232, 224, 212, .82);
+  border-radius: 30px;
+  box-shadow: 0 18px 55px rgba(26, 26, 46, .09), 0 2px 8px rgba(26, 26, 46, .03);
+  backdrop-filter: blur(10px);
 }
 
 .ck-main:has(.ck-welcome) {
@@ -118,7 +123,12 @@ h1, h2, h3 {
   box-shadow: $ck-shadow-card;
   border-top: $ck-card-accent solid var(--ck-accent, #{$ck-coral});
   padding: $ck-gap-md;
+  border-right: 1px solid rgba(232, 224, 212, .65);
+  border-bottom: 1px solid rgba(232, 224, 212, .65);
+  border-left: 1px solid rgba(232, 224, 212, .65);
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease;
 }
+.ck-card:hover { transform: translateY(-2px); box-shadow: $ck-shadow-lift; }
 
 // ── Eyebrow label above a heading or inside a card ─────────────────────────
 .ck-eyebrow {
@@ -141,7 +151,9 @@ h1, h2, h3 {
   --bs-btn-font-weight: #{$ck-weight-bold};
   min-height: $ck-tap-min;
   border-radius: $ck-radius-ctrl;
-  transition: transform 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
+  position: relative;
+  overflow: hidden;
+  transition: transform .22s cubic-bezier(.2,.8,.2,1), background-color .2s ease, box-shadow .22s ease;
 }
 
 .btn-primary {
@@ -156,7 +168,7 @@ h1, h2, h3 {
   --bs-btn-disabled-color: #fff;
 }
 
-.btn-primary:not(:disabled) { border: 2px solid $ck-ink; }
+.btn-primary:not(:disabled) { border: 2px solid $ck-ink; box-shadow: 3px 4px 0 $ck-ink; }
 
 .btn-quiet {
   background: $ck-surface;
@@ -166,8 +178,10 @@ h1, h2, h3 {
 }
 .btn-quiet:hover { border-color: $ck-coral; color: $ck-ink; }
 
-.btn:not(:disabled):hover { transform: translateY(-1px); }
-.btn:not(:disabled):active { transform: translateY(0); }
+.btn:not(:disabled):hover { transform: translateY(-3px); }
+.btn-primary:not(:disabled):hover { box-shadow: 5px 7px 0 $ck-ink; }
+.btn:not(:disabled):active { transform: translateY(1px) scale(.99); }
+.btn-primary:not(:disabled):active { box-shadow: 1px 2px 0 $ck-ink; }
 
 .btn:focus-visible,
 a:focus-visible,
@@ -197,6 +211,7 @@ button:focus-visible,
   background: var(--ck-accent-soft, #{$ck-yellow-soft});
   font-size: $ck-size-small;
   color: $ck-ink;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.55);
 }
 .ck-note p { margin: 0; }
 
