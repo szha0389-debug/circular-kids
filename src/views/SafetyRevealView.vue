@@ -51,5 +51,5 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 18px; }
 .ck-boundary-preview small, .ck-boundary-preview strong { display: block; }
 .ck-boundary-preview strong { font-family: var(--ck-font-display); font-size: 22px; }
 .ck-boundary-preview p { margin: 3px 0 0; font-size: var(--ck-size-small); }
-.ck-boundary-preview.is-do-not-touch { background: var(--ck-coral-soft); border: 1px solid rgba(231,124,98,.35); box-shadow: inset 4px 0 0 var(--ck-coral); }
+.ck-boundary-preview.is-do-not-touch { background: #f7eaea; border: 1px solid rgba(190,104,102,.28); box-shadow: inset 4px 0 0 #be6866; }
 </style>

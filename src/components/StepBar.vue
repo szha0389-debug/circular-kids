@@ -99,7 +99,7 @@ const steps = [
 
 .ck-steps__item.is-done .ck-steps__dot {
   background: var(--ck-coral);
-  color: #fff;
+  color: var(--ck-ink);
   animation: ck-step-pop .38s cubic-bezier(.2,1.35,.4,1);
 }
 

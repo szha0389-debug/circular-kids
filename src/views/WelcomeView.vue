@@ -124,8 +124,8 @@ const highlights = [
   font-weight: 700;
   line-height: 1.5;
 }
-.ck-welcome__visual { position: relative; display: grid; place-items: end start; min-height: 500px; margin-left: -8vw; padding: 0 0 46px 12vw; background: linear-gradient(145deg, var(--ck-teal-soft), var(--ck-yellow-soft)); clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%); isolation: isolate; }
-.ck-welcome__hero-image { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: 63% center; animation: hero-arrive .9s ease-out both; }
+.ck-welcome__visual { position: relative; display: grid; place-items: end start; min-height: 500px; margin: 28px 28px 28px -5vw; padding: 0 0 32px 9vw; background: linear-gradient(145deg, var(--ck-teal-soft), var(--ck-yellow-soft)); border-radius: 34px; overflow: hidden; isolation: isolate; }
+.ck-welcome__hero-image { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: 60% center; animation: hero-arrive .9s ease-out both; }
 .ck-welcome__visual::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(255,248,237,.84) 0%, rgba(255,248,237,.16) 55%, transparent 100%); }
 .ck-welcome__feature { width: min(290px, 60%); padding: 28px; background: rgba(255,255,255,.94); border-radius: 28px; box-shadow: var(--ck-shadow-lift); transform: rotate(-2deg); animation: card-float 4.5s ease-in-out infinite; }
 .ck-welcome__feature > span { display: grid; place-items: center; width: 70px; height: 70px; margin-bottom: 24px; border-radius: 50%; background: var(--ck-yellow); font-size: 34px; }
@@ -158,7 +158,7 @@ const highlights = [
   justify-content: center;
   padding-inline: 28px;
   border: 1px solid rgba(37,49,46,.08);
-  box-shadow: 0 12px 28px rgba(231,124,98,.24);
+  box-shadow: 0 12px 28px rgba(183,148,48,.2);
 }
 .ck-welcome__safety { max-width: 48ch; margin: 18px 0 0; font-size: var(--ck-size-mini); color: var(--ck-muted); }
 .ck-welcome__metrics { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 920px; margin: -42px auto 80px; position: relative; z-index: 2; background: var(--ck-surface); border-radius: 20px; box-shadow: var(--ck-shadow-lift); }
@@ -180,7 +180,7 @@ const highlights = [
   .ck-welcome__hero { min-height: 0; }
   .ck-welcome__copy { padding: 54px 24px 42px; }
   .ck-welcome__title { font-size: clamp(40px, 12vw, 58px); }
-  .ck-welcome__visual { min-height: 380px; margin-left: 0; padding: 0 20px 28px; clip-path: polygon(0 12%, 100% 0, 100% 100%, 0 100%); }
+  .ck-welcome__visual { min-height: 380px; margin: 0 16px 24px; padding: 0 20px 24px; border-radius: 26px; }
   .ck-welcome__hero-image { object-position: 65% center; }
   .ck-welcome__metrics { margin: -22px 16px 60px; }
   .ck-welcome__metrics div { padding: 18px 8px; }

@@ -27,7 +27,7 @@ li { position: relative; display: grid; justify-items: center; gap: 4px; color: 
 li:not(:last-child)::after { content: ""; position: absolute; left: 64%; right: -36%; top: 15px; height: 2px; background: var(--ck-border); }
 li.done:not(:last-child)::after { background: var(--ck-teal); }
 span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--ck-surface-warm); font-weight: 800; transition: transform .3s cubic-bezier(.2,1.35,.4,1), box-shadow .3s ease; }
-li.active span { background: var(--ck-coral); color: white; transform: scale(1.08); box-shadow: 0 0 0 6px rgba(255,107,71,.12); }
+li.active span { background: var(--ck-coral); color: var(--ck-ink); transform: scale(1.08); box-shadow: 0 0 0 6px rgba(183,148,48,.12); }
 li.done span { background: var(--ck-teal); color: white; animation: ck-safety-pop .38s cubic-bezier(.2,1.35,.4,1); }
 @keyframes ck-safety-pop { from { transform: scale(.7); } to { transform: scale(1); } }
 small { font-size: 10px; font-weight: 700; }

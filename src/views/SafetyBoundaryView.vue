@@ -65,8 +65,8 @@ async function goHome() {
 .ck-boundary h1 { margin: 4px 0; font-size: 32px; }
 .ck-boundary p { max-width: 38ch; margin: 0 auto; }
 .ck-boundary.is-ask-an-adult { background: var(--ck-yellow-soft); border-color: var(--ck-yellow); }
-.ck-boundary.is-do-not-touch { background: var(--ck-coral-soft); border-color: var(--ck-coral); }
-.ck-boundary.is-do-not-touch h1 { color: var(--ck-coral); }
+.ck-boundary.is-do-not-touch { background: #f7eaea; border-color: #be6866; }
+.ck-boundary.is-do-not-touch h1 { color: #9f5553; }
 .ck-why, .ck-pathways { text-align: left; margin-bottom: 16px; }
 .ck-why { --ck-accent: var(--ck-blue); }
 .ck-pathways { --ck-accent: var(--ck-purple); }

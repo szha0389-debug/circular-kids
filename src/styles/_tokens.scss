@@ -8,26 +8,26 @@
 // ============================================================================
 
 // ── Palette ─────────────────────────────────────────────────────────────────
-$ck-ground:        #F7F5F0;   // page background
-$ck-surface:       #FFFEFC;   // cards, header, option rows
-$ck-surface-warm:  #F1EEE8;   // neutral pills, wells
-$ck-border:        #E4E0D8;   // hairlines and option borders
+$ck-ground:        #F6F3EA;   // sun-warmed page background
+$ck-surface:       #FFFEFA;   // cards, header, option rows
+$ck-surface-warm:  #EFEEE7;   // neutral pills, wells
+$ck-border:        #DFE2DA;   // hairlines and option borders
 
-$ck-ink:           #25312E;   // headings and body text
-$ck-muted:         #747B77;   // captions, inactive step numbers
+$ck-ink:           #20363D;   // deep blue-green from the recycling bins
+$ck-muted:         #6F7977;   // captions, inactive step numbers
 
-$ck-coral:         #E77C62;   // primary action, active accents
-$ck-coral-soft:    #F8EAE5;
-$ck-yellow:        #E8C968;
-$ck-yellow-soft:   #FAF5E3;
-$ck-teal:          #70B9AF;
-$ck-teal-soft:     #E8F2F0;
+$ck-coral:         #D7B95D;   // soft butter-gold primary accent
+$ck-coral-soft:    #FAF4DE;
+$ck-yellow:        #D9AE45;
+$ck-yellow-soft:   #F8F1DD;
+$ck-teal:          #4F8F8B;
+$ck-teal-soft:     #E5F0ED;
 $ck-purple:        #9E8BC4;
 $ck-purple-soft:   #F0EDF6;
-$ck-blue:          #709BC1;
-$ck-blue-soft:     #EAF0F5;
-$ck-green:         #78AE88;
-$ck-green-soft:    #EAF2EC;
+$ck-blue:          #497B9A;
+$ck-blue-soft:     #E5EDF2;
+$ck-green:         #78915A;
+$ck-green-soft:    #EBF0E3;
 
 // ── Typography ──────────────────────────────────────────────────────────────
 // Fraunces carries every heading; Nunito carries everything else.

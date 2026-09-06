@@ -60,9 +60,9 @@ async function submit() {
 
 <style scoped>
 h1 { font-size: var(--ck-size-h1); margin-bottom: var(--ck-gap-md); }
-.ck-stop { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; padding: 16px; border-radius: var(--ck-radius-card); background: var(--ck-coral-soft); border: 1px solid rgba(231,124,98,.3); box-shadow: inset 4px 0 0 var(--ck-coral); }
+.ck-stop { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; padding: 16px; border-radius: var(--ck-radius-card); background: #f7eaea; border: 1px solid rgba(190,104,102,.25); box-shadow: inset 4px 0 0 #be6866; }
 .ck-stop > span { font-size: 34px; }
-.ck-stop strong { display: block; color: var(--ck-coral); font-family: var(--ck-font-display); font-size: 22px; }
+.ck-stop strong { display: block; color: #9f5553; font-family: var(--ck-font-display); font-size: 22px; }
 .ck-stop p { margin: 2px 0 0; }
 .ck-warning-scene { --ck-accent: var(--ck-yellow); display: flex; align-items: center; gap: 18px; margin-bottom: 24px; }
 .ck-warning-scene__icon { display: grid; place-items: center; width: 76px; height: 76px; flex: 0 0 auto; border-radius: 50%; background: var(--ck-yellow-soft); font-size: 38px; }
