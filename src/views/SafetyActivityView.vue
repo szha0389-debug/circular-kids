@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 import OptionList from "@/components/OptionList.vue";
+import QuestionMission from "@/components/QuestionMission.vue";
 
 const store = useInvestigation();
 const router = useRouter();
@@ -27,14 +28,13 @@ async function submit() {
 
 <template>
   <section v-if="store.safetyActivity" class="ck-safety">
-    <p class="ck-eyebrow">Spot the warning sign</p>
+    <QuestionMission eyebrow="Safety detective mission" title="What warning sign can you see?" :description="`Look closely at the ${store.item?.name || 'item'} before choosing what you would do.`" :icon="store.item?.icon || store.safetyActivity.warning.icon" />
 
     <article v-if="store.safetyActivity.immediateStop" class="ck-stop" role="alert">
       <span aria-hidden="true">✋</span>
       <div><strong>Do Not Touch</strong><p>Move away from the item and tell a trusted adult now.</p></div>
     </article>
 
-    <h1>What warning sign can you see?</h1>
     <article class="ck-card ck-warning-scene">
       <span class="ck-warning-scene__icon" aria-hidden="true">{{ store.safetyActivity.warning.icon }}</span>
       <div>
@@ -59,7 +59,6 @@ async function submit() {
 </template>
 
 <style scoped>
-h1 { font-size: var(--ck-size-h1); margin-bottom: var(--ck-gap-md); }
 .ck-stop { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; padding: 16px; border-radius: var(--ck-radius-card); background: #f7eaea; border: 1px solid rgba(190,104,102,.25); box-shadow: inset 4px 0 0 #be6866; }
 .ck-stop > span { font-size: 34px; }
 .ck-stop strong { display: block; color: #9f5553; font-family: var(--ck-font-display); font-size: 22px; }

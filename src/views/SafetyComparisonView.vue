@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 import OptionList from "@/components/OptionList.vue";
+import QuestionMission from "@/components/QuestionMission.vue";
 
 const store = useInvestigation();
 const router = useRouter();
@@ -24,8 +25,7 @@ async function submit() {
 
 <template>
   <section v-if="store.safetyComparison">
-    <p class="ck-eyebrow">Lower risk and higher risk</p>
-    <h1>Compare these two situations</h1>
+    <QuestionMission eyebrow="Safety comparison mission" title="Compare these two situations" description="Look at both examples, then choose the one that may be reasonable to observe from the outside." icon="⚖️" />
     <div class="ck-situations">
       <article v-for="situation in store.safetyComparison.situations" :key="situation.id" class="ck-card">
         <span aria-hidden="true">{{ situation.icon }}</span><h2>{{ situation.title }}</h2><p>{{ situation.detail }}</p>
@@ -42,7 +42,6 @@ async function submit() {
 </template>
 
 <style scoped>
-h1 { font-size: var(--ck-size-h1); margin-bottom: 18px; }
 .ck-situations { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
 .ck-situations article:first-child { --ck-accent: var(--ck-green); }
 .ck-situations article:last-child { --ck-accent: var(--ck-coral); }

@@ -15,6 +15,7 @@ import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 import OptionList from "@/components/OptionList.vue";
+import QuestionMission from "@/components/QuestionMission.vue";
 
 const store = useInvestigation();
 const router = useRouter();
@@ -40,11 +41,7 @@ async function record() {
 
 <template>
   <section>
-    <h1>What do you think?</h1>
-    <p class="ck-lead">
-      Based on what you’ve noticed, what’s your verdict? There’s no wrong answer —
-      choose the one that feels right to you.
-    </p>
+    <QuestionMission eyebrow="Your detective verdict" title="What do you think?" description="Based on what you noticed, choose the answer that feels right to you. There is no wrong answer." :icon="store.item?.icon || '🤔'" />
 
     <div class="ck-note ck-note--purple">
       <span aria-hidden="true">🔒</span>
@@ -73,9 +70,6 @@ async function record() {
 </template>
 
 <style scoped>
-h1 { font-size: var(--ck-size-h1); margin-bottom: 6px; }
-.ck-lead { margin-bottom: var(--ck-gap); }
-
 .ck-note--purple {
   --ck-accent: var(--ck-purple);
   --ck-accent-soft: var(--ck-purple-soft);

@@ -96,6 +96,12 @@ function choose(value) {
 }
 
 .ck-option__icon { flex: 0 0 auto; font-size: 20px; line-height: 1; }
+.ck-options li:nth-child(4n + 1) .ck-option { background: linear-gradient(90deg, #fff, var(--ck-teal-soft)); }
+.ck-options li:nth-child(4n + 2) .ck-option { background: linear-gradient(90deg, #fff, var(--ck-yellow-soft)); }
+.ck-options li:nth-child(4n + 3) .ck-option { background: linear-gradient(90deg, #fff, var(--ck-purple-soft)); }
+.ck-options li:nth-child(4n) .ck-option { background: linear-gradient(90deg, #fff, var(--ck-coral-soft)); }
+.ck-option__icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 14px; background: rgba(255,255,255,.88); box-shadow: 0 3px 10px rgba(61,74,80,.07); font-size: 22px; transition: transform .2s ease; }
+.ck-option:hover .ck-option__icon { transform: rotate(-7deg) scale(1.08); }
 
 .ck-option__body { flex: 1 1 auto; display: grid; gap: 2px; min-width: 0; }
 .ck-option__label { display: block; }

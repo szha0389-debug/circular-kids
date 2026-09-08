@@ -16,6 +16,7 @@ import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 import OptionList from "@/components/OptionList.vue";
+import QuestionMission from "@/components/QuestionMission.vue";
 
 const store = useInvestigation();
 const router = useRouter();
@@ -29,8 +30,8 @@ const isLast = computed(() => index.value === total.value - 1);
 
 // Skip is offered as a choice in the same list, exactly as the prototype does.
 const options = computed(() => [
-  ...(question.value?.options || []).map(o => ({ value: o.value, label: o.label })),
-  { value: "skipped", label: "Skip this one" }
+  ...(question.value?.options || []).map((o, i) => ({ value: o.value, label: o.label, icon: ["🔍", "💬", "✨", "🤔"][i % 4] })),
+  { value: "skipped", label: "Skip this one", icon: "⏭️" }
 ]);
 
 const current = computed({
@@ -66,7 +67,7 @@ function back() {
       <div class="ck-bar" role="presentation"><i :style="{ width: `${progress}%` }"></i></div>
     </div>
 
-    <h1>{{ question.text }}</h1>
+    <QuestionMission eyebrow="Clue detective mission" :title="question.text" description="Look carefully with your eyes only. You never need to touch or move the item." :icon="store.item?.icon || '🔎'" />
 
     <div class="ck-note">
       <span aria-hidden="true">💡</span>
@@ -135,8 +136,6 @@ function back() {
   background: var(--ck-coral);
   transition: width 0.2s ease;
 }
-
-h1 { font-size: var(--ck-size-h1); margin-bottom: var(--ck-gap); }
 
 .ck-note { margin-bottom: var(--ck-gap-md); }
 

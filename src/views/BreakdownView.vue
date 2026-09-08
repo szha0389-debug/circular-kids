@@ -33,7 +33,7 @@ const tones = ["blue", "purple", "coral", "teal", "green", "yellow"];
     <p class="ck-eyebrow">{{ MODE_LABEL[mode] }}</p>
     <h1>{{ MODE_TITLE[mode] }} {{ store.item?.name }}</h1>
     <p class="ck-lead">
-      Here are the main things to look at. Several of them may still be perfectly useful —
+      Here are the main things to look at. Several of them may still be perfectly useful
       even if one has a problem.
     </p>
 
