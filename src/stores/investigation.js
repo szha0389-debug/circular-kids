@@ -101,9 +101,6 @@ export const useInvestigation = defineStore("investigation", {
             this.problemOptions = view.problems;
             this.questions = view.questions;
           }
-          if (record.verdict) {
-            this.reveal = await api.reveal(record.id);
-          }
           const status = await api.safetyStatus(record.id);
           this.safetyStage = status.stage;
           this.safetyResponse = status.safetyResponse;
@@ -253,17 +250,6 @@ export const useInvestigation = defineStore("investigation", {
         this.verdict = value;
         await api.patch(this.id, { verdict: value, stage: "reveal" });
         this.reveal = await api.reveal(this.id);
-      } finally {
-        this.busy = false;
-      }
-    },
-
-    async restoreReveal() {
-      if (!this.id || !this.verdict) return null;
-      this.busy = true;
-      try {
-        this.reveal = await api.reveal(this.id);
-        return this.reveal;
       } finally {
         this.busy = false;
       }

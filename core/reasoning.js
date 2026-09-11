@@ -15,41 +15,12 @@ export function verdictLabel(value) {
 }
 
 const BAND_TEXT = [
-  "The parts you checked still look usable.",
-  "Some parts look usable, but other parts need checking.",
-  "The parts you checked do not look usable right now."
+  "Most of what you looked at still seems sound.",
+  "Some of what you looked at seems sound, and some of it does not.",
+  "Most of what you looked at seems to have gone."
 ];
 
-const TENTATIVE_TEXT = "There are not enough answers to choose a result yet.";
-
-function outcomeFor(band, { dangerFlag = false, lowInformation = false } = {}) {
-  if (dangerFlag) {
-    return {
-      title: "Stop using it and ask an adult",
-      detail: "A warning sign was noticed. Put the item aside and take it to the Safety Check."
-    };
-  }
-  if (lowInformation || band == null) {
-    return {
-      title: "Ask an adult to check it",
-      detail: "There are not enough answers yet. Keep the item aside and continue to the Safety Check."
-    };
-  }
-  return [
-    {
-      title: "Keep it for now",
-      detail: "The checked parts still look usable. Continue to the Safety Check before using it again."
-    },
-    {
-      title: "Set it aside for a closer check",
-      detail: "Some parts may still be usable. Continue to the Safety Check to decide what happens next."
-    },
-    {
-      title: "Stop using it for now",
-      detail: "The checked parts do not look usable. Put the item aside and continue to the Safety Check."
-    }
-  ][band];
-}
+const TENTATIVE_TEXT = "There was not much to go on, so this stays a guess.";
 
 /** Band a mean weight into 0, 1 or 2. */
 function bandOf(mean) {
@@ -101,7 +72,6 @@ export function reason({ itemId = null, problems = [], answers = [] } = {}) {
     return {
       conclusion: TENTATIVE_TEXT,
       band: null,
-      outcome: outcomeFor(null, { dangerFlag, lowInformation: true }),
       lowInformation: true,
       dangerFlag,
       uncertainty,
@@ -114,9 +84,8 @@ export function reason({ itemId = null, problems = [], answers = [] } = {}) {
   const thin = answered.length === 1;
 
   return {
-    conclusion: thin ? `${BAND_TEXT[band]} Only one question was answered.` : BAND_TEXT[band],
+    conclusion: thin ? `${BAND_TEXT[band]} Only one clue was answered, so this stays a guess.` : BAND_TEXT[band],
     band,
-    outcome: outcomeFor(band, { dangerFlag, lowInformation: thin }),
     lowInformation: thin,
     dangerFlag,
     uncertainty,

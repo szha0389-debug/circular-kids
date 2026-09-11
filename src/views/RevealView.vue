@@ -7,22 +7,12 @@
 // argue, rank or resolve. No wording marks a verdict right, wrong, correct or
 // incorrect: several of these judgements have more than one defensible answer.
 
-import { computed, onMounted, ref } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 
 const store = useInvestigation();
 const router = useRouter();
-const loadError = ref("");
-
-onMounted(async () => {
-  if (store.reveal) return;
-  try {
-    await store.restoreReveal();
-  } catch {
-    loadError.value = "Your result could not load. Go back and choose your verdict again.";
-  }
-});
 
 const LABELS = {
   "still-useful": "Still Useful",
@@ -40,10 +30,24 @@ const ICONS = {
 const reveal = computed(() => store.reveal);
 const comparison = computed(() => reveal.value?.comparison);
 const tentative = computed(() => reveal.value?.reasoning?.lowInformation);
-const systemOutcome = computed(() => reveal.value?.reasoning?.outcome || {
-  title: "Continue to the Safety Check",
-  detail: reveal.value?.reasoning?.conclusion || "Check the item before deciding what to do next."
-});
+
+const problemLabels = computed(() =>
+  store.problems
+    .map(id => store.problemOptions.find(p => p.id === id)?.label || "Not sure")
+    .join(", ")
+);
+
+/** Answers as the child gave them, with no colour that implies a meaning. */
+const answerRows = computed(() =>
+  store.questions.map((q, i) => {
+    const value = store.answers[i];
+    const option = q.options.find(o => o.value === value);
+    return {
+      question: q.text,
+      answer: value === "skipped" || value == null ? "Skipped" : option?.label || value
+    };
+  })
+);
 
 async function carryOn() {
   await store.handOver();
@@ -59,9 +63,10 @@ async function startAgain() {
 
 <template>
   <section v-if="reveal">
-    <h1>Your result and the next step</h1>
+    <h1>Your verdict vs the evidence</h1>
     <p class="ck-lead">
-      First, see what you chose. Then follow the system suggestion below.
+      Here is how your verdict compares with what the clues suggest — and what they mean
+      together.
     </p>
 
     <div class="ck-compare">
@@ -72,24 +77,40 @@ async function startAgain() {
       </article>
 
       <article class="ck-card ck-compare__card ck-compare__card--clues">
-        <p class="ck-eyebrow">System suggestion</p>
-        <span class="ck-compare__icon" aria-hidden="true">💡</span>
-        <p class="ck-compare__value">{{ systemOutcome.title }}</p>
-        <p class="ck-compare__detail">{{ systemOutcome.detail }}</p>
+        <p class="ck-eyebrow">Evidence suggests</p>
+        <span class="ck-compare__icon" aria-hidden="true">🔍</span>
+        <p class="ck-compare__value ck-compare__value--text">{{ reveal.reasoning.conclusion }}</p>
       </article>
     </div>
 
-    <article class="ck-simple-compare" :class="comparison?.differs ? 'is-different' : 'is-aligned'">
-      <span class="ck-simple-compare__icon" aria-hidden="true">{{ comparison?.differs ? "↔️" : "✓" }}</span>
-      <div>
-        <p class="ck-eyebrow">Simple comparison</p>
-        <h2>{{ comparison?.differs ? "You chose something different" : "Your choice is similar" }}</h2>
-        <p>
-          {{ comparison?.differs
-            ? "That is okay. Keep your answer, then use the Safety Check before deciding what to do."
-            : "Your answer and the system result point to the same next step." }}
-        </p>
+    <article class="ck-card ck-block ck-block--teal">
+      <p class="ck-eyebrow">What we investigated</p>
+      <p class="ck-block__row"><span aria-hidden="true">📦</span> <strong>Item:</strong> {{ store.item?.name }}</p>
+      <p class="ck-block__row"><span aria-hidden="true">🔎</span> <strong>Suspected problem:</strong> {{ problemLabels }}</p>
+    </article>
+
+    <article class="ck-card ck-block ck-block--blue">
+      <p class="ck-eyebrow">Clue answers</p>
+      <div v-for="(row, i) in answerRows" :key="i" class="ck-answer">
+        <p class="ck-answer__q">{{ row.question }}</p>
+        <span class="ck-answer__pill">{{ row.answer }}</span>
       </div>
+    </article>
+
+    <article class="ck-card ck-block" :class="comparison?.differs ? 'ck-block--yellow' : 'ck-block--green'">
+      <p class="ck-eyebrow">
+        {{ comparison?.differs ? "Your verdict and the evidence differ" : "Your verdict and the evidence line up" }}
+      </p>
+      <template v-if="comparison?.differs && comparison.clue">
+        <p class="ck-block__lead">The clue pulling the other way is:</p>
+        <p class="ck-block__quote">{{ comparison.clue.question }}</p>
+        <p class="ck-block__answer">You said: <strong>{{ comparison.clue.answer }}</strong></p>
+      </template>
+      <p class="ck-block__foot">
+        Both readings can be reasonable — there is not always one answer when you are
+        investigating an item by looking at it. Your verdict stands exactly as you
+        recorded it.
+      </p>
     </article>
 
     <div v-if="tentative" class="ck-note">
@@ -98,7 +119,7 @@ async function startAgain() {
     </div>
 
     <p class="ck-boundary">
-      Next: check whether the item is safe before anyone touches or uses it.
+      No repair, reuse or disposal advice is given here. That comes next, in the safety check.
     </p>
 
     <button type="button" class="btn btn-primary w-100" :disabled="store.busy" @click="carryOn">
@@ -107,15 +128,6 @@ async function startAgain() {
 
     <button type="button" class="btn btn-link ck-again" @click="startAgain">
       Start a new investigation instead
-    </button>
-  </section>
-
-  <section v-else class="ck-result-state">
-    <span aria-hidden="true">{{ loadError ? "↩️" : "🔎" }}</span>
-    <h1>{{ loadError ? "We could not open your result" : "Loading your result…" }}</h1>
-    <p>{{ loadError || "Your answers are being checked." }}</p>
-    <button v-if="loadError" type="button" class="btn btn-primary" @click="router.push({ name: 'verdict' })">
-      Back to My Verdict
     </button>
   </section>
 </template>
@@ -127,7 +139,7 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 6px; }
 .ck-compare {
   display: grid;
   gap: var(--ck-gap-sm);
-  margin-bottom: 22px;
+  margin-bottom: var(--ck-gap-sm);
 }
 @media (min-width: 480px) {
   /* Equal width, equal weight: neither card is the answer. */
@@ -152,15 +164,63 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 6px; }
   font-weight: 700;
   font-size: var(--ck-size-small);
 }
-.ck-compare__detail { max-width: 34ch; margin: 8px auto 0; color: var(--ck-muted); font-size: var(--ck-size-mini); line-height: 1.5; }
 
-.ck-simple-compare { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; margin-bottom: 22px; padding: 22px; border: 1px solid var(--ck-border); border-radius: 22px; background: #fff; }
-.ck-simple-compare.is-aligned { border-top: 5px solid var(--ck-green); }
-.ck-simple-compare.is-different { border-top: 5px solid var(--ck-yellow); }
-.ck-simple-compare__icon { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 17px; background: var(--ck-yellow-soft); font-size: 25px; font-weight: 900; }
-.ck-simple-compare h2 { margin: 0 0 5px; font-size: var(--ck-size-h2); }
-.ck-simple-compare p { margin: 0; color: var(--ck-muted); font-size: var(--ck-size-small); }
-.ck-simple-compare .ck-eyebrow { margin-bottom: 4px; }
+.ck-block { margin-bottom: var(--ck-gap-sm); }
+.ck-block--teal { --ck-accent: var(--ck-teal); }
+.ck-block--blue { --ck-accent: var(--ck-blue); }
+.ck-block--yellow { --ck-accent: var(--ck-yellow); }
+.ck-block--green { --ck-accent: var(--ck-green); }
+
+.ck-block__row {
+  margin: 0 0 6px;
+  font-size: var(--ck-size-small);
+  color: var(--ck-ink);
+}
+.ck-block__row:last-child { margin-bottom: 0; }
+
+.ck-block__lead {
+  margin: 0 0 4px;
+  font-size: var(--ck-size-small);
+  color: var(--ck-muted);
+}
+.ck-block__quote {
+  margin: 0;
+  font-size: var(--ck-size-small);
+  color: var(--ck-ink);
+  font-weight: 700;
+}
+.ck-block__answer {
+  margin: 2px 0 10px;
+  font-size: var(--ck-size-small);
+  color: var(--ck-ink);
+}
+.ck-block__foot {
+  margin: 0;
+  font-size: var(--ck-size-mini);
+  color: var(--ck-muted);
+  line-height: 1.6;
+}
+
+.ck-answer {
+  padding-block: 10px;
+  border-bottom: 1px solid var(--ck-border);
+}
+.ck-answer:last-child { border-bottom: 0; padding-bottom: 0; }
+.ck-answer__q {
+  margin: 0 0 6px;
+  font-size: var(--ck-size-small);
+  color: var(--ck-muted);
+}
+.ck-answer__pill {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: var(--ck-radius-pill);
+  /* One neutral pill for every answer: the summary must not grade them either. */
+  background: var(--ck-surface-warm);
+  color: var(--ck-ink);
+  font-size: var(--ck-size-mini);
+  font-weight: 700;
+}
 
 .ck-boundary {
   margin: var(--ck-gap-md) 0;
@@ -177,6 +237,4 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 6px; }
   font-weight: 700;
   text-underline-offset: 3px;
 }
-.ck-result-state { min-height: 310px; display: grid !important; place-content: center; justify-items: center; gap: 10px; text-align: center; }
-.ck-result-state > span { font-size: 42px; }.ck-result-state h1, .ck-result-state p { margin: 0; }.ck-result-state p { color: var(--ck-muted); }
 </style>

@@ -5,9 +5,8 @@ import { useInvestigation } from "@/stores/investigation";
 // prototype splits US-1.2 into "look at the parts" and "say what's wrong".
 const routes = [
   { path: "/", name: "welcome", component: () => import("@/views/WelcomeView.vue") },
-  { path: "/shopping-list", name: "shopping-list", component: () => import("@/views/ShoppingListView.vue") },
   { path: "/identify", name: "identify", component: () => import("@/views/IdentifyView.vue"), meta: { step: 1 } },
-  { path: "/breakdown", redirect: { name: "problem" } },
+  { path: "/breakdown", name: "breakdown", component: () => import("@/views/BreakdownView.vue"), meta: { step: 2, needs: "item" } },
   { path: "/problem", name: "problem", component: () => import("@/views/ProblemView.vue"), meta: { step: 2, needs: "item" } },
   { path: "/clues", name: "clues", component: () => import("@/views/CluesView.vue"), meta: { step: 3, needs: "problems" } },
   { path: "/verdict", name: "verdict", component: () => import("@/views/VerdictView.vue"), meta: { step: 4, needs: "problems" } },

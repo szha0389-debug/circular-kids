@@ -317,14 +317,13 @@ test("US-1.5 no wording marks a verdict right, wrong, correct or incorrect", () 
   }
 });
 
-test("US-1.5 a low-information case says so and recommends an adult check", () => {
+test("US-1.5 a low-information case says so and stays tentative", () => {
   const record = createRecord("thin");
   applyUpdate(record, { itemId: "mug", problems: ["not-sure"] });
   applyUpdate(record, { answers: ["skipped", "skipped", "skipped"], verdict: "still-useful" });
   const result = reveal(record);
   assert.equal(result.reasoning.lowInformation, true);
-  assert.match(result.reasoning.conclusion, /not enough answers/i);
-  assert.match(result.reasoning.outcome.title, /ask an adult/i);
+  assert.match(result.reasoning.conclusion, /guess/i);
 });
 
 test("US-1.5 the handover carries everything Epic 2 needs, and no photo", () => {
