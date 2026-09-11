@@ -14,7 +14,8 @@ const router = useRouter();
 
 const inFlow = computed(() => Boolean(route.meta?.step || route.meta?.safetyStep));
 const hasStorybookBackdrop = computed(() =>
-  ["problem", "clues", "verdict", "reveal"].includes(String(route.name))
+  Boolean(route.meta?.step || route.meta?.safetyStep) ||
+  ["futures-explore", "futures-compare", "futures-result"].includes(String(route.name))
 );
 
 onMounted(async () => {
@@ -77,7 +78,6 @@ async function goToHomeSection(sectionId) {
     <nav v-if="!inFlow" class="ck-site-nav" aria-label="Main navigation">
       <button type="button" @click="goToHomeSection('how-it-works')">How it works</button>
       <button type="button" @click="goToHomeSection('safety-first')">Safety first</button>
-      <RouterLink :to="{ name: 'shopping-list' }">Shopping list</RouterLink>
       <RouterLink :to="{ name: 'identify' }" class="ck-site-nav__action">Investigate →</RouterLink>
     </nav>
 

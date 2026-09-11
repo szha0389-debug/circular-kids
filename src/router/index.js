@@ -1,11 +1,11 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
+import { useFutures } from "@/stores/futures";
 
 // `step` drives the five-step indicator. Two screens share step 2 because the
 // prototype splits US-1.2 into "look at the parts" and "say what's wrong".
 const routes = [
   { path: "/", name: "welcome", component: () => import("@/views/WelcomeView.vue") },
-  { path: "/shopping-list", name: "shopping-list", component: () => import("@/views/ShoppingListView.vue") },
   { path: "/identify", name: "identify", component: () => import("@/views/IdentifyView.vue"), meta: { step: 1 } },
   { path: "/breakdown", redirect: { name: "problem" } },
   { path: "/problem", name: "problem", component: () => import("@/views/ProblemView.vue"), meta: { step: 2, needs: "item" } },
@@ -17,6 +17,9 @@ const routes = [
   { path: "/safety/reveal", name: "safety-reveal", component: () => import("@/views/SafetyRevealView.vue"), meta: { safetyStep: 2, needs: "safetyAnswered" } },
   { path: "/safety/compare", name: "safety-comparison", component: () => import("@/views/SafetyComparisonView.vue"), meta: { safetyStep: 3, needs: "safetyAnswered" } },
   { path: "/safety/boundary", name: "safety-boundary", component: () => import("@/views/SafetyBoundaryView.vue"), meta: { safetyStep: 4, needs: "comparisonAnswered" } },
+  { path: "/futures", name: "futures-explore", component: () => import("@/views/FuturesExploreView.vue"), meta: { needs: "safetyBoundary" } },
+  { path: "/futures/compare", name: "futures-compare", component: () => import("@/views/FuturesCompareView.vue"), meta: { needs: "futuresReady" } },
+  { path: "/futures/result", name: "futures-result", component: () => import("@/views/FuturesResultView.vue"), meta: { needs: "futureSelected" } },
   { path: "/:pathMatch(.*)*", redirect: "/" }
 ];
 
@@ -26,7 +29,9 @@ const router = createRouter({
   // requests when the child refreshes or opens a copied link.
   history: createWebHashHistory(),
   routes,
-  scrollBehavior: () => ({ top: 0, behavior: "smooth" })
+  scrollBehavior: to => to.hash
+    ? { el: to.hash, top: 72, behavior: "smooth" }
+    : { top: 0, behavior: "smooth" }
 });
 
 // The Definition of Done forbids any reachable screen that offers no way
@@ -39,7 +44,10 @@ const GATES = {
   handover: store => Boolean(store.handover),
   safetyReady: store => store.safetyReady,
   safetyAnswered: store => store.safetyAnswered,
-  comparisonAnswered: store => store.comparisonAnswered
+  comparisonAnswered: store => store.comparisonAnswered,
+  safetyBoundary: store => store.safetyBoundarySet,
+  futuresReady: () => useFutures().options.length > 0,
+  futureSelected: () => Boolean(useFutures().selected)
 };
 
 const FALLBACK = {
@@ -49,7 +57,10 @@ const FALLBACK = {
   handover: "reveal",
   safetyReady: "identify",
   safetyAnswered: "safety-activity",
-  comparisonAnswered: "safety-comparison"
+  comparisonAnswered: "safety-comparison",
+  safetyBoundary: "safety-boundary",
+  futuresReady: "futures-explore",
+  futureSelected: "futures-compare"
 };
 
 router.beforeEach(async to => {

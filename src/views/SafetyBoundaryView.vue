@@ -14,11 +14,7 @@ onMounted(async () => {
   }
 });
 
-async function goHome() {
-  await store.closeCase();
-  await store.start();
-  router.push({ name: "welcome" });
-}
+function exploreFutures() { router.push({ name: "welcome", hash: "#how-it-works" }); }
 </script>
 
 <template>
@@ -51,8 +47,8 @@ async function goHome() {
       <button type="button" class="btn btn-quiet" @click="router.push({ name: 'safety-comparison' })">
         ← Back
       </button>
-      <button type="button" class="btn btn-primary btn--wide" @click="goHome">
-        Return to Home →
+      <button type="button" class="btn btn-primary btn--wide" @click="exploreFutures">
+        Back to My Epic Cards →
       </button>
     </div>
   </section>
