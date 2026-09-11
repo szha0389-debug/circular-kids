@@ -13,6 +13,9 @@ const route = useRoute();
 const router = useRouter();
 
 const inFlow = computed(() => Boolean(route.meta?.step || route.meta?.safetyStep));
+const hasStorybookBackdrop = computed(() =>
+  ["problem", "clues", "verdict", "reveal"].includes(String(route.name))
+);
 
 onMounted(async () => {
   try {
@@ -65,13 +68,16 @@ async function goToHomeSection(sectionId) {
          Epic 2 and Epic 3 are different activities under the same product, so
          this stays put while the welcome screen's heading changes with them. -->
     <RouterLink to="/" class="ck-brand" aria-label="Circular Kids home">
-      <span class="ck-brand__mark" aria-hidden="true">↻</span>
+      <span class="ck-brand__mark" aria-hidden="true">
+        <img src="/assets/circular-kids-logo.png" alt="" />
+      </span>
       <span class="ck-brand__text">Circular <b>Kids</b></span>
     </RouterLink>
 
     <nav v-if="!inFlow" class="ck-site-nav" aria-label="Main navigation">
       <button type="button" @click="goToHomeSection('how-it-works')">How it works</button>
       <button type="button" @click="goToHomeSection('safety-first')">Safety first</button>
+      <RouterLink :to="{ name: 'shopping-list' }">Shopping list</RouterLink>
       <RouterLink :to="{ name: 'identify' }" class="ck-site-nav__action">Investigate →</RouterLink>
     </nav>
 
@@ -85,7 +91,7 @@ async function goToHomeSection(sectionId) {
   <StepBar v-if="route.meta.step" :current="route.meta.step" />
   <SafetyStepBar v-if="route.meta.safetyStep" :current="route.meta.safetyStep" />
 
-  <main id="main" class="ck-main">
+  <main id="main" class="ck-main" :class="{ 'ck-main--storybook': hasStorybookBackdrop }">
     <div class="ck-column">
       <p
         v-if="store.notice"
@@ -166,13 +172,13 @@ async function goToHomeSection(sectionId) {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--ck-coral-soft);
-  color: var(--ck-coral);
-  font-size: 13px;
+  overflow: hidden;
+  background: #fff8e8;
   line-height: 1;
   transition: transform .45s cubic-bezier(.2,.8,.2,1), background-color .2s ease;
 }
-.ck-brand:hover .ck-brand__mark { transform: rotate(-32deg) scale(1.08); background: var(--ck-yellow-soft); }
+.ck-brand__mark img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ck-brand:hover .ck-brand__mark { transform: rotate(-8deg) scale(1.08); background: var(--ck-yellow-soft); }
 .ck-site-nav {
   grid-column: 2;
   display: flex;
@@ -241,6 +247,22 @@ async function goToHomeSection(sectionId) {
   padding-block: var(--ck-gap-lg) var(--ck-gap-xl);
 }
 
+.ck-main--storybook {
+  min-height: calc(100svh - 132px);
+  padding-block: clamp(54px, 8vw, 104px);
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,250,224,.02)),
+    url("/assets/investigation-landscape.png");
+  background-size: cover;
+  background-position: center bottom;
+  background-attachment: fixed;
+}
+
+.ck-main--storybook .ck-view {
+  background: rgba(255,255,255,.96) !important;
+  box-shadow: 0 24px 70px rgba(54, 72, 45, .18), 0 0 0 10px rgba(255,255,255,.22) !important;
+}
+
 .ck-notice {
   margin-bottom: var(--ck-gap-md);
   padding: 12px 16px;
@@ -272,5 +294,12 @@ async function goToHomeSection(sectionId) {
 
 @media (max-width: 760px) {
   .ck-site-nav { display: none; }
+  .ck-main--storybook {
+    padding-block: 36px 54px;
+    background-attachment: scroll;
+    background-image:
+      linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,250,224,.04)),
+      url("/assets/investigation-landscape.png");
+  }
 }
 </style>

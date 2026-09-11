@@ -10,6 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { handle } from "./core/handler.js";
 import { createStore } from "./core/store.js";
+import { findFoodProduct } from "./core/open-food-facts.js";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(root, "dist");
@@ -128,6 +129,21 @@ const server = http.createServer(async (req, res) => {
 
     if (url.pathname === "/api/image-recognition" || url.pathname === "/api/ai/health") {
       return proxyAi(req, res, url);
+    }
+
+    if (url.pathname === "/api/food-search") {
+      if (req.method !== "GET") return sendJson(res, 405, { message: "That action is not available." });
+      try {
+        const product = await findFoodProduct({
+          barcode: url.searchParams.get("barcode") || "",
+          name: url.searchParams.get("name") || ""
+        });
+        return product
+          ? sendJson(res, 200, product)
+          : sendJson(res, 404, { message: "Food product not found." });
+      } catch {
+        return sendJson(res, 502, { message: "Open Food Facts is temporarily unavailable." });
+      }
     }
 
     if (url.pathname.startsWith("/api/")) {
