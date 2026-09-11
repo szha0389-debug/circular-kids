@@ -94,6 +94,16 @@ const highlights = [
       </div>
     </div>
 
+    <section class="ck-welcome__shopping" aria-labelledby="shopping-title">
+      <div class="ck-welcome__shopping-icon" aria-hidden="true">🛒</div>
+      <div>
+        <p class="ck-eyebrow">Buy only what you need</p>
+        <h2 id="shopping-title">Check home before you shop.</h2>
+        <p>Create a shopping list and get a reminder when the same or a similar food is still in your inventory.</p>
+      </div>
+      <RouterLink :to="{ name: 'shopping-list' }" class="btn btn-primary">Open Shopping List →</RouterLink>
+    </section>
+
     <section class="ck-welcome__data" aria-labelledby="waste-data-title">
       <div class="ck-welcome__data-heading">
         <p class="ck-eyebrow">The bigger picture</p>
@@ -212,6 +222,11 @@ const highlights = [
 .ck-welcome__section-copy h2, .ck-welcome__safety-band h2 { font-size: clamp(30px, 3vw, 44px); }
 .ck-welcome__section-copy > p:last-child { color: var(--ck-muted); max-width: 36ch; }
 .ck-welcome__data { padding: 84px clamp(24px, 6vw, 96px); background: linear-gradient(135deg, var(--ck-yellow-soft), #fff, var(--ck-teal-soft)); }
+.ck-welcome__shopping { display: grid; grid-template-columns: auto 1fr auto; gap: 24px; align-items: center; padding: 54px clamp(24px, 8vw, 130px); background: linear-gradient(110deg, var(--ck-purple-soft), #fff, var(--ck-yellow-soft)); border-bottom: 1px solid var(--ck-border); }
+.ck-welcome__shopping-icon { display: grid; place-items: center; width: 76px; height: 76px; border-radius: 24px; background: #fff; box-shadow: var(--ck-shadow-card); font-size: 36px; }
+.ck-welcome__shopping h2, .ck-welcome__shopping p { margin: 0; }
+.ck-welcome__shopping h2 { margin-bottom: 7px; font-size: clamp(28px, 3vw, 40px); }
+.ck-welcome__shopping > div > p:last-child { max-width: 58ch; color: var(--ck-muted); }
 .ck-welcome__data-heading { max-width: 720px; margin: 0 auto 34px; text-align: center; }
 .ck-welcome__data-heading h2 { margin-bottom: 12px; font-size: clamp(30px, 3vw, 44px); }
 .ck-welcome__data-heading > p:last-child { margin: 0; color: var(--ck-muted); }
@@ -251,6 +266,8 @@ const highlights = [
   .ck-welcome__section { min-height: 0; margin-top: 42px; padding: 58px 20px; }
   .ck-welcome__data { padding: 58px 20px; }
   .ck-welcome__charts { grid-template-columns: 1fr; }
+  .ck-welcome__shopping { grid-template-columns: auto 1fr; padding: 42px 24px; }
+  .ck-welcome__shopping .btn { grid-column: 1 / -1; }
   .ck-welcome__safety-band { grid-template-columns: auto 1fr; min-height: 0; margin: 0; padding: 52px 24px; }
   .ck-welcome__safety-band > p { grid-column: 1 / -1; }
 }

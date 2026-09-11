@@ -72,7 +72,7 @@ function goToList(message = "") {
 
 async function confirmSuggestion() {
   await store.chooseItem(store.suggestion.itemId);
-  router.push({ name: "breakdown" });
+  router.push({ name: "problem" });
 }
 
 function rejectSuggestion() {
@@ -93,7 +93,7 @@ function openCategoryList(categoryId) {
 async function confirmItem() {
   if (!pickedItem.value) return;
   await store.chooseItem(pickedItem.value);
-  router.push({ name: "breakdown" });
+  router.push({ name: "problem" });
 }
 </script>
 

@@ -36,6 +36,11 @@ async function request(path, { method = "GET", body, timeout = TIMEOUT_MS } = {}
 export const api = {
   catalogue: () => request("/api/catalogue"),
 
+  findFood: ({ barcode = "", name = "" }) => {
+    const params = new URLSearchParams({ barcode, name });
+    return request(`/api/food-search?${params}`);
+  },
+
   open: () => request("/api/investigations", { method: "POST" }),
 
   get: id => request(`/api/investigations/${id}`),

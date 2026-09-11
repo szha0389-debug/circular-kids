@@ -169,6 +169,7 @@ export function reveal(record) {
     verdict: record.verdict,
     reasoning: {
       conclusion: reasoning.conclusion,
+      outcome: reasoning.outcome,
       lowInformation: reasoning.lowInformation,
       uncertainty: reasoning.uncertainty
     },
