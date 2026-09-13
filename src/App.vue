@@ -13,16 +13,23 @@ const route = useRoute();
 const router = useRouter();
 
 const inFlow = computed(() => Boolean(route.meta?.step || route.meta?.safetyStep));
+const inQuiz = computed(() => ["mystery-hub", "mystery"].includes(String(route.name)));
 const hasStorybookBackdrop = computed(() =>
   Boolean(route.meta?.step || route.meta?.safetyStep) ||
-  ["futures-explore", "futures-compare", "futures-result"].includes(String(route.name))
+  ["futures-explore", "futures-compare", "futures-result"].includes(String(route.name)) ||
+  inQuiz.value
 );
 
 onMounted(async () => {
   try {
     await store.start();
   } catch {
-    store.say("We could not open a new case. Check the site is running, then refresh.", "warn");
+    // The quiz works without a case, so it should not greet the child with an
+    // error about one.
+    await router.isReady();
+    if (!route.meta?.standalone) {
+      store.say("We could not open a new case. Check the site is running, then refresh.", "warn");
+    }
   }
   window.addEventListener("beforeunload", store.releasePhoto);
 });
@@ -78,6 +85,14 @@ async function goToHomeSection(sectionId) {
     <nav v-if="!inFlow" class="ck-site-nav" aria-label="Main navigation">
       <button type="button" @click="goToHomeSection('how-it-works')">How it works</button>
       <button type="button" @click="goToHomeSection('safety-first')">Safety first</button>
+      <RouterLink
+        :to="{ name: 'mystery-hub' }"
+        class="ck-site-nav__quiz"
+        :class="{ 'is-current': inQuiz }"
+        :aria-current="inQuiz ? 'page' : undefined"
+      >
+        <span aria-hidden="true">🕵️</span> Mystery quiz
+      </RouterLink>
       <RouterLink :to="{ name: 'identify' }" class="ck-site-nav__action">Investigate →</RouterLink>
     </nav>
 
@@ -214,6 +229,8 @@ async function goToHomeSection(sectionId) {
   box-shadow: 0 7px 18px rgba(86,176,199,.18);
 }
 .ck-site-nav .ck-site-nav__action::after { display: none; }
+.ck-site-nav .ck-site-nav__quiz.is-current { color: var(--ck-coral); }
+.ck-site-nav .ck-site-nav__quiz.is-current::after { right: 0; }
 .ck-site-nav .ck-site-nav__action:hover { color: var(--ck-ink); transform: translateY(-1px); }
 .ck-brand__text b { color: var(--ck-coral); }
 .ck-brand__text {
@@ -293,7 +310,21 @@ async function goToHomeSection(sectionId) {
 }
 
 @media (max-width: 760px) {
-  .ck-site-nav { display: none; }
+  /* The quiz has no other way in, so it is the one link kept on small screens.
+     Investigate is still reachable from the welcome screen's main button. */
+  .ck-site-nav { grid-column: 3; justify-self: end; }
+  .ck-site-nav > :not(.ck-site-nav__quiz) { display: none; }
+  .ck-site-nav .ck-site-nav__quiz {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 12px;
+    border-radius: 14px;
+    background: var(--ck-yellow-soft);
+    font-size: var(--ck-size-mini);
+  }
+  .ck-site-nav .ck-site-nav__quiz::after { display: none; }
   .ck-main--storybook {
     padding-block: 36px 54px;
     background-attachment: scroll;
@@ -301,5 +332,9 @@ async function goToHomeSection(sectionId) {
       linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,250,224,.04)),
       url("/assets/investigation-landscape.png");
   }
+}
+
+@media (max-width: 480px) {
+  .ck-site-nav { grid-column: 2; }
 }
 </style>

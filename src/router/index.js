@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 import { useFutures } from "@/stores/futures";
+import { findMystery } from "../../core/mysteries.js";
 
 // `step` drives the five-step indicator. Two screens share step 2 because the
 // prototype splits US-1.2 into "look at the parts" and "say what's wrong".
@@ -20,6 +21,15 @@ const routes = [
   { path: "/futures", name: "futures-explore", component: () => import("@/views/FuturesExploreView.vue"), meta: { needs: "safetyBoundary" } },
   { path: "/futures/compare", name: "futures-compare", component: () => import("@/views/FuturesCompareView.vue"), meta: { needs: "futuresReady" } },
   { path: "/futures/result", name: "futures-result", component: () => import("@/views/FuturesResultView.vue"), meta: { needs: "futureSelected" } },
+  // Epic 4 stands on its own: it needs no open case, so it never waits on the API.
+  { path: "/quiz", name: "mystery-hub", component: () => import("@/views/MysteryHubView.vue"), meta: { standalone: true } },
+  {
+    path: "/quiz/:id",
+    name: "mystery",
+    component: () => import("@/views/MysteryChallengeView.vue"),
+    meta: { standalone: true },
+    beforeEnter: to => (findMystery(to.params.id) ? true : { name: "mystery-hub" })
+  },
   { path: "/:pathMatch(.*)*", redirect: "/" }
 ];
 
@@ -64,6 +74,7 @@ const FALLBACK = {
 };
 
 router.beforeEach(async to => {
+  if (to.meta?.standalone) return true;
   const store = useInvestigation();
   if (!store.ready) {
     try { await store.start(); } catch { return { name: "welcome" }; }
