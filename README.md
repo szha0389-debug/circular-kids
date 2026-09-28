@@ -1,10 +1,23 @@
-# Circular Kids — Epic 1
+# Circular Kids
 
 **Investigate Before I Throw It Away.** A child opens a case on an item that seems
-broken, sees what is still good about it, pins down what actually failed, answers a
-few clues, and reaches their own verdict — before the site offers one.
+broken, checks its condition and safety boundary, compares circular futures, and
+can follow what may happen next without the site making the decision for them.
 
 Vue 3 + Vite + Bootstrap 5 on the front, one shared rules module on the back.
+
+## Iteration 3
+
+- **Epic 5 — Follow My Item's Journey:** a short, safety-aware simulation follows
+  the selected future and lets the child replay another option already allowed by
+  the Epic 2 boundary. Outcomes are described as possible, never as live tracking.
+- **Epic 6 — My Rescue Shelf:** optional on-device item stories can be saved,
+  updated, grouped, deleted or cleared without an account. Only the item, noticed
+  problem, safety boundary, chosen future and later outcome are retained; session
+  photos and free-text personal details are never stored.
+
+Run `npm test` for the shared Epic 1–6 rules and `npm run build` for a production
+client build.
 
 ## Image recognition
 

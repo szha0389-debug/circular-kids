@@ -14,9 +14,10 @@ const router = useRouter();
 
 const inFlow = computed(() => Boolean(route.meta?.step || route.meta?.safetyStep));
 const inQuiz = computed(() => ["mystery-hub", "mystery"].includes(String(route.name)));
+const inShelf = computed(() => route.name === "rescue-shelf");
 const hasStorybookBackdrop = computed(() =>
   Boolean(route.meta?.step || route.meta?.safetyStep) ||
-  ["futures-explore", "futures-compare", "futures-result"].includes(String(route.name)) ||
+  ["futures-explore", "futures-compare", "futures-result", "item-journey", "rescue-shelf"].includes(String(route.name)) ||
   inQuiz.value
 );
 
@@ -92,6 +93,14 @@ async function goToHomeSection(sectionId) {
         :aria-current="inQuiz ? 'page' : undefined"
       >
         <span aria-hidden="true">🕵️</span> Mystery quiz
+      </RouterLink>
+      <RouterLink
+        :to="{ name: 'rescue-shelf' }"
+        class="ck-site-nav__shelf"
+        :class="{ 'is-current': inShelf }"
+        :aria-current="inShelf ? 'page' : undefined"
+      >
+        <span aria-hidden="true">🪴</span> My Rescue Shelf
       </RouterLink>
       <RouterLink :to="{ name: 'identify' }" class="ck-site-nav__action">Investigate →</RouterLink>
     </nav>
@@ -229,8 +238,8 @@ async function goToHomeSection(sectionId) {
   box-shadow: 0 7px 18px rgba(86,176,199,.18);
 }
 .ck-site-nav .ck-site-nav__action::after { display: none; }
-.ck-site-nav .ck-site-nav__quiz.is-current { color: var(--ck-coral); }
-.ck-site-nav .ck-site-nav__quiz.is-current::after { right: 0; }
+.ck-site-nav .is-current { color: var(--ck-coral); }
+.ck-site-nav .is-current::after { right: 0; }
 .ck-site-nav .ck-site-nav__action:hover { color: var(--ck-ink); transform: translateY(-1px); }
 .ck-brand__text b { color: var(--ck-coral); }
 .ck-brand__text {
@@ -310,11 +319,12 @@ async function goToHomeSection(sectionId) {
 }
 
 @media (max-width: 760px) {
-  /* The quiz has no other way in, so it is the one link kept on small screens.
-     Investigate is still reachable from the welcome screen's main button. */
+  /* Keep both standalone activities reachable on small screens. Investigate is
+     still reachable from the welcome screen's main button. */
   .ck-site-nav { grid-column: 3; justify-self: end; }
-  .ck-site-nav > :not(.ck-site-nav__quiz) { display: none; }
-  .ck-site-nav .ck-site-nav__quiz {
+  .ck-site-nav > :not(.ck-site-nav__quiz):not(.ck-site-nav__shelf) { display: none; }
+  .ck-site-nav .ck-site-nav__quiz,
+  .ck-site-nav .ck-site-nav__shelf {
     min-height: 40px;
     display: inline-flex;
     align-items: center;
@@ -324,7 +334,9 @@ async function goToHomeSection(sectionId) {
     background: var(--ck-yellow-soft);
     font-size: var(--ck-size-mini);
   }
-  .ck-site-nav .ck-site-nav__quiz::after { display: none; }
+  .ck-site-nav .ck-site-nav__shelf { background: var(--ck-green-soft); }
+  .ck-site-nav .ck-site-nav__quiz::after,
+  .ck-site-nav .ck-site-nav__shelf::after { display: none; }
   .ck-main--storybook {
     padding-block: 36px 54px;
     background-attachment: scroll;
@@ -336,5 +348,6 @@ async function goToHomeSection(sectionId) {
 
 @media (max-width: 480px) {
   .ck-site-nav { grid-column: 2; }
+  .ck-site-nav .ck-site-nav__quiz { display: none; }
 }
 </style>

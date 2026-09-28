@@ -3,10 +3,12 @@ import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 import { useFutures } from "@/stores/futures";
+import { useRescueShelf } from "@/stores/rescueShelf";
 
 const router = useRouter();
 const investigation = useInvestigation();
 const futures = useFutures();
+const shelf = useRescueShelf();
 
 const AI_WARMUP_SESSION_KEY = "circular-kids-ai-warmup-triggered";
 let aiWarmupTriggered = false;
@@ -34,7 +36,10 @@ const epic3Done = computed(() => Boolean(futures.selected));
 const epics = computed(() => [
   { icon: "🔎", tag: "EPIC 1 · AI IDENTIFY", title: "Investigate My Item", text: "Identify your item, look for clues and record your own verdict.", done: epic1Done.value, enabled: true, route: epic1Done.value ? "handover" : "identify", action: epic1Done.value ? "View result" : "Start challenge" },
   { icon: "🛡️", tag: "EPIC 2 · SAFETY", title: "Check What Is Safe", text: "Find the safety boundary before deciding what should happen next.", done: epic2Done.value, enabled: epic1Done.value, route: epic2Done.value ? "safety-boundary" : "safety-activity", action: epic2Done.value ? "View result" : "Start safety" },
-  { icon: "🌱", tag: "EPIC 3 · RECOMMENDATION", title: "Explore Possible Futures", text: "Compare suitable futures, choose one and receive a clear next step.", done: epic3Done.value, enabled: epic2Done.value, route: epic3Done.value ? "futures-result" : "futures-explore", action: epic3Done.value ? "View my choice" : "Explore futures" }
+  { icon: "🌱", tag: "EPIC 3 · RECOMMENDATION", title: "Explore Possible Futures", text: "Compare suitable futures, choose one and receive a clear next step.", done: epic3Done.value, enabled: epic2Done.value, route: epic3Done.value ? "futures-result" : "futures-explore", action: epic3Done.value ? "View my choice" : "Explore futures" },
+  { icon: "🕵️", tag: "EPIC 4 · MYSTERY QUIZ", title: "Spot a Circular Mystery", text: "Practise careful looking with short, no-score picture challenges.", done: false, enabled: true, route: "mystery-hub", action: "Choose a mystery" },
+  { icon: "🗺️", tag: "EPIC 5 · ITEM JOURNEY", title: "Follow My Item's Journey", text: "See the possible stages after your choice, then replay another safe future.", done: futures.journeySeen, enabled: epic3Done.value, route: "item-journey", action: futures.journeySeen ? "Replay my journey" : "Follow the journey" },
+  { icon: "🪴", tag: "EPIC 6 · RESCUE HISTORY", title: "My Rescue Shelf", text: "Save item stories and return later to record what actually happened.", done: shelf.count > 0, enabled: true, route: "rescue-shelf", action: shelf.count > 0 ? "Open my shelf" : "See my shelf" }
 ]);
 function openEpic(epic) { if (epic.enabled) router.push({ name: epic.route }); }
 
@@ -89,7 +94,7 @@ const highlights = [
     <div id="how-it-works" class="ck-welcome__section">
       <div class="ck-welcome__epic-heading">
         <p class="ck-eyebrow">Choose your next activity</p>
-        <h2>One item. Three adventures.</h2>
+        <h2>One item. Six adventures.</h2>
         <p>Finish one activity, return here, then choose when you are ready for the next.</p>
       </div>
       <div class="ck-welcome__epics">

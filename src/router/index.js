@@ -21,6 +21,9 @@ const routes = [
   { path: "/futures", name: "futures-explore", component: () => import("@/views/FuturesExploreView.vue"), meta: { needs: "safetyBoundary" } },
   { path: "/futures/compare", name: "futures-compare", component: () => import("@/views/FuturesCompareView.vue"), meta: { needs: "futuresReady" } },
   { path: "/futures/result", name: "futures-result", component: () => import("@/views/FuturesResultView.vue"), meta: { needs: "futureSelected" } },
+  { path: "/journey", name: "item-journey", component: () => import("@/views/ItemJourneyView.vue"), meta: { needs: "futureSelected" } },
+  // Epic 6 is on-device and can be opened without an active investigation.
+  { path: "/rescue-shelf", name: "rescue-shelf", component: () => import("@/views/RescueShelfView.vue"), meta: { standalone: true } },
   // Epic 4 stands on its own: it needs no open case, so it never waits on the API.
   { path: "/quiz", name: "mystery-hub", component: () => import("@/views/MysteryHubView.vue"), meta: { standalone: true } },
   {
