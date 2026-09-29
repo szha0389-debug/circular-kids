@@ -20,6 +20,7 @@ const progress = useMysteries();
 
 const mystery = computed(() => findMystery(route.params.id));
 const position = computed(() => MYSTERIES.findIndex(item => item.id === mystery.value?.id) + 1);
+const total = MYSTERIES.length;
 
 const misses = ref(0);
 const solved = ref(false);
@@ -120,6 +121,14 @@ function onChooseArea(area) {
       {{ nudge ? "Look inside the glowing ring 🔍" : "No need to be exact — tapping close by counts." }}
     </p>
 
+    <!-- AC4.3.2: the last mystery ends, rather than offering a seventh "Next"
+         that would send the child round the same six for ever. -->
+    <p v-else-if="!next" class="ck-mystery__finished">
+      <span aria-hidden="true">🌟</span>
+      That was the last mystery — you have found the problem in all {{ total }}. Any of them can
+      be played again from the list.
+    </p>
+
     <div class="ck-actions">
       <button type="button" class="btn btn-quiet" @click="router.push({ name: 'mystery-hub' })">
         ← All mysteries
@@ -196,6 +205,20 @@ function onChooseArea(area) {
   font-size: var(--ck-size-mini);
   font-weight: 700;
 }
+
+.ck-mystery__finished {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 14px 0 0;
+  padding: 14px 18px;
+  border-radius: var(--ck-radius-ctrl);
+  background: var(--ck-purple-soft);
+  color: var(--ck-ink);
+  font-size: var(--ck-size-small);
+  font-weight: 700;
+}
+.ck-mystery__finished span { font-size: 22px; }
 
 @media (max-width: 520px) {
   .ck-mystery__success { flex-direction: column; gap: 6px; }

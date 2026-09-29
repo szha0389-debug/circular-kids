@@ -1,4 +1,6 @@
 <script setup>
+// Accepted so every scene shares one interface; the picture keeps the
+// problem visible, so this scene has no solved state.
 defineProps({ solved: { type: Boolean, default: false } });
 </script>
 
@@ -38,16 +40,18 @@ defineProps({ solved: { type: Boolean, default: false } });
     <rect x="258" y="208" width="10" height="42" fill="#B08D63" />
     <rect x="362" y="208" width="10" height="42" fill="#B08D63" />
 
-    <!-- desk lamp -->
-    <g v-if="!solved">
+    <!-- The desk lamp, which stays lit after the answer is found: the amber
+         mark says "Still switched on", so switching it off in the picture would
+         contradict the label the child is reading. -->
+    <g>
       <circle class="ck-lamp-glow" cx="296" cy="124" r="52" fill="#FFDC52" opacity=".3" />
       <path d="M282 132 L312 132 L348 196 L252 196 Z" fill="#FFF0A6" opacity=".6" />
     </g>
     <ellipse cx="324" cy="194" rx="22" ry="5" fill="#8A969C" />
     <line x1="324" y1="192" x2="304" y2="150" stroke="#8A969C" stroke-width="6" stroke-linecap="round" />
     <line x1="304" y1="150" x2="318" y2="112" stroke="#8A969C" stroke-width="6" stroke-linecap="round" />
-    <path d="M320 100 L330 118 L292 138 L272 118 Z" :fill="solved ? '#D6DCDF' : '#FFDC52'" />
-    <circle cx="288" cy="134" r="7" :fill="solved ? '#EEF1F2' : '#FFFBE0'" />
+    <path d="M320 100 L330 118 L292 138 L272 118 Z" fill="#FFDC52" />
+    <circle cx="288" cy="134" r="7" fill="#FFFBE0" />
   </g>
 </template>
 

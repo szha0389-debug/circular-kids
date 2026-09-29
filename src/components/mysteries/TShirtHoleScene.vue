@@ -1,4 +1,6 @@
 <script setup>
+// Accepted so every scene shares one interface; the picture keeps the
+// problem visible, so this scene has no solved state.
 defineProps({ solved: { type: Boolean, default: false } });
 </script>
 
@@ -16,20 +18,16 @@ defineProps({ solved: { type: Boolean, default: false } });
     <path d="M236 52 Q262 76 288 52" fill="none" stroke="#E6BE2E" stroke-width="6" stroke-linecap="round" />
     <path d="M286 150 l7 15 l16 2 l-12 11 l3 16 l-14 -8 l-14 8 l3 -16 l-12 -11 l16 -2 Z" fill="#FF929C" />
 
-    <!-- The one small hole on the sleeve — the wall shows through its frayed
-         edge — mended with a patch once it has been found. -->
+    <!-- The one small hole on the sleeve; the wall shows through its frayed
+         edge. It stays open after the answer is found, because the amber mark
+         points at it and the green mark points at the mending thread. -->
     <path
-      v-if="!solved"
       d="M166 111 l5 -5 l5 3 l6 -4 l3 6 l-1 5 l4 4 l-6 4 l-5 -2 l-6 3 l-3 -6 l-4 -2 Z"
       fill="#EAFBF8"
       stroke="#C99A1E"
       stroke-width="2"
       stroke-linejoin="round"
     />
-    <g v-else>
-      <circle cx="176" cy="116" r="11" fill="#63D7C8" />
-      <circle cx="176" cy="116" r="8" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="3 3" />
-    </g>
 
     <!-- heading to the bin -->
     <path d="M334 204 Q376 236 400 238" fill="none" stroke="#899194" stroke-width="3" stroke-dasharray="7 6" stroke-linecap="round" opacity=".6" />

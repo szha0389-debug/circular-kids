@@ -34,7 +34,20 @@ const target = computed(() => {
   const [x, y, width, height] = props.mystery.target;
   return { x, y, width, height, cx: x + width / 2, cy: y + height / 2 };
 });
+const better = computed(() => {
+  const rect = props.mystery.better?.rect;
+  if (!rect) return null;
+  const [x, y, width, height] = rect;
+  return { x, y, width, height, cx: x + width / 2, cy: y + height / 2 };
+});
 const CONFETTI = ["yellow", "coral", "teal", "purple", "green", "blue", "yellow", "coral"];
+
+// Captions sit under their box, or above it when the box already reaches the
+// bottom of the scene.
+function caption(box) {
+  const below = box.y + box.height + 28;
+  return { x: box.cx, y: below > SCENE_HEIGHT - 6 ? box.y - 18 : below };
+}
 
 // Convert the pointer position into scene units through the SVG's own matrix,
 // so the check stays correct at any rendered size or aspect ratio.
@@ -90,10 +103,25 @@ function areaStyle([x, y, width, height]) {
         <circle :cx="marker.x" :cy="marker.y" r="8" />
       </g>
 
-      <g v-if="solved" class="ck-scene__found">
+      <!-- Two different marks, deliberately. The problem is ringed in amber and
+           never with a tick: a tick drawn over the bottle going into the wrong
+           bin reads as approval of the very thing the child was asked to
+           question. The tick belongs on the better choice, where the scene has
+           one to point at. -->
+      <g v-if="solved" class="ck-scene__problem">
         <rect :x="target.x - 6" :y="target.y - 6" :width="target.width + 12" :height="target.height + 12" rx="18" />
         <circle :cx="target.x + target.width + 2" :cy="target.y - 2" r="15" />
-        <path :d="`M${target.x + target.width - 5} ${target.y - 2} l5 5 l9 -10`" />
+        <text :x="target.x + target.width + 2" :y="target.y + 4">!</text>
+        <text v-if="mystery.problemLabel" class="ck-scene__tag" :x="caption(target).x" :y="caption(target).y">
+          {{ mystery.problemLabel }}
+        </text>
+      </g>
+
+      <g v-if="solved && better" class="ck-scene__better">
+        <rect :x="better.x - 6" :y="better.y - 6" :width="better.width + 12" :height="better.height + 12" rx="18" />
+        <circle :cx="better.x + better.width + 2" :cy="better.y - 2" r="15" />
+        <path :d="`M${better.x + better.width - 5} ${better.y - 2} l5 5 l9 -10`" />
+        <text class="ck-scene__tag" :x="caption(better).x" :y="caption(better).y">{{ mystery.better.label }}</text>
       </g>
     </svg>
 
@@ -158,10 +186,31 @@ function areaStyle([x, y, width, height]) {
   pointer-events: none;
 }
 
-.ck-scene__found rect { fill: rgba(145, 214, 111, .14); stroke: var(--ck-green); stroke-width: 4; stroke-dasharray: 13 7; }
-.ck-scene__found circle { fill: var(--ck-green); }
-.ck-scene__found path { fill: none; stroke: #fff; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
-.ck-scene__found { animation: ck-scene-pop .45s cubic-bezier(.2,.8,.2,1); transform-box: fill-box; transform-origin: center; }
+.ck-scene__problem rect { fill: rgba(255, 179, 71, .16); stroke: #E89B2F; stroke-width: 4; stroke-dasharray: 13 7; }
+.ck-scene__problem circle { fill: #E89B2F; }
+.ck-scene__problem > text:first-of-type { fill: #fff; font-size: 20px; font-weight: 900; text-anchor: middle; }
+
+.ck-scene__better rect { fill: rgba(145, 214, 111, .16); stroke: var(--ck-green); stroke-width: 4; stroke-dasharray: 13 7; }
+.ck-scene__better circle { fill: var(--ck-green); }
+.ck-scene__better path { fill: none; stroke: #fff; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* A white halo behind the caption keeps it readable over any part of a scene,
+   without having to measure the text to draw a plate behind it. */
+.ck-scene__tag {
+  text-anchor: middle;
+  font-family: var(--ck-font-body);
+  font-size: 15px;
+  font-weight: 800;
+  fill: var(--ck-ink);
+  stroke: rgba(255, 255, 255, .92);
+  stroke-width: 6;
+  paint-order: stroke;
+  stroke-linejoin: round;
+}
+
+.ck-scene__problem,
+.ck-scene__better { animation: ck-scene-pop .45s cubic-bezier(.2,.8,.2,1); transform-box: fill-box; transform-origin: center; }
+.ck-scene__better { animation-delay: .18s; animation-fill-mode: backwards; }
 
 .ck-scene__areas { position: absolute; inset: 0; pointer-events: none; }
 .ck-scene__area {

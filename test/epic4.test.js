@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync, readdirSync } from "node:fs";
 import {
   MYSTERIES,
   SCENE_HEIGHT,
@@ -125,11 +126,23 @@ test("AC4.3.2 the next suggestion is unsolved and from another category", () => 
   assert.notEqual(next.category, findMystery("bottle-bin").category);
 });
 
-test("AC4.3.2 when everything is solved, a different mystery is still offered", () => {
+test("AC4.3.2 the suggestion never repeats a mystery the child has solved", () => {
+  const done = ["bottle-bin", "running-tap"];
+  for (const id of done) {
+    const next = nextMystery(id, done);
+    assert.ok(next, id);
+    assert.ok(!done.includes(next.id), `${id} was offered a solved mystery`);
+  }
+});
+
+test("AC4.3.2 once everything is solved there is no next mystery, only the hub", () => {
+  // A suggestion here would leave a "Next" button on the final screen for
+  // ever — a loop with no ending — so the child returns to the hub instead.
   const everything = MYSTERIES.map(mystery => mystery.id);
-  const next = nextMystery("lights-on", everything);
-  assert.ok(next);
-  assert.notEqual(next.id, "lights-on");
+  assert.equal(nextMystery("lights-on", everything), null);
+  // ...but while one is still unsolved, it is the one offered.
+  const allButLitter = MYSTERIES.filter(mystery => mystery.id !== "park-litter").map(mystery => mystery.id);
+  assert.equal(nextMystery("lights-on", allButLitter).id, "park-litter");
 });
 
 test("insideRect respects its tolerance on every edge", () => {
@@ -137,4 +150,41 @@ test("insideRect respects its tolerance on every edge", () => {
   assert.equal(insideRect(rect, { x: 90, y: 125 }, 10), true);
   assert.equal(insideRect(rect, { x: 160, y: 125 }, 10), true);
   assert.equal(insideRect(rect, { x: 125, y: 161 }, 10), false);
+});
+
+test("AC4.1.3 the problem carries a short label, never a tick of approval", () => {
+  for (const mystery of MYSTERIES) {
+    assert.ok(mystery.problemLabel, `${mystery.id} has no problem label`);
+    assert.ok(mystery.problemLabel.length <= 24, `${mystery.id} problem label is too long for the scene`);
+  }
+});
+
+test("AC4.1.3 a scene with a better choice points at something already in the picture", () => {
+  for (const mystery of MYSTERIES.filter(item => item.better)) {
+    const { rect, label } = mystery.better;
+    const [x, y, width, height] = rect;
+    assert.ok(x >= 0 && y >= 0 && x + width <= SCENE_WIDTH && y + height <= SCENE_HEIGHT, mystery.id);
+    assert.ok(label && label.length <= 24, `${mystery.id} better label is too long`);
+    // It must be a named area, so the child could have tapped it themselves...
+    const area = mystery.areas.find(item => String(item.rect) === String(rect));
+    assert.ok(area, `${mystery.id}: the better choice is not a part of the picture`);
+    // ...and it must never be the problem, or the two marks would collide.
+    assert.ok(!area.correct, `${mystery.id}: the better choice cannot also be the problem`);
+    assert.equal(isHit(mystery, { x: x + width / 2, y: y + height / 2 }), false, mystery.id);
+  }
+});
+
+test("AC4.1.3 a solved scene keeps the problem visible, so the marks cannot contradict it", () => {
+  // The amber mark and its label describe the problem in the present tense
+  // ("Still running"). A scene that turned the tap off or mended the hole on a
+  // correct answer would contradict the label the child is reading, so no
+  // scene may draw itself differently once it is solved.
+  const dir = new URL("../src/components/mysteries/", import.meta.url);
+  const files = readdirSync(dir);
+  assert.equal(files.length, MYSTERIES.length, "one scene component per mystery");
+  for (const file of files) {
+    const source = readFileSync(new URL(file, dir), "utf8");
+    const code = source.replace(/<!--[\s\S]*?-->/g, "").replace(/^\s*\/\/.*$/gm, "");
+    assert.ok(!/["':]solved|solved \?|!solved/.test(code), `${file} still branches on solved`);
+  }
 });

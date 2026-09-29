@@ -21,16 +21,18 @@ export const MYSTERIES = Object.freeze([
     category: "Recycling",
     icon: "♻️",
     title: "The bottle and the two bins",
-    prompt: "Something is about to go into the wrong bin. Can you find it?",
+    prompt: "Two bins, and something is being thrown away. Tap whatever is going wrong here.",
     hints: [
       "Read the labels on the two bins.",
       "Follow the thing that is falling. Does it match the label on its bin?"
     ],
     success: {
       title: "You found it!",
-      text: "The plastic bottle is dropping into the general waste bin, but the recycling bin is right next to it. In the recycling bin, its plastic can be collected and made into something new instead of being buried."
+      text: "The bottle is dropping into the general waste bin. Everything in that bin gets buried, so the plastic is lost. The recycling bin standing right beside it would keep the plastic in use."
     },
     lesson: "Check the label before you throw something away.",
+    problemLabel: "Wrong bin",
+    better: { rect: [146, 150, 108, 124], label: "Bottle belongs here" },
     target: [280, 56, 124, 222],
     areas: [
       { id: "window", label: "The window", rect: [30, 34, 110, 90] },
@@ -44,16 +46,17 @@ export const MYSTERIES = Object.freeze([
     category: "Saving water",
     icon: "💧",
     title: "Brushing time",
-    prompt: "Someone is brushing their teeth. What is being wasted?",
+    prompt: "It is time to brush teeth. Tap whatever is going wrong here.",
     hints: [
       "Look for something that is being used even though nobody needs it right now.",
       "Look closely at the sink."
     ],
     success: {
       title: "Great spotting!",
-      text: "The tap has been left running during brushing. Turning it off until it is time to rinse keeps lots of clean water from going straight down the drain."
+      text: "The tap keeps running the whole time the brushing goes on, but that water is not needed until it is time to rinse. Until then it runs straight down the drain."
     },
     lesson: "Turn the tap off while you brush.",
+    problemLabel: "Still running",
     target: [232, 128, 104, 80],
     areas: [
       { id: "mirror", label: "The mirror", rect: [180, 20, 160, 84] },
@@ -67,16 +70,17 @@ export const MYSTERIES = Object.freeze([
     category: "Saving energy",
     icon: "💡",
     title: "The empty bedroom",
-    prompt: "Everyone has gone outside to play. What is still using energy?",
+    prompt: "Everyone has gone outside to play. Tap whatever is going wrong here.",
     hints: [
       "Nobody is in the room. Is anything still switched on?",
       "Look for something that is glowing."
     ],
     success: {
       title: "Well done, detective!",
-      text: "The desk lamp is still on in an empty room, and the sun is already lighting it up. Switching off lights nobody is using saves electricity."
+      text: "The desk lamp is still on in an empty room, and daylight is already coming through the window. Switching off a light nobody is using saves electricity straight away."
     },
     lesson: "Last one out? Lights off.",
+    problemLabel: "Still switched on",
     target: [244, 80, 112, 122],
     areas: [
       { id: "window", label: "The sunny window", rect: [384, 38, 116, 112] },
@@ -90,16 +94,18 @@ export const MYSTERIES = Object.freeze([
     category: "Caring for nature",
     icon: "🌳",
     title: "A day at the park",
-    prompt: "This park is lovely, but one thing does not belong here. Can you spot it?",
+    prompt: "A lovely afternoon in the park. Tap whatever is going wrong here.",
     hints: [
       "Look for something that should have gone somewhere else.",
       "Look down at the grass near the bench."
     ],
     success: {
       title: "You found it!",
-      text: "A juice box and a wrapper have been left on the grass. Wind and rain can carry litter into creeks, where animals may mistake it for food. The bin is only a few steps away."
+      text: "A juice box and a wrapper have been left on the grass, where wind and rain can carry them into creeks and animals may mistake them for food. The bin is only a few steps away."
     },
     lesson: "If there is no bin nearby, take your rubbish home.",
+    problemLabel: "Dropped on the grass",
+    better: { rect: [384, 158, 72, 88], label: "Rubbish belongs here" },
     target: [204, 236, 116, 66],
     areas: [
       { id: "tree", label: "The tree", rect: [36, 36, 116, 196] },
@@ -114,17 +120,19 @@ export const MYSTERIES = Object.freeze([
     category: "Electronics",
     icon: "🔋",
     title: "The flat batteries",
-    prompt: "The remote needed new batteries. Where are the old ones going?",
+    prompt: "The remote has just been given new batteries. Tap whatever is going wrong here.",
     hints: [
       "Look for something small that is falling.",
       "There is a special box for batteries. Are the old ones going there?"
     ],
     success: {
       title: "Great detective work!",
-      text: "The old batteries are dropping into the kitchen bin. Batteries hold materials that can be recovered and used again, so they belong at a battery drop-off point, not in household rubbish."
+      text: "The old batteries are dropping into the kitchen bin, where the materials inside them are lost. A battery drop-off box, like the one on the bench, collects them so those materials can be used again."
     },
     safetyNote: "Old batteries can get hot or leak. Ask a trusted adult to put them in the battery drop-off box.",
     lesson: "Batteries never go in the household bin.",
+    problemLabel: "Wrong bin",
+    better: { rect: [188, 134, 104, 80], label: "Batteries belong here" },
     target: [318, 72, 136, 172],
     areas: [
       { id: "clock", label: "The clock on the wall", rect: [36, 26, 70, 70] },
@@ -138,16 +146,18 @@ export const MYSTERIES = Object.freeze([
     category: "Clothing",
     icon: "👕",
     title: "The T-shirt headed for the bin",
-    prompt: "This T-shirt is about to be thrown away. Find what is actually wrong with it.",
+    prompt: "This T-shirt is on its way to the bin. Tap the only thing that is actually wrong with it.",
     hints: [
       "Most of the T-shirt looks fine. Look for one small spot.",
       "Check the sleeves closely."
     ],
     success: {
       title: "Nice detective work!",
-      text: "There is just one small hole on the sleeve, and the rest of the T-shirt is in good shape. A few stitches with an adult's help could keep it in use for a long time."
+      text: "One small hole on the sleeve is the only thing wrong — the rest of the T-shirt is in good shape. A few stitches with an adult's help would keep it wearable for a long time."
     },
     lesson: "A small problem does not always mean the end.",
+    problemLabel: "One small hole",
+    better: { rect: [32, 240, 70, 60], label: "Mend it instead" },
     target: [134, 88, 84, 72],
     areas: [
       { id: "collar", label: "The collar", rect: [244, 40, 64, 26] },
@@ -212,19 +222,19 @@ export function shouldNudge(misses) {
 }
 
 /**
- * AC4.3.2 — suggest another mystery. Prefer one not yet solved from a different
- * category; otherwise anything not yet solved; otherwise any other mystery.
- * Never the one the child has just finished.
+ * AC4.3.2 — suggest another mystery: one not yet solved, preferring a different
+ * category, and never the one just finished.
+ *
+ * Returns null once every mystery is solved. Offering an already-solved
+ * mystery here would put a "Next" button on the last screen of the last
+ * mystery for ever, which is a loop with no way out rather than an ending.
+ * The child is sent back to the hub instead, where any mystery can be replayed
+ * deliberately.
  */
 export function nextMystery(currentId, doneIds = []) {
   const current = findMystery(currentId);
-  const others = MYSTERIES.filter(mystery => mystery.id !== currentId);
-  const fresh = others.filter(mystery => !doneIds.includes(mystery.id));
-  return (
-    fresh.find(mystery => mystery.category !== current?.category) ||
-    fresh[0] ||
-    others.find(mystery => mystery.category !== current?.category) ||
-    others[0] ||
-    null
+  const fresh = MYSTERIES.filter(
+    mystery => mystery.id !== currentId && !doneIds.includes(mystery.id)
   );
+  return fresh.find(mystery => mystery.category !== current?.category) || fresh[0] || null;
 }

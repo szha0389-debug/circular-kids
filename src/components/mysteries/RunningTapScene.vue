@@ -1,4 +1,6 @@
 <script setup>
+// Accepted so every scene shares one interface; the picture keeps the
+// problem visible, so this scene has no solved state.
 defineProps({ solved: { type: Boolean, default: false } });
 </script>
 
@@ -37,16 +39,14 @@ defineProps({ solved: { type: Boolean, default: false } });
     <rect x="296" y="152" width="16" height="16" rx="5" fill="#B8C4CA" />
     <circle cx="253" cy="138" r="9" fill="#FF929C" />
 
-    <!-- running water -->
-    <g v-if="!solved">
+    <!-- Running water, which stays running after the answer is found: the
+         amber mark says "Still running", so turning the tap off in the picture
+         would contradict the label the child is reading. -->
+    <g>
       <path class="ck-tap-stream" d="M304 168 C299 178 309 188 304 198" stroke="#79C7F0" stroke-width="7" fill="none" stroke-linecap="round" />
       <circle cx="286" cy="194" r="3" fill="#79C7F0" />
       <circle cx="322" cy="192" r="3.5" fill="#79C7F0" />
       <circle cx="296" cy="186" r="2.5" fill="#79C7F0" />
-    </g>
-    <g v-else>
-      <circle cx="304" cy="176" r="4" fill="#79C7F0" />
-      <path d="M322 160 l6 -6 M326 172 l8 0 M320 184 l6 6" stroke="#FFDC52" stroke-width="3" stroke-linecap="round" />
     </g>
 
     <!-- cup and toothbrushes -->
