@@ -1,30 +1,11 @@
-<script setup>
-// The Definition of Done requires the licence attribution for the open data
-// this project uses to appear in the footer.
-const sources = [
-  { name: "Australian Government Waste Data", href: "https://www.dcceew.gov.au/environment/protection/waste/publications/national-waste-resource-recovery-reporting" },
-  { name: "Open Repair Alliance", href: "https://openrepair.org/open-data/" },
-  { name: "Wikidata", href: "https://www.wikidata.org/" },
-  { name: "ACCC Product Safety", href: "https://www.productsafety.gov.au/" },
-  { name: "Open Images", href: "https://storage.googleapis.com/openimages/web/index.html" }
-];
-</script>
-
 <template>
+  <!-- Attribution for the open data sets this project uses is kept in
+       db/README.md, alongside each dataset's licence terms. -->
   <footer class="ck-footer">
     <div class="ck-column">
       <p class="ck-footer__lead">
         <strong>Circular Kids</strong>
         <span>A learning activity for noticing clues, checking safety with a trusted adult and exploring what could happen next.</span>
-      </p>
-      <p class="ck-footer__sources">
-        <strong>Evidence and open data</strong>
-        <span>
-          <template v-for="(source, i) in sources" :key="source.name">
-            <a :href="source.href" target="_blank" rel="noopener noreferrer">{{ source.name }}</a
-            ><span v-if="i < sources.length - 1">, </span>
-          </template>
-        </span>
       </p>
       <p class="ck-footer__privacy">
         <strong>Photo privacy</strong>
@@ -44,31 +25,29 @@ const sources = [
   padding-block: 24px;
   font-size: var(--ck-size-mini);
   color: var(--ck-muted);
-  text-align: left;
+  text-align: center;
 }
 
-.ck-footer__lead {
+/* The two notes sit side by side and stay centred as a pair. Wrapping rather
+   than a fixed two-column grid, so a narrow screen stacks them with the same
+   spacing instead of squeezing both. */
+.ck-footer .ck-column {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--ck-gap-md) clamp(32px, 6vw, 72px);
+}
+
+.ck-footer p {
+  display: grid;
+  gap: 5px;
   margin: 0;
-  color: var(--ck-ink);
+  flex: 0 1 34ch;
+  max-width: 44ch;
 }
-
-.ck-footer p { display: grid; gap: 5px; }
 .ck-footer p > strong { color: var(--ck-ink); font-size: var(--ck-size-small); }
 .ck-footer p > span { line-height: 1.55; }
-.ck-footer__sources { margin: 0; }
-.ck-footer__sources a {
-  color: var(--ck-muted);
-  text-underline-offset: 2px;
-}
-.ck-footer__sources a:hover { color: var(--ck-coral); }
 
-.ck-footer__privacy { margin: 0; }
-
-@media (min-width: 760px) {
-  .ck-footer .ck-column { display: grid; grid-template-columns: 1.05fr 1.4fr 1fr; gap: 42px; align-items: start; }
-}
-
-@media (max-width: 759px) {
-  .ck-footer .ck-column { display: grid; gap: 18px; }
-}
+.ck-footer__lead { color: var(--ck-ink); }
 </style>
