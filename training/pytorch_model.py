@@ -9,7 +9,7 @@ from typing import Callable
 
 import numpy as np
 import torch
-from PIL import Image
+from PIL import Image, ImageOps
 from torch import nn
 from torch.utils.data import Dataset
 from torchvision import models, transforms
@@ -75,6 +75,11 @@ def eval_transform() -> Callable:
     ])
 
 
+def canonicalize_image(image: Image.Image) -> Image.Image:
+    """Apply camera orientation and RGB conversion before any model transform."""
+    return ImageOps.exif_transpose(image).convert("RGB")
+
+
 class ClassFolderDataset(Dataset):
     """Folder dataset whose label order follows classes.json rather than alphabetic order."""
     def __init__(self, split_dir: Path, class_names: list[str], transform: Callable):
@@ -100,7 +105,7 @@ class ClassFolderDataset(Dataset):
     def __getitem__(self, index: int) -> tuple[torch.Tensor, int]:
         path, label = self.samples[index]
         with Image.open(path) as opened:
-            image = opened.convert("RGB")
+            image = canonicalize_image(opened)
         return self.transform(image), label
 
 
@@ -122,7 +127,7 @@ def predict_image(
     """Return softmax-ranked predictions using evaluation-time preprocessing."""
     if not 1 <= top_k <= len(class_names):
         raise ValueError(f"top_k must be between 1 and {len(class_names)}")
-    batch = eval_transform()(image.convert("RGB")).unsqueeze(0).to(device)
+    batch = eval_transform()(canonicalize_image(image)).unsqueeze(0).to(device)
     with torch.inference_mode():
         probabilities = model(batch).softmax(dim=1)[0]
         values, indices = probabilities.topk(top_k)

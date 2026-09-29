@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  CONFIDENCE_THRESHOLD,
   IMAGE_LABELS,
   chooseSuggestion
 } from "../src/services/imageRecognition.js";
@@ -23,18 +24,23 @@ test("a confident image score becomes a catalogue suggestion", () => {
 
   assert.equal(result.suggestion.itemId, "backpack");
   assert.equal(result.suggestion.confidence, 0.72);
+  assert.equal(result.suggestion.confidenceLevel, "confident");
 });
 
-test("the highest score is returned even when confidence is low", () => {
+test("the highest score is retained but clearly marked when confidence is low", () => {
   const backpack = IMAGE_LABELS.findIndex(item => item.itemId === "backpack");
   const jacket = IMAGE_LABELS.findIndex(item => item.itemId === "jacket");
   const weak = new Array(IMAGE_LABELS.length).fill(0.01);
   weak[backpack] = 0.12;
   weak[jacket] = 0.11;
-  assert.equal(chooseSuggestion(weak).suggestion.itemId, "backpack");
+  const weakResult = chooseSuggestion(weak);
+  assert.equal(weakResult.suggestion.itemId, "backpack");
+  assert.equal(weakResult.suggestion.confidenceLevel, "low");
 
   const ambiguous = new Array(IMAGE_LABELS.length).fill(0.01);
-  ambiguous[backpack] = 0.6;
+  ambiguous[backpack] = CONFIDENCE_THRESHOLD;
   ambiguous[jacket] = 0.59;
-  assert.equal(chooseSuggestion(ambiguous).suggestion.itemId, "backpack");
+  const thresholdResult = chooseSuggestion(ambiguous);
+  assert.equal(thresholdResult.suggestion.itemId, "backpack");
+  assert.equal(thresholdResult.suggestion.confidenceLevel, "confident");
 });
