@@ -73,6 +73,9 @@ function open(id) {
     <button v-if="suggested" type="button" class="btn btn-primary w-100 ck-hub-start" @click="open(suggested.id)">
       {{ allSolved ? `Look again: ${suggested.title}` : `Start with ${suggested.category} →` }}
     </button>
+    <RouterLink :to="{ name: 'welcome', hash: '#how-it-works' }" class="btn btn-link ck-hub-back">
+      ← Back to Stage Cards
+    </RouterLink>
   </section>
 </template>
 
@@ -162,6 +165,7 @@ function open(id) {
 .ck-hub-card.is-done .ck-hub-card__status { color: #5c9c3e; }
 
 .ck-hub-start { margin-top: 22px; }
+.ck-hub-back { display: block; width: fit-content; margin: 12px auto 0; }
 
 @media (max-width: 640px) {
   .ck-hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

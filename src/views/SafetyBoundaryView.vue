@@ -48,7 +48,7 @@ function exploreFutures() { router.push({ name: "welcome", hash: "#how-it-works"
         ← Back
       </button>
       <button type="button" class="btn btn-primary btn--wide" @click="exploreFutures">
-        Back to My Epic Cards →
+        Back to Stage Cards →
       </button>
     </div>
   </section>

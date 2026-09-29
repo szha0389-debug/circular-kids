@@ -30,23 +30,23 @@ onMounted(() => {
   void fetch("/api/ai/health").catch(() => {});
 });
 
-const epic1Done = computed(() => Boolean(investigation.handover || investigation.safetyResponse || investigation.safetyResult));
-const epic2Done = computed(() => investigation.safetyBoundarySet);
-const epic3Done = computed(() => Boolean(futures.selected));
-const epics = computed(() => [
-  { icon: "🔎", tag: "EPIC 1 · AI IDENTIFY", title: "Investigate My Item", text: "Identify your item, look for clues and record your own verdict.", done: epic1Done.value, enabled: true, route: epic1Done.value ? "handover" : "identify", action: epic1Done.value ? "View result" : "Start challenge" },
-  { icon: "🛡️", tag: "EPIC 2 · SAFETY", title: "Check What Is Safe", text: "Find the safety boundary before deciding what should happen next.", done: epic2Done.value, enabled: epic1Done.value, route: epic2Done.value ? "safety-boundary" : "safety-activity", action: epic2Done.value ? "View result" : "Start safety" },
-  { icon: "🌱", tag: "EPIC 3 · RECOMMENDATION", title: "Explore Possible Futures", text: "Compare suitable futures, choose one and receive a clear next step.", done: epic3Done.value, enabled: epic2Done.value, route: epic3Done.value ? "futures-result" : "futures-explore", action: epic3Done.value ? "View my choice" : "Explore futures" },
-  { icon: "🕵️", tag: "EPIC 4 · MYSTERY QUIZ", title: "Spot a Circular Mystery", text: "Practise careful looking with short, no-score picture challenges.", done: false, enabled: true, route: "mystery-hub", action: "Choose a mystery" },
-  { icon: "🗺️", tag: "EPIC 5 · ITEM JOURNEY", title: "Follow My Item's Journey", text: "See the possible stages after your choice, then replay another safe future.", done: futures.journeySeen, enabled: epic3Done.value, route: "item-journey", action: futures.journeySeen ? "Replay my journey" : "Follow the journey" },
-  { icon: "🪴", tag: "EPIC 6 · RESCUE HISTORY", title: "My Rescue Shelf", text: "Save item stories and return later to record what actually happened.", done: shelf.count > 0, enabled: true, route: "rescue-shelf", action: shelf.count > 0 ? "Open my shelf" : "See my shelf" }
+const stage1Done = computed(() => Boolean(investigation.handover || investigation.safetyResponse || investigation.safetyResult));
+const stage2Done = computed(() => investigation.safetyBoundarySet);
+const stage3Done = computed(() => Boolean(futures.selected));
+const stages = computed(() => [
+  { icon: "🔎", tag: "STAGE 1 · MY VERDICT", title: "Investigate & Give My Verdict", text: "Identify your item, look for clues and record your own verdict.", done: stage1Done.value, enabled: true, route: stage1Done.value ? "handover" : "identify", action: stage1Done.value ? "View result" : "Start challenge" },
+  { icon: "🛡️", tag: "STAGE 2 · SAFETY", title: "Check What Is Safe", text: "Find the safety boundary before deciding what should happen next.", done: stage2Done.value, enabled: stage1Done.value, route: stage2Done.value ? "safety-boundary" : "safety-activity", action: stage2Done.value ? "View result" : "Start safety" },
+  { icon: "🌱", tag: "STAGE 3 · RECOMMENDATION", title: "Explore Possible Futures", text: "Compare suitable futures, choose one and receive a clear next step.", done: stage3Done.value, enabled: stage2Done.value, route: stage3Done.value ? "futures-result" : "futures-explore", action: stage3Done.value ? "View my choice" : "Explore futures" },
+  { icon: "🕵️", tag: "STAGE 4 · MYSTERY QUIZ", title: "Spot a Circular Mystery", text: "Practise careful looking with short, no-score picture challenges.", done: false, enabled: true, route: "mystery-hub", action: "Choose a mystery" },
+  { icon: "🗺️", tag: "STAGE 5 · ITEM JOURNEY", title: "Follow My Item's Journey", text: "See the possible stages after your choice, then replay another safe future.", done: futures.journeySeen, enabled: stage3Done.value, route: "item-journey", action: futures.journeySeen ? "Replay my journey" : "Follow the journey" },
+  { icon: "🪴", tag: "STAGE 6 · RESCUE HISTORY", title: "My Rescue Shelf", text: "Save item stories and return later to record what actually happened.", done: shelf.count > 0, enabled: true, route: "rescue-shelf", action: shelf.count > 0 ? "Open my shelf" : "See my shelf" }
 ]);
-function openEpic(epic) { if (epic.enabled) router.push({ name: epic.route }); }
+function openStage(stage) { if (stage.enabled) router.push({ name: stage.route }); }
 
 const highlights = [
   { value: "5", label: "guided steps" },
   { value: "0", label: "photos stored" },
-  { value: "100%", label: "look-only learning" }
+  { value: "3.0 Mt", label: "plastic waste generated · 2022–23" }
 ];
 </script>
 
@@ -57,8 +57,8 @@ const highlights = [
         <p class="ck-eyebrow">A smarter way to reuse</p>
         <h1 class="ck-welcome__title">Investigate before<br />you throw it away.</h1>
         <p class="ck-welcome__lead">
-          Look closely, follow simple clues, and discover whether your item — or one of
-          its parts — could still have a future.
+          Look closely, follow simple clues, and discover whether your item or one of
+          its parts could still have a future.
         </p>
         <RouterLink :to="{ name: 'identify' }" class="btn btn-primary ck-welcome__cta">
           Start My Investigation →
@@ -90,21 +90,25 @@ const highlights = [
         <span>{{ item.label }}</span>
       </div>
     </div>
+    <p class="ck-welcome__metrics-source">
+      Waste evidence: Australia generated about 3.0 million tonnes of plastic waste in 2022–23.
+      <a href="https://www.dcceew.gov.au/environment/protection/waste/publications/national-waste-resource-recovery-reporting/glance-2024" target="_blank" rel="noopener noreferrer">View the Australian Government source</a>.
+    </p>
 
     <div id="how-it-works" class="ck-welcome__section">
       <div class="ck-welcome__epic-heading">
         <p class="ck-eyebrow">Choose your next activity</p>
-        <h2>One item. Six adventures.</h2>
-        <p>Finish one activity, return here, then choose when you are ready for the next.</p>
+        <h2>One item. Six stages.</h2>
+        <p>Finish one stage, return here, then choose when you are ready for the next.</p>
       </div>
       <div class="ck-welcome__epics">
-        <article v-for="epic in epics" :key="epic.tag" class="ck-epic" :class="{ 'is-done': epic.done, 'is-locked': !epic.enabled }">
-          <span v-if="epic.done" class="ck-epic__done">✓ Done</span>
-          <span class="ck-epic__icon" aria-hidden="true">{{ epic.icon }}</span>
-          <p class="ck-epic__tag">{{ epic.tag }}</p>
-          <h3>{{ epic.title }}</h3>
-          <p class="ck-epic__text">{{ epic.text }}</p>
-          <button type="button" :disabled="!epic.enabled" @click="openEpic(epic)">{{ epic.enabled ? epic.action : "Complete the previous Epic" }} <span v-if="epic.enabled">→</span></button>
+        <article v-for="stage in stages" :key="stage.tag" class="ck-epic" :class="{ 'is-done': stage.done, 'is-locked': !stage.enabled }">
+          <span v-if="stage.done" class="ck-epic__done">✓ Done</span>
+          <span class="ck-epic__icon" aria-hidden="true">{{ stage.icon }}</span>
+          <p class="ck-epic__tag">{{ stage.tag }}</p>
+          <h3>{{ stage.title }}</h3>
+          <p class="ck-epic__text">{{ stage.text }}</p>
+          <button type="button" :disabled="!stage.enabled" @click="openStage(stage)">{{ stage.enabled ? stage.action : "Complete the previous Stage" }} <span v-if="stage.enabled">→</span></button>
         </article>
       </div>
     </div>
@@ -146,7 +150,9 @@ const highlights = [
           <figcaption><strong>Big idea</strong><span>The lines move up and down—waste amounts can change over time.</span></figcaption>
         </figure>
       </div>
-      <p class="ck-welcome__data-source">Source: National Waste and Resource Recovery Database 2024. Map boundaries: ABS ASGS 2016.</p>
+      <p class="ck-welcome__data-source">
+        Source: <a href="https://www.dcceew.gov.au/environment/protection/waste/publications/national-waste-resource-recovery-reporting" target="_blank" rel="noopener noreferrer">Australian Government, National Waste and Resource Recovery Database 2024</a>. Map boundaries: ABS ASGS 2016.
+      </p>
     </section>
 
     <div id="safety-first" class="ck-welcome__safety-band">
@@ -219,6 +225,8 @@ const highlights = [
 .ck-welcome__metrics strong, .ck-welcome__metrics span { display: block; }
 .ck-welcome__metrics strong { font-family: var(--ck-font-display); font-size: 28px; }
 .ck-welcome__metrics span { color: var(--ck-muted); font-size: 12px; font-weight: 800; }
+.ck-welcome__metrics-source { max-width: 920px; margin: 12px auto 0; padding-inline: 18px; color: var(--ck-muted); font-size: 12px; text-align: center; }
+.ck-welcome__metrics-source a, .ck-welcome__data-source a { color: inherit; font-weight: 900; text-underline-offset: 3px; }
 .ck-welcome__section {
   scroll-margin-top: 68px;
   min-height: 620px;
