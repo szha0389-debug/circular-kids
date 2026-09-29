@@ -24,6 +24,7 @@ const MAX_ATTEMPTS = 2;
 const categoryLabel = computed(
   () => store.categories.find(c => c.id === openCategory.value)?.label || ""
 );
+const isLowConfidence = computed(() => store.suggestion?.confidenceLevel === "low");
 
 const categoryOptions = computed(() =>
   store.categories.map(c => ({ value: c.id, label: c.label, icon: c.icon }))
@@ -171,8 +172,12 @@ async function confirmItem() {
 
     <!-- ───────────────────────────────────── panel 3: check the guess -->
     <template v-else-if="panel === 'confirm'">
-      <h1>I think I recognise this!</h1>
-      <p class="ck-lead">Have a look at my suggestion and let me know if I got it right.</p>
+      <h1>{{ isLowConfidence ? "I found a possible match" : "I think I recognise this!" }}</h1>
+      <p class="ck-lead">
+        {{ isLowConfidence
+          ? "I’m not completely sure about this guess, so please check it carefully."
+          : "Have a look at my suggestion and let me know if I got it right." }}
+      </p>
 
       <div class="ck-card ck-guess">
         <img v-if="store.hasPhoto" :src="store.photoUrl" alt="The photo you took" class="ck-guess__photo" />

@@ -48,7 +48,7 @@ function saveToShelf() {
 
 <template>
   <section v-if="journey" class="ck-journey">
-    <p class="ck-eyebrow">My item's journey · Epic 5</p>
+    <p class="ck-eyebrow">My item's journey · Stage 5</p>
     <header class="ck-journey__heading">
       <span aria-hidden="true">{{ journey.icon }}</span>
       <div>
@@ -94,7 +94,7 @@ function saveToShelf() {
     </div>
     <div class="ck-journey__finish">
       <RouterLink v-if="saved" :to="{ name: 'rescue-shelf' }">Open My Rescue Shelf →</RouterLink>
-      <button type="button" @click="router.push({ name: 'welcome', hash: '#how-it-works' })">Finish Without Saving</button>
+      <button type="button" @click="router.push({ name: 'welcome', hash: '#how-it-works' })">Back to Stage Cards</button>
     </div>
   </section>
 </template>

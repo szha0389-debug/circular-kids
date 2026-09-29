@@ -60,7 +60,7 @@ function finish() {
     </div>
     <div class="ck-result__finish">
       <RouterLink v-if="saved" :to="{ name: 'rescue-shelf' }">Open My Rescue Shelf →</RouterLink>
-      <button type="button" @click="finish">{{ saved ? "Finish" : "Finish Without Saving" }}</button>
+      <button type="button" @click="finish">Back to Stage Cards</button>
     </div>
   </section>
 </template>

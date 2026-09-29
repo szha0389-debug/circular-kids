@@ -29,7 +29,7 @@ function clearShelf() {
     <header class="ck-shelf__heading">
       <span aria-hidden="true">🪴</span>
       <div>
-        <p class="ck-eyebrow">My Rescue History · Epic 6</p>
+        <p class="ck-eyebrow">My Rescue History · Stage 6</p>
         <h1>My Rescue Shelf</h1>
         <p>Return to an item story and record what actually happened.</p>
       </div>
@@ -82,6 +82,10 @@ function clearShelf() {
         <button type="button" class="btn btn-quiet" @click="clearShelf">Clear My Rescue Shelf</button>
       </div>
     </template>
+
+    <RouterLink :to="{ name: 'welcome', hash: '#how-it-works' }" class="btn btn-link ck-shelf__back">
+      ← Back to Stage Cards
+    </RouterLink>
   </section>
 </template>
 
@@ -118,6 +122,7 @@ function clearShelf() {
 .ck-shelf-card__delete { min-height: 44px; margin: 12px 18px 18px; padding: 0; border: 0; background: none; color: var(--ck-muted); font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 .ck-shelf__footer { display: flex; gap: 12px; margin-top: 28px; }
 .ck-shelf__footer .btn { flex: 1; }
+.ck-shelf__back { display: block; width: fit-content; margin: 18px auto 0; }
 @media (max-width: 600px) {
   .ck-shelf__heading { align-items: flex-start; }
   .ck-shelf__heading > span { flex-basis: 58px; width: 58px; height: 58px; border-radius: 18px; font-size: 30px; }

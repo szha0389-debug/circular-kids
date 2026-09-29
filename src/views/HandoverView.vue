@@ -45,7 +45,7 @@ function beginSafety() {
     <p v-if="payload?.lowInformation" class="ck-done__note">Not many clues were recorded, so this result remains a careful guess.</p>
     <div class="ck-done__next">
       <div><span aria-hidden="true">🛡️</span><p><strong>Next: safety check</strong><br />Learn when to ask a trusted adult.</p></div>
-      <button type="button" class="btn btn-primary" @click="beginSafety">Back to My Epic Cards →</button>
+      <button type="button" class="btn btn-primary" @click="beginSafety">Back to Stage Cards →</button>
     </div>
     <button type="button" class="btn btn-link ck-again" @click="again">Investigate something else</button>
   </section>

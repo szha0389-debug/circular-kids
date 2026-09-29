@@ -67,6 +67,10 @@ function onChooseArea(area) {
   const [x, y, width, height] = area.rect;
   settle(isCorrectArea(mystery.value, area.id), { x: x + width / 2, y: y + height / 2 });
 }
+
+function backToStages() {
+  router.push({ name: "welcome", hash: "#how-it-works" });
+}
 </script>
 
 <template>
@@ -134,14 +138,23 @@ function onChooseArea(area) {
         ← All mysteries
       </button>
       <button
-        v-if="solved && next"
+        v-if="solved"
         type="button"
         class="btn btn-primary btn--wide"
-        @click="router.push({ name: 'mystery', params: { id: next.id } })"
+        @click="backToStages"
       >
-        Next: {{ next.category }} {{ next.icon }} →
+        Back to Stage Cards →
       </button>
     </div>
+
+    <button
+      v-if="solved && next"
+      type="button"
+      class="btn btn-link ck-mystery__next"
+      @click="router.push({ name: 'mystery', params: { id: next.id } })"
+    >
+      Try another mystery: {{ next.category }} {{ next.icon }} →
+    </button>
   </section>
 </template>
 
@@ -205,6 +218,7 @@ function onChooseArea(area) {
   font-size: var(--ck-size-mini);
   font-weight: 700;
 }
+.ck-mystery__next { display: block; margin: 12px auto 0; }
 
 .ck-mystery__finished {
   display: flex;

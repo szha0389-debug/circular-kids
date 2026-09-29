@@ -18,6 +18,7 @@ from training.pytorch_model import load_checkpoint, load_classes, predict_image,
 ROOT = Path(__file__).resolve().parents[1]
 CHECKPOINT_PATH = ROOT / "training" / "artifacts" / "best_model.pth"
 MAX_IMAGE_BYTES = 6_000_000
+CONFIDENCE_THRESHOLD = 0.60
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/webp"}
 ALLOWED_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
 # Reuse Uvicorn's configured handlers so model lifecycle logs are visible in
@@ -67,7 +68,9 @@ def decode_image(payload: bytes) -> Image.Image:
         with Image.open(BytesIO(payload)) as opened:
             opened.verify()
         with Image.open(BytesIO(payload)) as opened:
-            return opened.convert("RGB")
+            # Keep the source metadata until the shared model preprocessing
+            # applies EXIF orientation and RGB conversion consistently.
+            return opened.copy()
     except (UnidentifiedImageError, OSError, ValueError, Image.DecompressionBombError) as error:
         raise HTTPException(status_code=400, detail="The uploaded file is not a valid image.") from error
 
@@ -106,9 +109,18 @@ async def image_recognition(image: UploadFile = File(...)) -> dict:
         logger.exception("Image-recognition inference failed")
         raise HTTPException(status_code=500, detail="Image recognition could not complete.") from error
 
-    named_predictions = [
-        {**entry, "name": app.state.classes_by_id[entry["itemId"]]["name"]}
-        for entry in predictions
-    ]
+    named_predictions = []
+    for entry in predictions:
+        confidence_level = "low" if entry["confidence"] < CONFIDENCE_THRESHOLD else "confident"
+        named_predictions.append({
+            **entry,
+            "name": app.state.classes_by_id[entry["itemId"]]["name"],
+            "confidenceLevel": confidence_level,
+        })
     logger.info("Recognized image: %s (%.2f)", named_predictions[0]["itemId"], named_predictions[0]["confidence"])
-    return {"success": True, "prediction": named_predictions[0], "topPredictions": named_predictions}
+    return {
+        "success": True,
+        "prediction": named_predictions[0],
+        "topPredictions": named_predictions,
+        "confidenceThreshold": CONFIDENCE_THRESHOLD,
+    }
