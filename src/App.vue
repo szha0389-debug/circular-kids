@@ -2,8 +2,7 @@
 import { computed, nextTick, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
-import StepBar from "@/components/StepBar.vue";
-import SafetyStepBar from "@/components/SafetyStepBar.vue";
+import FlowProgress from "@/components/FlowProgress.vue";
 import BackdropShapes from "@/components/BackdropShapes.vue";
 import AppFooter from "@/components/AppFooter.vue";
 import PageCompanion from "@/components/PageCompanion.vue";
@@ -12,7 +11,14 @@ const store = useInvestigation();
 const route = useRoute();
 const router = useRouter();
 
-const inFlow = computed(() => Boolean(route.meta?.step || route.meta?.safetyStep));
+// Every screen of the guided journey, in order. The journey menu replaces the
+// site navigation while the child is inside it.
+const FLOW_ROUTES = [
+  "identify", "problem", "clues", "verdict", "reveal",
+  "safety-activity", "safety-comparison", "safety-boundary",
+  "futures-explore", "futures-compare", "futures-result", "item-journey"
+];
+const inFlow = computed(() => FLOW_ROUTES.includes(String(route.name)));
 const inQuiz = computed(() => ["mystery-hub", "mystery"].includes(String(route.name)));
 const inShelf = computed(() => route.name === "rescue-shelf");
 const hasStorybookBackdrop = computed(() =>
@@ -112,11 +118,13 @@ async function goToHomeSection(sectionId) {
     </button>
   </header>
 
-  <StepBar v-if="route.meta.step" :current="route.meta.step" />
-  <SafetyStepBar v-if="route.meta.safetyStep" :current="route.meta.safetyStep" />
-
   <main id="main" class="ck-main" :class="{ 'ck-main--storybook': hasStorybookBackdrop }">
-    <div class="ck-column">
+    <div class="ck-column" :class="{ 'ck-column--flow': inFlow }">
+      <!-- Where am I, what is done, what is next — beside the task on a laptop,
+           folded into one bar on a phone. -->
+      <FlowProgress v-if="inFlow" />
+
+      <div class="ck-flow-body">
       <p
         v-if="store.notice"
         class="ck-notice"
@@ -136,6 +144,7 @@ async function goToHomeSection(sectionId) {
       <RouterView v-slot="{ Component, route: current }">
         <component :is="Component" :key="current.name" class="ck-view" />
       </RouterView>
+      </div>
     </div>
   </main>
 
@@ -284,9 +293,27 @@ async function goToHomeSection(sectionId) {
   background-attachment: fixed;
 }
 
+/* The journey menu takes a fixed rail; the task keeps the rest. */
+.ck-column--flow {
+  display: grid;
+  grid-template-columns: 274px minmax(0, 1fr);
+  gap: clamp(20px, 2.6vw, 34px);
+  align-items: start;
+}
+.ck-flow-body { min-width: 0; }
+
+@media (max-width: 1023px) {
+  .ck-column--flow { grid-template-columns: 1fr; gap: 18px; }
+}
+
 .ck-main--storybook .ck-view {
   background: rgba(255,255,255,.96) !important;
   box-shadow: 0 24px 70px rgba(54, 72, 45, .18), 0 0 0 10px rgba(255,255,255,.22) !important;
+}
+
+/* The menu is one of the floating surfaces over the landscape, like the task. */
+.ck-main--storybook :deep(.ck-flow) {
+  box-shadow: 0 24px 60px rgba(54, 72, 45, .16), 0 0 0 8px rgba(255,255,255,.2);
 }
 
 .ck-notice {

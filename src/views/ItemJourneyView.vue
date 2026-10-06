@@ -48,7 +48,7 @@ function saveToShelf() {
 
 <template>
   <section v-if="journey" class="ck-journey">
-    <p class="ck-eyebrow">My item's journey · Stage 5</p>
+    <p class="ck-eyebrow">My item's journey · Stage 4</p>
     <header class="ck-journey__heading">
       <span aria-hidden="true">{{ journey.icon }}</span>
       <div>

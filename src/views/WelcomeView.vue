@@ -30,16 +30,16 @@ onMounted(() => {
   void fetch("/api/ai/health").catch(() => {});
 });
 
-const stage1Done = computed(() => Boolean(investigation.handover || investigation.safetyResponse || investigation.safetyResult));
+// Same signal the journey menu uses, so the card and the menu never disagree.
+const stage1Done = computed(() => Boolean(investigation.reveal));
 const stage2Done = computed(() => investigation.safetyBoundarySet);
 const stage3Done = computed(() => Boolean(futures.selected));
 const stages = computed(() => [
-  { icon: "🔎", tag: "STAGE 1 · MY VERDICT", title: "Investigate & Give My Verdict", text: "Identify your item, look for clues and record your own verdict.", done: stage1Done.value, enabled: true, route: stage1Done.value ? "handover" : "identify", action: stage1Done.value ? "View result" : "Start challenge" },
+  { icon: "🔎", tag: "STAGE 1 · MY VERDICT", title: "Investigate & Give My Verdict", text: "Identify your item, look for clues and record your own verdict.", done: stage1Done.value, enabled: true, route: stage1Done.value ? "reveal" : "identify", action: stage1Done.value ? "View result" : "Start challenge" },
   { icon: "🛡️", tag: "STAGE 2 · SAFETY", title: "Check What Is Safe", text: "Find the safety boundary before deciding what should happen next.", done: stage2Done.value, enabled: stage1Done.value, route: stage2Done.value ? "safety-boundary" : "safety-activity", action: stage2Done.value ? "View result" : "Start safety" },
   { icon: "🌱", tag: "STAGE 3 · RECOMMENDATION", title: "Explore Possible Futures", text: "Compare suitable futures, choose one and receive a clear next step.", done: stage3Done.value, enabled: stage2Done.value, route: stage3Done.value ? "futures-result" : "futures-explore", action: stage3Done.value ? "View my choice" : "Explore futures" },
-  { icon: "🕵️", tag: "STAGE 4 · MYSTERY QUIZ", title: "Spot a Circular Mystery", text: "Practise careful looking with short, no-score picture challenges.", done: false, enabled: true, route: "mystery-hub", action: "Choose a mystery" },
-  { icon: "🗺️", tag: "STAGE 5 · ITEM JOURNEY", title: "Follow My Item's Journey", text: "See the possible stages after your choice, then replay another safe future.", done: futures.journeySeen, enabled: stage3Done.value, route: "item-journey", action: futures.journeySeen ? "Replay my journey" : "Follow the journey" },
-  { icon: "🪴", tag: "STAGE 6 · RESCUE HISTORY", title: "My Rescue Shelf", text: "Save item stories and return later to record what actually happened.", done: shelf.count > 0, enabled: true, route: "rescue-shelf", action: shelf.count > 0 ? "Open my shelf" : "See my shelf" }
+  { icon: "🗺️", tag: "STAGE 4 · ITEM JOURNEY", title: "Follow My Item's Journey", text: "See the possible stages after your choice, then replay another safe future.", done: futures.journeySeen, enabled: stage3Done.value, route: "item-journey", action: futures.journeySeen ? "Replay my journey" : "Follow the journey" },
+  { icon: "🪴", tag: "STAGE 5 · RESCUE HISTORY", title: "My Rescue Shelf", text: "Save item stories and return later to record what actually happened.", done: shelf.count > 0, enabled: true, route: "rescue-shelf", action: shelf.count > 0 ? "Open my shelf" : "See my shelf" }
 ]);
 function openStage(stage) { if (stage.enabled) router.push({ name: stage.route }); }
 
@@ -98,7 +98,7 @@ const highlights = [
     <div id="how-it-works" class="ck-welcome__section">
       <div class="ck-welcome__epic-heading">
         <p class="ck-eyebrow">Choose your next activity</p>
-        <h2>One item. Six stages.</h2>
+        <h2>One item. Five stages.</h2>
         <p>Finish one stage, return here, then choose when you are ready for the next.</p>
       </div>
       <div class="ck-welcome__epics">
@@ -111,6 +111,16 @@ const highlights = [
           <button type="button" :disabled="!stage.enabled" @click="openStage(stage)">{{ stage.enabled ? stage.action : "Complete the previous Stage" }} <span v-if="stage.enabled">→</span></button>
         </article>
       </div>
+
+      <aside class="ck-welcome__quiz">
+        <span class="ck-welcome__quiz-icon" aria-hidden="true">🕵️</span>
+        <div>
+          <p class="ck-eyebrow">Anytime activity</p>
+          <h3>Spot a Circular Mystery</h3>
+          <p>Short picture challenges with no timer and no score. They need no item and no open case — play them whenever you like.</p>
+        </div>
+        <RouterLink :to="{ name: 'mystery-hub' }" class="btn btn-primary">Choose a mystery →</RouterLink>
+      </aside>
     </div>
 
     <section class="ck-welcome__data" aria-labelledby="waste-data-title">
@@ -239,8 +249,8 @@ const highlights = [
 .ck-welcome__epic-heading { max-width: 720px; margin: 0 auto 34px; text-align: center; }
 .ck-welcome__epic-heading h2, .ck-welcome__safety-band h2 { margin-bottom: 10px; font-size: clamp(30px, 3vw, 44px); }
 .ck-welcome__epic-heading > p:last-child { color: var(--ck-muted); }
-.ck-welcome__epics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1320px; margin: 0 auto; }
-.ck-epic { position: relative; display: flex; min-height: 420px; flex-direction: column; padding: 32px 28px 26px; border: 4px solid #3f86f7; border-radius: 32px; background: rgba(255,255,255,.96); box-shadow: 0 18px 40px rgba(49,76,115,.11); transition: transform .2s, opacity .2s, filter .2s; }
+.ck-welcome__epics { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; max-width: 1320px; margin: 0 auto; }
+.ck-epic { position: relative; display: flex; flex: 1 1 320px; max-width: 420px; min-height: 420px; flex-direction: column; padding: 32px 28px 26px; border: 4px solid #3f86f7; border-radius: 32px; background: rgba(255,255,255,.96); box-shadow: 0 18px 40px rgba(49,76,115,.11); transition: transform .2s, opacity .2s, filter .2s; }
 .ck-epic:hover:not(.is-locked):not(.is-done) { transform: translateY(-7px); }
 .ck-epic__done { position: absolute; top: 18px; right: 18px; padding: 7px 12px; border-radius: 999px; background: #dff5e5; color: #237342; font-weight: 900; }
 .ck-epic__icon { display: grid; place-items: center; width: 92px; height: 92px; margin: 24px 0; border-radius: 50%; background: var(--ck-yellow-soft); font-size: 48px; }
@@ -251,6 +261,23 @@ const highlights = [
 .ck-epic.is-done { filter: saturate(.45); opacity: .58; background: rgba(244,247,246,.95); }
 .ck-epic.is-locked { filter: grayscale(.8); opacity: .42; }
 .ck-epic.is-locked button { color: var(--ck-muted); }
+.ck-welcome__quiz {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px;
+  align-items: center;
+  max-width: 1320px;
+  margin: 34px auto 0;
+  padding: 24px 28px;
+  border: 3px dashed rgba(181,156,240,.55);
+  border-radius: 28px;
+  background: linear-gradient(120deg, var(--ck-purple-soft), #fffdf7);
+}
+.ck-welcome__quiz-icon { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: #fff; box-shadow: 0 10px 22px rgba(96,87,51,.1); font-size: 36px; }
+.ck-welcome__quiz h3 { margin: 2px 0 6px; font-family: var(--ck-font-display); font-size: 26px; }
+.ck-welcome__quiz p:last-child { margin: 0; color: var(--ck-muted); font-weight: 700; }
+.ck-welcome__quiz .btn { white-space: nowrap; }
+
 .ck-welcome__data { position: relative; isolation: isolate; overflow: hidden; padding: 92px clamp(24px, 6vw, 96px); background: linear-gradient(180deg, #fff6d8 0%, #eafcff 48%, #e9f8dc 100%); }
 .ck-welcome__data::before { content:""; position:absolute; inset:auto -5% -120px; z-index:-1; height:270px; border-radius:50% 50% 0 0; background:linear-gradient(155deg,#bce5a4,#eaf7b5); opacity:.78; }
 .ck-welcome__data::after { content:""; position:absolute; inset:0; z-index:-2; background:radial-gradient(circle at 16% 16%,rgba(255,224,103,.5),transparent 18%),radial-gradient(circle at 86% 28%,rgba(128,220,233,.32),transparent 19%); }
@@ -301,7 +328,8 @@ const highlights = [
   .ck-welcome__metrics { margin: -22px 16px 60px; }
   .ck-welcome__metrics div { padding: 18px 8px; }
   .ck-welcome__section { min-height: 0; margin-top: 42px; padding: 58px 20px; }
-  .ck-welcome__epics { grid-template-columns: 1fr; }
+  .ck-epic { flex-basis: 100%; max-width: none; }
+  .ck-welcome__quiz { grid-template-columns: 1fr; justify-items: start; padding: 22px; }
   .ck-welcome__data { padding: 58px 20px; }
   .ck-welcome__charts { grid-template-columns: 1fr; }
   .ck-kid-trends__cards { grid-template-columns: 1fr; }

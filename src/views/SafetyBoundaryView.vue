@@ -14,7 +14,7 @@ onMounted(async () => {
   }
 });
 
-function exploreFutures() { router.push({ name: "welcome", hash: "#how-it-works" }); }
+function exploreFutures() { router.push({ name: "futures-explore" }); }
 </script>
 
 <template>
@@ -48,7 +48,7 @@ function exploreFutures() { router.push({ name: "welcome", hash: "#how-it-works"
         ← Back
       </button>
       <button type="button" class="btn btn-primary btn--wide" @click="exploreFutures">
-        Back to Stage Cards →
+        Explore possible futures →
       </button>
     </div>
   </section>

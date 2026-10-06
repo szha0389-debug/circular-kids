@@ -74,7 +74,7 @@ function open(id) {
       {{ allSolved ? `Look again: ${suggested.title}` : `Start with ${suggested.category} →` }}
     </button>
     <RouterLink :to="{ name: 'welcome', hash: '#how-it-works' }" class="btn btn-link ck-hub-back">
-      ← Back to Stage Cards
+      ← Back to the home page
     </RouterLink>
   </section>
 </template>

@@ -8,13 +8,21 @@
 //     when the case closes or the page unloads.
 
 import { defineStore } from "pinia";
+import { invalidatedBy } from "../../core/flow.js";
 import { api } from "@/api/client";
+import { useFutures } from "@/stores/futures";
 import { recogniseImage } from "@/services/imageRecognition";
 
 const RECOGNITION_TIMEOUT_MS = 8000;
 const CASE_KEY = "circularKidsInvestigationId";
 export const MAX_IMAGE_BYTES = 6_000_000;
 export const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+/** Two answer lists are the same when every slot matches, missing ones included. */
+function sameAnswers(now, sent) {
+  if (!Array.isArray(sent) || now.length !== sent.length) return false;
+  return now.every((value, index) => value === sent[index]);
+}
 
 export const useInvestigation = defineStore("investigation", {
   state: () => ({
@@ -41,6 +49,11 @@ export const useInvestigation = defineStore("investigation", {
     questions: [],
     answers: [],
     verdict: null,
+
+    // What was last sent for each answer, so coming back to a step and
+    // continuing without actually changing anything keeps the rest of the case.
+    sentProblems: null,
+    sentAnswers: null,
 
     // Reveal — populated only after the verdict is recorded.
     reveal: null,
@@ -81,6 +94,45 @@ export const useInvestigation = defineStore("investigation", {
       this.noticeTone = tone;
     },
 
+    /**
+     * Drop everything that was worked out from an answer that has just changed.
+     *
+     * core/flow.js holds the dependency graph; this maps each name in it onto
+     * the state that holds it. Anything cleared here is fetched again by the
+     * screen that needs it, so a cleared value is one about to be worked out
+     * afresh rather than a gap.
+     */
+    forgetAfter(answer) {
+      const stale = new Set(invalidatedBy(answer));
+
+      if (stale.has("problems")) {
+        this.problems = [];
+        this.questions = [];
+        this.sentProblems = null;
+      }
+      if (stale.has("answers")) {
+        this.answers = new Array(this.questions.length).fill(null);
+        this.sentAnswers = null;
+      }
+      if (stale.has("verdict")) this.verdict = null;
+      if (stale.has("reveal")) {
+        this.reveal = null;
+        this.handover = null;
+      }
+      if (stale.has("safetyResponse")) {
+        this.safetyResponse = null;
+        this.safetyActivity = null;
+        this.safetyReveal = null;
+        this.safetyStage = null;
+      }
+      if (stale.has("comparisonResponse")) {
+        this.comparisonResponse = null;
+        this.safetyComparison = null;
+      }
+      if (stale.has("boundary")) this.safetyResult = null;
+      if (stale.has("future")) useFutures().forgetChoice();
+    },
+
     async start() {
       if (this.ready) return;
       const catalogue = await api.catalogue();
@@ -93,6 +145,8 @@ export const useInvestigation = defineStore("investigation", {
           this.id = record.id;
           this.problems = record.problems || [];
           this.answers = record.answers || [];
+          this.sentProblems = [...this.problems];
+          this.sentAnswers = [...this.answers];
           this.verdict = record.verdict || null;
           const view = record.itemId ? await api.caseView(record.id) : null;
           if (view?.item) {
@@ -195,16 +249,14 @@ export const useInvestigation = defineStore("investigation", {
     async chooseItem(itemId) {
       this.busy = true;
       try {
+        const changed = itemId !== this.item?.id;
         await api.patch(this.id, { itemId, stage: "breakdown" });
         const view = await api.caseView(this.id);
         this.item = view.item;
         this.breakdown = view.breakdown;
         this.problemOptions = view.problems;
-        this.problems = [];
-        this.answers = [];
-        this.questions = [];
-        this.verdict = null;
-        this.reveal = null;
+        // A different item makes every later answer about something else.
+        if (changed) this.forgetAfter("item");
       } finally {
         this.busy = false;
       }
@@ -220,10 +272,19 @@ export const useInvestigation = defineStore("investigation", {
     async confirmProblems() {
       this.busy = true;
       try {
-        await api.patch(this.id, { problems: this.problems, stage: "clues" });
+        const changed = !sameAnswers(this.problems, this.sentProblems);
+        const chosen = [...this.problems];
+        await api.patch(this.id, { problems: chosen, stage: "clues" });
         const view = await api.caseView(this.id);
+        if (changed) {
+          // Different observations mean different clues, a different warning
+          // and a different boundary, so none of the old ones survive.
+          this.forgetAfter("problems");
+          this.problems = chosen;
+        }
         this.questions = view.questions;
-        this.answers = new Array(view.questions.length).fill(null);
+        if (changed) this.answers = new Array(view.questions.length).fill(null);
+        this.sentProblems = chosen;
       } finally {
         this.busy = false;
       }
@@ -243,15 +304,23 @@ export const useInvestigation = defineStore("investigation", {
     },
 
     async saveAnswers() {
-      await api.patch(this.id, { answers: this.answers, stage: "verdict" });
+      const changed = !sameAnswers(this.answers, this.sentAnswers);
+      const given = [...this.answers];
+      await api.patch(this.id, { answers: given, stage: "verdict" });
+      // A clue can turn a warning serious, so the boundary is worked out from
+      // these answers as much as the reasoning is.
+      if (changed) this.forgetAfter("answers");
+      this.answers = given;
+      this.sentAnswers = given;
     },
 
     /** US-1.4. The reveal is fetched only once this has succeeded. */
     async recordVerdict(value) {
       this.busy = true;
       try {
-        this.verdict = value;
         await api.patch(this.id, { verdict: value, stage: "reveal" });
+        this.forgetAfter("verdict");
+        this.verdict = value;
         this.reveal = await api.reveal(this.id);
       } finally {
         this.busy = false;
@@ -292,7 +361,11 @@ export const useInvestigation = defineStore("investigation", {
     async recordSafetyResponse(value) {
       this.busy = true;
       try {
+        const changed = value !== this.safetyResponse;
         await api.patch(this.id, { safetyResponse: value, stage: "safety-reveal" });
+        // Re-posting the same answer to restore the explanation after a refresh
+        // is not a change, and must not throw the rest of the case away.
+        if (changed) this.forgetAfter("safetyResponse");
         this.safetyResponse = value;
         this.safetyReveal = await api.safetyReveal(this.id);
         this.safetyStage = "safety-reveal";
@@ -310,7 +383,9 @@ export const useInvestigation = defineStore("investigation", {
     async recordComparisonResponse(value) {
       this.busy = true;
       try {
+        const changed = value !== this.comparisonResponse;
         await api.patch(this.id, { comparisonResponse: value, stage: "safety-boundary" });
+        if (changed) this.forgetAfter("comparisonResponse");
         this.comparisonResponse = value;
         this.safetyResult = await api.safetyBoundary(this.id);
         this.safetyStage = "safety-boundary";

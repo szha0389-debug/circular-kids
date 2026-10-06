@@ -29,7 +29,7 @@ function clearShelf() {
     <header class="ck-shelf__heading">
       <span aria-hidden="true">🪴</span>
       <div>
-        <p class="ck-eyebrow">My Rescue History · Stage 6</p>
+        <p class="ck-eyebrow">My Rescue History · Stage 5</p>
         <h1>My Rescue Shelf</h1>
         <p>Return to an item story and record what actually happened.</p>
       </div>

@@ -13,13 +13,21 @@ const routes = [
   { path: "/clues", name: "clues", component: () => import("@/views/CluesView.vue"), meta: { step: 3, needs: "problems" } },
   { path: "/verdict", name: "verdict", component: () => import("@/views/VerdictView.vue"), meta: { step: 4, needs: "problems" } },
   { path: "/reveal", name: "reveal", component: () => import("@/views/RevealView.vue"), meta: { step: 5, needs: "verdict" } },
-  { path: "/handover", name: "handover", component: () => import("@/views/HandoverView.vue"), meta: { step: 5, needs: "handover" } },
+  // The findings used to sit on a screen of their own after the reveal. They
+  // say the same thing, so they now share one screen and this path only keeps
+  // older links working.
+  { path: "/handover", redirect: { name: "reveal" } },
   { path: "/safety", name: "safety-activity", component: () => import("@/views/SafetyActivityView.vue"), meta: { safetyStep: 1, needs: "safetyReady" } },
-  { path: "/safety/reveal", name: "safety-reveal", component: () => import("@/views/SafetyRevealView.vue"), meta: { safetyStep: 2, needs: "safetyAnswered" } },
-  { path: "/safety/compare", name: "safety-comparison", component: () => import("@/views/SafetyComparisonView.vue"), meta: { safetyStep: 3, needs: "safetyAnswered" } },
-  { path: "/safety/boundary", name: "safety-boundary", component: () => import("@/views/SafetyBoundaryView.vue"), meta: { safetyStep: 4, needs: "comparisonAnswered" } },
-  { path: "/futures", name: "futures-explore", component: () => import("@/views/FuturesExploreView.vue"), meta: { needs: "safetyBoundary" } },
-  { path: "/futures/compare", name: "futures-compare", component: () => import("@/views/FuturesCompareView.vue"), meta: { needs: "futuresReady" } },
+  // The warning sign is now explained in place, on the screen that asked about
+  // it, rather than on a screen of its own.
+  { path: "/safety/reveal", redirect: { name: "safety-activity" } },
+  { path: "/safety/compare", name: "safety-comparison", component: () => import("@/views/SafetyComparisonView.vue"), meta: { safetyStep: 2, needs: "safetyAnswered" } },
+  { path: "/safety/boundary", name: "safety-boundary", component: () => import("@/views/SafetyBoundaryView.vue"), meta: { safetyStep: 3, needs: "comparisonAnswered" } },
+  // Exploring the options and choosing between them were two screens showing
+  // the same three columns. One screen, reached by both paths: `/futures` to
+  // choose, `/futures/compare?returnTo=journey` to swap a choice already made.
+  { path: "/futures", name: "futures-explore", component: () => import("@/views/FuturesCompareView.vue"), meta: { needs: "safetyBoundary" } },
+  { path: "/futures/compare", name: "futures-compare", component: () => import("@/views/FuturesCompareView.vue"), meta: { needs: "safetyBoundary" } },
   { path: "/futures/result", name: "futures-result", component: () => import("@/views/FuturesResultView.vue"), meta: { needs: "futureSelected" } },
   { path: "/journey", name: "item-journey", component: () => import("@/views/ItemJourneyView.vue"), meta: { needs: "futureSelected" } },
   // Epic 6 is on-device and can be opened without an active investigation.
@@ -54,12 +62,10 @@ const GATES = {
   item: store => store.itemChosen,
   problems: store => store.problemsChosen,
   verdict: store => store.verdictRecorded,
-  handover: store => Boolean(store.handover),
   safetyReady: store => store.safetyReady,
   safetyAnswered: store => store.safetyAnswered,
   comparisonAnswered: store => store.comparisonAnswered,
   safetyBoundary: store => store.safetyBoundarySet,
-  futuresReady: () => useFutures().options.length > 0,
   futureSelected: () => Boolean(useFutures().selected)
 };
 
@@ -67,12 +73,10 @@ const FALLBACK = {
   item: "identify",
   problems: "problem",
   verdict: "clues",
-  handover: "reveal",
   safetyReady: "identify",
   safetyAnswered: "safety-activity",
   comparisonAnswered: "safety-comparison",
   safetyBoundary: "safety-boundary",
-  futuresReady: "futures-explore",
   futureSelected: "futures-compare"
 };
 

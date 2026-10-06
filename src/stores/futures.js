@@ -42,6 +42,21 @@ export const useFutures = defineStore("futures", {
     },
     markJourneySeen() {
       this.journeySeen = true;
+    },
+    /**
+     * Forget the chosen future and the journey built on it.
+     *
+     * Called when an earlier answer changes: the options are worked out from
+     * the safety boundary, so a choice made under the old one may not even be
+     * offered under the new one.
+     */
+    forgetChoice() {
+      this.options = [];
+      this.explored = [];
+      this.selectedId = null;
+      this.replayFromId = null;
+      this.lastJourneyFromId = null;
+      this.journeySeen = false;
     }
   }
 });

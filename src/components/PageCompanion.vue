@@ -7,8 +7,8 @@ const route = useRoute();
 const scenes = {
   breakdown: { main: "🔍", left: "🧩", right: "✨", text: "Look at one part at a time" },
   verdict: { main: "🤔", left: "💭", right: "📝", text: "Your own idea comes first" },
-  handover: { main: "🌱", left: "♻️", right: "⭐", text: "One small clue can start a new future" },
-  "safety-reveal": { main: "🛡️", left: "👀", right: "💡", text: "Look, pause, and learn why" },
+  reveal: { main: "🌱", left: "♻️", right: "⭐", text: "One small clue can start a new future" },
+  "safety-activity": { main: "🛡️", left: "👀", right: "💡", text: "Look, pause, and learn why" },
   "safety-boundary": { main: "🙋", left: "🛡️", right: "🌈", text: "Asking an adult is a strong choice" }
 };
 
