@@ -11,6 +11,12 @@
 // and labels them ✅ / ❌. That is a reaction — it tells the child which answer
 // is the good one. The layout, spacing and shape below are the prototype's; the
 // selected state is a single neutral treatment for all four choices.
+//
+// All three clues live on one screen. One question per screen meant three waits
+// and three page loads for three taps, which read as a long interrogation; here
+// the child can see how short it is and answer at their own pace. The old
+// "your answers are recorded" screen between the clues and the verdict is gone
+// with it — finishing the clues is not news, so it goes straight on.
 
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -20,94 +26,83 @@ import QuestionMission from "@/components/QuestionMission.vue";
 
 const store = useInvestigation();
 const router = useRouter();
-const index = ref(0);
-const showCheckpoint = ref(false);
+const error = ref("");
 
 const total = computed(() => store.questions.length);
-const question = computed(() => store.questions[index.value]);
-const progress = computed(() => ((index.value + 1) / Math.max(total.value, 1)) * 100);
-const isLast = computed(() => index.value === total.value - 1);
+const answered = computed(() => store.answers.filter(Boolean).length);
+const complete = computed(() => total.value > 0 && answered.value === total.value);
 
 // Skip is offered as a choice in the same list, exactly as the prototype does.
-const options = computed(() => [
-  ...(question.value?.options || []).map((o, i) => ({ value: o.value, label: o.label, icon: ["🔍", "💬", "✨", "🤔"][i % 4] })),
-  { value: "skipped", label: "Skip this one", icon: "⏭️" }
-]);
-
-const current = computed({
-  get: () => store.answers[index.value],
-  set: value => store.answer(index.value, value)   // recorded, and nothing else
-});
-
-async function advance() {
-  if (!isLast.value) {
-    index.value += 1;
-    return;
-  }
-  await store.saveAnswers();
-  // A neutral checkpoint after the group of three. This changes presentation
-  // only: answers, scoring and the following verdict flow remain untouched.
-  showCheckpoint.value = true;
+function optionsFor(question) {
+  return [
+    ...(question.options || []).map((option, i) => ({
+      value: option.value,
+      label: option.label,
+      icon: ["🔍", "💬", "✨", "🤔"][i % 4]
+    })),
+    { value: "skipped", label: "Skip this one", icon: "⏭️" }
+  ];
 }
 
-function continueToVerdict() {
+async function finish() {
+  if (!complete.value) {
+    error.value = "Answer each clue, or tap Skip on the ones you cannot tell.";
+    return;
+  }
+  error.value = "";
+  await store.saveAnswers();
   router.push({ name: "verdict" });
 }
 
 function back() {
-  if (index.value > 0) index.value -= 1;
-  else router.push({ name: "problem" });
+  router.push({ name: "problem" });
 }
 </script>
 
 <template>
-  <section v-if="question && !showCheckpoint">
-    <div class="ck-clue__head">
-      <p class="ck-eyebrow">Clue {{ index + 1 }} of {{ total }}</p>
-      <div class="ck-bar" role="presentation"><i :style="{ width: `${progress}%` }"></i></div>
-    </div>
-
-    <QuestionMission eyebrow="Clue detective mission" :title="question.text" description="Look carefully with your eyes only. You never need to touch or move the item." :icon="store.item?.icon || '🔎'" />
+  <section v-if="total">
+    <QuestionMission
+      eyebrow="Clue detective mission"
+      :title="`${total} quick clues about your ${store.item?.name || 'item'}`"
+      description="Look carefully with your eyes only. You never need to touch or move the item."
+      :icon="store.item?.icon || '🔎'"
+    />
 
     <div class="ck-note">
       <span aria-hidden="true">💡</span>
-      <p>Just look at your item. You do not need to touch or move anything.</p>
+      <p>No answer is right or wrong here. Tap Skip on anything you cannot tell by looking.</p>
     </div>
 
-    <OptionList v-model="current" :options="options" :name="`clue-${index}`" :key="question.id" />
+    <!-- Progress through the questions — never progress towards a verdict. -->
+    <div class="ck-clue__head">
+      <p class="ck-eyebrow">{{ answered }} of {{ total }} answered</p>
+      <div class="ck-bar" role="presentation">
+        <i :style="{ width: `${(answered / total) * 100}%` }"></i>
+      </div>
+    </div>
 
-    <p class="ck-hint">Choose an answer, choose no problem, or tap Skip.</p>
+    <ol class="ck-clue__list">
+      <li v-for="(question, index) in store.questions" :key="question.id" class="ck-clue">
+        <h2 class="ck-clue__question">
+          <span class="ck-clue__number" aria-hidden="true">{{ index + 1 }}</span>
+          {{ question.text }}
+        </h2>
+        <OptionList
+          :model-value="store.answers[index]"
+          :options="optionsFor(question)"
+          :name="`clue-${index}`"
+          @update:model-value="store.answer(index, $event)"
+        />
+      </li>
+    </ol>
+
+    <p v-if="error" class="ck-error" role="alert">{{ error }}</p>
 
     <div class="ck-actions">
       <button type="button" class="btn btn-quiet" @click="back">← Back</button>
-      <button type="button" class="btn btn-primary btn--wide" :disabled="!current" @click="advance">
-        {{ isLast ? "Finish Clues →" : "Next Clue →" }}
+      <button type="button" class="btn btn-primary btn--wide" :disabled="!complete" @click="finish">
+        Give My Verdict →
       </button>
-    </div>
-  </section>
-
-  <section v-else-if="showCheckpoint" class="ck-checkpoint">
-    <div class="ck-checkpoint__visual" aria-hidden="true">
-      <span class="ck-checkpoint__spark ck-checkpoint__spark--one">✦</span>
-      <span class="ck-checkpoint__spark ck-checkpoint__spark--two">✦</span>
-      <span class="ck-checkpoint__card ck-checkpoint__card--one">🔍</span>
-      <span class="ck-checkpoint__card ck-checkpoint__card--two">💬</span>
-      <span class="ck-checkpoint__card ck-checkpoint__card--three">🌱</span>
-      <span class="ck-checkpoint__icon">✓</span>
-    </div>
-    <p class="ck-eyebrow">3 clues completed</p>
-    <h1>Thanks — your answers are recorded.</h1>
-    <p class="ck-lead">
-      You have finished this short group of three questions. We have not marked any
-      answer right or wrong.
-    </p>
-    <div class="ck-note ck-note--teal">
-      <span aria-hidden="true">💬</span>
-      <p><strong>Your feedback:</strong> all {{ total }} clue responses are ready for your own verdict.</p>
-    </div>
-    <div class="ck-actions">
-      <button type="button" class="btn btn-quiet" @click="showCheckpoint = false">← Review answers</button>
-      <button type="button" class="btn btn-primary btn--wide" @click="continueToVerdict">Give My Verdict →</button>
     </div>
   </section>
 </template>
@@ -117,7 +112,7 @@ function back() {
   display: flex;
   align-items: center;
   gap: var(--ck-gap);
-  margin-bottom: var(--ck-gap-sm);
+  margin: var(--ck-gap-md) 0 var(--ck-gap-sm);
 }
 .ck-clue__head .ck-eyebrow { margin: 0; white-space: nowrap; }
 
@@ -132,90 +127,52 @@ function back() {
   display: block;
   height: 100%;
   border-radius: inherit;
-  /* Progress through the questions — never progress towards a verdict. */
   background: var(--ck-coral);
-  transition: width 0.2s ease;
+  transition: width 0.25s ease;
 }
 
-.ck-note { margin-bottom: var(--ck-gap-md); }
+.ck-clue__list { display: grid; gap: var(--ck-gap-md); margin: 0; padding: 0; list-style: none; }
 
-.ck-hint {
-  margin: var(--ck-gap-sm) 0 0;
-  text-align: center;
+/* Each clue is its own card, so three questions on one screen still read as
+   three separate things to look at rather than one long form. */
+.ck-clue {
+  padding: 18px 18px 14px;
+  border: 1px solid var(--ck-border);
+  border-radius: var(--ck-radius-card);
+  background: var(--ck-surface);
+}
+
+.ck-clue__question {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  margin: 0 0 12px;
+  font-size: var(--ck-size-h2);
+  line-height: 1.25;
+}
+.ck-clue__number {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ck-surface-warm);
+  box-shadow: inset 0 0 0 2px var(--ck-border);
+  font-family: var(--ck-font-body);
   font-size: var(--ck-size-mini);
+  font-weight: 900;
   color: var(--ck-muted);
 }
 
-.ck-checkpoint { text-align: center; }
-.ck-checkpoint h1 { max-width: 16ch; margin-inline: auto; }
-.ck-checkpoint .ck-lead { max-width: 39ch; margin: 0 auto var(--ck-gap-md); }
-.ck-checkpoint .ck-note { text-align: left; }
-.ck-checkpoint__visual {
-  position: relative;
-  width: 230px;
-  height: 122px;
-  margin: 0 auto 14px;
-}
-.ck-checkpoint__visual::before {
-  content: "";
-  position: absolute;
-  inset: 20px 42px 0;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--ck-yellow-soft), transparent 68%);
-  animation: ck-glow 2.8s ease-in-out infinite;
-}
-.ck-checkpoint__icon {
-  position: absolute;
-  left: 50%;
-  top: 16px;
-  translate: -50% 0;
-  display: grid;
-  place-items: center;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: var(--ck-green);
-  box-shadow: 0 0 0 11px var(--ck-green-soft), 0 14px 30px rgba(86,125,72,.16);
-  color: white;
-  font-size: 30px;
-  font-weight: 900;
-  animation: ck-check-in .65s cubic-bezier(.2,1.45,.4,1) both;
-}
-.ck-checkpoint__card {
-  position: absolute;
-  top: 38px;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid rgba(32,54,61,.06);
-  border-radius: 16px;
-  background: white;
-  box-shadow: 0 10px 26px rgba(32,54,61,.09);
-  font-size: 21px;
-  opacity: 0;
-  animation: ck-clue-in .55s cubic-bezier(.2,1.25,.4,1) forwards;
-}
-.ck-checkpoint__card--one { left: 12px; rotate: -9deg; background: var(--ck-blue-soft); animation-delay: .14s; }
-.ck-checkpoint__card--two { right: 12px; rotate: 9deg; background: var(--ck-purple-soft); animation-delay: .26s; }
-.ck-checkpoint__card--three { left: 36px; top: 78px; rotate: 5deg; background: var(--ck-teal-soft); animation-delay: .38s; }
-.ck-checkpoint__spark { position: absolute; z-index: 3; color: var(--ck-yellow); font-size: 18px; animation: ck-spark 2.2s ease-in-out infinite; }
-.ck-checkpoint__spark--one { left: 68px; top: 6px; }
-.ck-checkpoint__spark--two { right: 56px; top: 80px; animation-delay: -.8s; }
+.ck-note { margin-bottom: var(--ck-gap-sm); }
 
-@keyframes ck-check-in {
-  from { opacity: 0; transform: scale(.55) rotate(-12deg); }
-  to { opacity: 1; transform: scale(1); }
-}
-@keyframes ck-clue-in {
-  from { opacity: 0; transform: translateY(18px) scale(.8); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes ck-glow { 0%,100% { opacity: .55; transform: scale(.92); } 50% { opacity: 1; transform: scale(1.08); } }
-@keyframes ck-spark { 0%,100% { opacity: .35; transform: scale(.75) rotate(0); } 50% { opacity: 1; transform: scale(1.12) rotate(18deg); } }
-
-@media (max-width: 420px) {
-  .ck-checkpoint__visual { width: 205px; }
+.ck-error {
+  margin: var(--ck-gap-sm) 0 0;
+  padding: 12px 16px;
+  border-radius: var(--ck-radius-ctrl);
+  background: var(--ck-yellow-soft);
+  color: var(--ck-ink);
+  font-size: var(--ck-size-small);
 }
 </style>

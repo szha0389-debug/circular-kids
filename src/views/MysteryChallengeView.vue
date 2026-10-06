@@ -68,8 +68,10 @@ function onChooseArea(area) {
   settle(isCorrectArea(mystery.value, area.id), { x: x + width / 2, y: y + height / 2 });
 }
 
-function backToStages() {
-  router.push({ name: "welcome", hash: "#how-it-works" });
+// The quiz is its own entry point, not a stage of the investigation, so the
+// way out of a solved mystery is back to the list of mysteries.
+function backToHub() {
+  router.push({ name: "mystery-hub" });
 }
 </script>
 
@@ -141,9 +143,9 @@ function backToStages() {
         v-if="solved"
         type="button"
         class="btn btn-primary btn--wide"
-        @click="backToStages"
+        @click="backToHub"
       >
-        Back to Stage Cards →
+        Back to all mysteries →
       </button>
     </div>
 
