@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 import { useFutures } from "@/stores/futures";
@@ -9,6 +9,16 @@ const router = useRouter();
 const investigation = useInvestigation();
 const futures = useFutures();
 const shelf = useRescueShelf();
+const storyVideo = ref(null);
+
+function playStoryVideo() {
+  if (!storyVideo.value) return;
+
+  storyVideo.value.muted = true;
+  void storyVideo.value.play().catch(() => {
+    // Some browsers suspend background media; autoplay retries when it can play again.
+  });
+}
 
 const AI_WARMUP_SESSION_KEY = "circular-kids-ai-warmup-triggered";
 let aiWarmupTriggered = false;
@@ -28,6 +38,10 @@ onMounted(() => {
 
   aiWarmupTriggered = true;
   void fetch("/api/ai/health").catch(() => {});
+});
+
+onMounted(() => {
+  requestAnimationFrame(playStoryVideo);
 });
 
 // Same signal the journey menu uses, so the card and the menu never disagree.
@@ -174,12 +188,14 @@ const highlights = [
               <span>Watch this 12-second circular story play on repeat.</span>
             </div>
             <video
+              ref="storyVideo"
               class="ck-kid-video__player"
               autoplay
               loop
               muted
               playsinline
               preload="auto"
+              @canplay="playStoryVideo"
               poster="/assets/circular-economy-story-poster.png"
               aria-label="A twelve-second animation about Australia's waste. It shows national waste and recovery figures, then follows old electronics and clothing into reuse, repair, sharing and recycling."
             >
