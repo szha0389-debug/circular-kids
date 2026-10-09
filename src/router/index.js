@@ -2,6 +2,9 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 import { useFutures } from "@/stores/futures";
 import { findMystery } from "../../core/mysteries.js";
+import { chunkRecoveryUrl, isChunkLoadError } from "./chunkRecovery.js";
+
+const CHUNK_RECOVERY_KEY = "circular-kids-chunk-recovery";
 
 // Hash routing keeps static hosting simple, but people may still type or share
 // a direct path such as `/identify` or `/abc`. Move that path behind the hash
@@ -108,6 +111,35 @@ router.beforeEach(async to => {
   if (!needs) return true;
   if (GATES[needs](store)) return true;
   return { name: FALLBACK[needs] };
+});
+
+// A branch alias can switch to a new Vercel deployment while an older page is
+// still open. Its next lazy route then points at an old hashed file that the
+// alias no longer serves. Reload once at the requested route so the browser
+// picks up the new index and matching assets instead of leaving a button stuck.
+router.onError((error, to) => {
+  if (typeof window === "undefined" || !isChunkLoadError(error)) return;
+
+  const target = to?.fullPath || window.location.hash.slice(1) || "/";
+  let previousTarget = "";
+  try {
+    previousTarget = sessionStorage.getItem(CHUNK_RECOVERY_KEY) || "";
+  } catch {
+    // Storage may be unavailable; reloading the matching route is still safe.
+  }
+
+  if (previousTarget === target) {
+    try { sessionStorage.removeItem(CHUNK_RECOVERY_KEY); } catch {}
+    useInvestigation().say("This page could not finish updating. Please refresh and try again.", "warn");
+    return;
+  }
+
+  try { sessionStorage.setItem(CHUNK_RECOVERY_KEY, target); } catch {}
+  window.location.replace(chunkRecoveryUrl(window.location.href, target));
+});
+
+router.afterEach(() => {
+  try { sessionStorage.removeItem(CHUNK_RECOVERY_KEY); } catch {}
 });
 
 export default router;
