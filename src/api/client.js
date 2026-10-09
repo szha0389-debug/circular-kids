@@ -41,7 +41,8 @@ export const api = {
 
   get: id => request(`/api/investigations/${id}`),
 
-  patch: (id, patch) => request(`/api/investigations/${id}`, { method: "PATCH", body: patch }),
+  // POST avoids a 405 issued by protected Vercel preview routes for PATCH.
+  patch: (id, patch) => request(`/api/investigations/${id}`, { method: "POST", body: patch }),
 
   caseView: id => request(`/api/investigations/${id}/case`),
 

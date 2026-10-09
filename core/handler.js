@@ -72,7 +72,9 @@ export async function handle({ method, path, body = {} }, store) {
 
   if (!action) {
     if (method === "GET") return { status: 200, body: record };
-    if (method === "PATCH") {
+    // POST is accepted as a compatibility update method because some protected
+    // Vercel preview deployments reject PATCH before it reaches the function.
+    if (method === "PATCH" || method === "POST") {
       const updated = await store.update(id, body);
       if (!updated) return NOT_FOUND;
       return { status: 200, body: updated };

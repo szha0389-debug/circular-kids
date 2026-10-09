@@ -371,7 +371,7 @@ test("API the catalogue, case and reveal route through one shared handler", asyn
   assert.equal(catalogue.body.categories.length, 6);
 
   await handle(
-    { method: "PATCH", path: `/api/investigations/${id}`, body: { itemId: "backpack", problems: ["zip-stuck"] } },
+    { method: "POST", path: `/api/investigations/${id}`, body: { itemId: "backpack", problems: ["zip-stuck"] } },
     store
   );
 
