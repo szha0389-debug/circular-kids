@@ -62,16 +62,33 @@ export function createDbStore() {
 
     async update(id, input) {
       const db = sql();
-      // Older deployments created the investigations table before the safety
-      // columns existed. Make the additive migration idempotent so a normal
-      // item confirmation cannot fail just because that one-off migration was
-      // missed in the hosted database.
-      await ensureInvestigationSchema(db);
       const rows = await db`SELECT * FROM investigations WHERE id = ${id} LIMIT 1`;
       const current = shape(rows[0]);
       if (!current) return null;
       // Validation and field whitelisting happen in core, not in SQL.
       const next = applyUpdate(current, input);
+
+      const safetyChanged = ["safetyResponse", "comparisonResponse"].some(key =>
+        Object.prototype.hasOwnProperty.call(input || {}, key)
+      );
+
+      if (!safetyChanged) {
+        // Keep Epic 1 independent from the later safety migration. An older
+        // database can therefore confirm an item immediately, even before its
+        // additive Epic 2 columns have been created.
+        const updatedRows = await db`
+          UPDATE investigations SET
+            item_id = ${next.itemId},
+            problems = ${JSON.stringify(next.problems)},
+            answers = ${JSON.stringify(next.answers)},
+            verdict = ${next.verdict},
+            stage = ${next.stage},
+            updated_at = NOW()
+          WHERE id = ${id} RETURNING *`;
+        return shape(updatedRows[0]);
+      }
+
+      await ensureInvestigationSchema(db);
       const updatedRows = await db`
         UPDATE investigations SET
           item_id = ${next.itemId},
