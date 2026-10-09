@@ -132,36 +132,68 @@ const highlights = [
         <span class="ck-welcome__data-mascot" aria-hidden="true">🦘</span>
         <p class="ck-eyebrow">Australia’s waste story</p>
         <h2 id="waste-data-title">Plastic waste across Australia</h2>
-        <p>Follow the map and timeline to discover where plastic waste went and how the story changed.</p>
+        <p>See which states sent away the most plastic and how the story changed over time.</p>
       </div>
       <div class="ck-welcome__charts">
         <figure class="ck-welcome__chart ck-welcome__chart--map">
-          <span class="ck-welcome__chart-badge" aria-hidden="true">🗺️</span>
-          <div class="ck-kid-map" role="group" aria-label="Plastic waste disposal map of Australia">
-            <div class="ck-kid-map__title"><strong>Which places sent away the most?</strong><span>Darker red means more plastic waste.</span></div>
-            <div class="ck-kid-map__picture">
-              <img src="/assets/waste-disposal-map.png" alt="Map of Australia showing plastic waste sent to disposal by state and territory in 2022–23" loading="lazy" />
-              <span class="ck-kid-map__tip">👀 Darker red means more</span>
+          <span class="ck-welcome__chart-badge" aria-hidden="true">🏆</span>
+          <div class="ck-kid-ranking">
+            <div class="ck-kid-map__title">
+              <strong>Who sent away the most plastic?</strong>
+              <span>Meet the top three in 2022–23.</span>
             </div>
+            <p class="ck-kid-ranking__key"><span aria-hidden="true">👀</span> A longer line means more plastic.</p>
+            <ol class="ck-kid-ranking__list" aria-label="Top three states for plastic waste sent to disposal in 2022–23">
+              <li class="is-first">
+                <span class="ck-kid-ranking__medal" aria-hidden="true">🥇</span>
+                <span class="ck-kid-ranking__place"><strong>New South Wales</strong><small>1st place</small></span>
+                <span class="ck-kid-ranking__amount"><strong>713</strong><small>thousand tonnes</small></span>
+                <span class="ck-kid-ranking__track" aria-hidden="true"><i></i></span>
+              </li>
+              <li class="is-second">
+                <span class="ck-kid-ranking__medal" aria-hidden="true">🥈</span>
+                <span class="ck-kid-ranking__place"><strong>Queensland</strong><small>2nd place</small></span>
+                <span class="ck-kid-ranking__amount"><strong>664</strong><small>thousand tonnes</small></span>
+                <span class="ck-kid-ranking__track" aria-hidden="true"><i></i></span>
+              </li>
+              <li class="is-third">
+                <span class="ck-kid-ranking__medal" aria-hidden="true">🥉</span>
+                <span class="ck-kid-ranking__place"><strong>Victoria</strong><small>3rd place</small></span>
+                <span class="ck-kid-ranking__amount"><strong>634</strong><small>thousand tonnes</small></span>
+                <span class="ck-kid-ranking__track" aria-hidden="true"><i></i></span>
+              </li>
+            </ol>
           </div>
-          <figcaption><strong>Big idea</strong><span>NSW, Queensland and Victoria sent away the largest amounts in 2022–23.</span></figcaption>
+          <figcaption><strong>Remember this</strong><span>New South Wales sent away the most. Queensland and Victoria were close behind.</span></figcaption>
         </figure>
         <figure class="ck-welcome__chart">
-          <span class="ck-welcome__chart-badge" aria-hidden="true">📈</span>
-          <div class="ck-kid-trends" role="img" aria-label="Child-friendly summary showing that plastic waste changed differently across Australia over time">
-            <div class="ck-kid-map__title"><strong>Did it always stay the same?</strong><span>No. Each place has its own waste story.</span></div>
-            <div class="ck-kid-trends__path" aria-hidden="true"><span>2006</span><i>●</i><b>〰〰↗</b><i>●</i><span>2023</span></div>
-            <div class="ck-kid-trends__cards">
-              <div><span>📈</span><strong>Some went up</strong><p>More plastic was sent away in some states.</p></div>
-              <div><span>📉</span><strong>Some went down</strong><p>Other states reduced their amount.</p></div>
-              <div><span>🔄</span><strong>It can change</strong><p>Choices about reuse and recycling can change the story.</p></div>
+          <span class="ck-welcome__chart-badge" aria-hidden="true">🎬</span>
+          <div class="ck-kid-video">
+            <div class="ck-kid-map__title">
+              <strong>Can old things get a new life?</strong>
+              <span>Press play for a 12-second circular story.</span>
             </div>
+            <video
+              class="ck-kid-video__player"
+              controls
+              muted
+              playsinline
+              preload="metadata"
+              poster="/assets/circular-economy-story-poster.png"
+              aria-label="A twelve-second animation about Australia's waste. It shows national waste and recovery figures, then follows old electronics and clothing into reuse, repair, sharing and recycling."
+            >
+              <source src="/assets/circular-economy-story.mp4" type="video/mp4">
+              Your browser cannot play this video.
+            </video>
           </div>
-          <figcaption><strong>Big idea</strong><span>The lines move up and down—waste amounts can change over time.</span></figcaption>
+          <figcaption><strong>Big idea</strong><span>Before binning an item, look for a safe way to share, repair, reuse or recycle it.</span></figcaption>
         </figure>
       </div>
       <p class="ck-welcome__data-source">
-        Source: <a href="https://www.dcceew.gov.au/environment/protection/waste/publications/national-waste-resource-recovery-reporting" target="_blank" rel="noopener noreferrer">Australian Government, National Waste and Resource Recovery Database 2024</a>. Map boundaries: ABS ASGS 2016.
+        Data: <a href="https://www.dcceew.gov.au/environment/protection/waste/publications/national-waste-resource-recovery-report-2026" target="_blank" rel="noopener noreferrer">Australian Government, National Waste and Resource Recovery Report 2026</a>.
+        Community examples: ABC News on <a href="https://www.abc.net.au/news/2025-02-10/business-ewaste-recycling-reuse-microsoft-windows-10/104909752" target="_blank" rel="noopener noreferrer">e-waste reuse</a>,
+        <a href="https://www.abc.net.au/news/2026-04-11/hobart-city-mission-repair-clothing-reduce-landfill/106551256" target="_blank" rel="noopener noreferrer">clothing repair</a>, and
+        <a href="https://www.abc.net.au/news/2025-06-29/op-shops-recycling-circular-economy-repurpose-old-things-reuse/105457796" target="_blank" rel="noopener noreferrer">the circular economy</a>.
       </p>
     </section>
 
@@ -293,11 +325,10 @@ const highlights = [
 .ck-welcome__chart:first-child { border-color:#ff9da7; transform:rotate(-.45deg); }
 .ck-welcome__chart-badge { position:absolute; top:14px; right:15px; z-index:2; display:grid; place-items:center; width:52px; height:52px; border:4px solid #fff; border-radius:50%; background:var(--ck-yellow-soft); box-shadow:0 8px 18px rgba(70,80,90,.14); font-size:26px; }
 .ck-welcome__chart img { display:block; width:100%; aspect-ratio:1.72 / 1; padding:18px; object-fit:contain; background:#fffdf8; }
-.ck-welcome__chart--map img { aspect-ratio: 1.2 / 1; }
-.ck-kid-map,.ck-kid-trends{display:flex;min-height:520px;flex-direction:column;padding:38px 28px 26px;background:linear-gradient(180deg,#f4fbff,#fffbea)}
+.ck-kid-ranking,.ck-kid-video{display:flex;min-height:520px;flex-direction:column;padding:38px 28px 26px;background:linear-gradient(180deg,#f4fbff,#fffbea)}
 .ck-kid-map__title{text-align:center}.ck-kid-map__title strong,.ck-kid-map__title span{display:block}.ck-kid-map__title strong{font-family:var(--ck-font-display);font-size:25px}.ck-kid-map__title span{margin-top:4px;color:var(--ck-muted);font-weight:700}
-.ck-kid-map__picture{position:relative;display:grid;place-items:center;flex:1;margin-top:14px;overflow:hidden;border:4px solid #fff;border-radius:26px;background:#edf6fa;box-shadow:inset 0 0 0 2px rgba(121,199,240,.18)}.ck-kid-map__picture img{width:100%;height:100%;max-height:430px;padding:8px;object-fit:contain;background:#edf6fa}.ck-kid-map__tip{position:absolute;right:14px;bottom:14px;padding:9px 13px;border:3px solid #fff;border-radius:999px;background:#fff1a9;box-shadow:0 7px 18px rgba(54,72,80,.14);font-size:12px;font-weight:900}
-.ck-kid-trends__path{display:flex;align-items:center;justify-content:center;gap:14px;margin:58px 0 38px;color:#3488de;font-size:18px;font-weight:900}.ck-kid-trends__path b{color:#ff8291;font-size:42px;letter-spacing:-8px}.ck-kid-trends__cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.ck-kid-trends__cards>div{padding:20px 15px;border:3px solid #fff;border-radius:24px;background:#eaf5ff;box-shadow:0 10px 18px rgba(65,89,90,.1);text-align:center}.ck-kid-trends__cards>div:nth-child(2){background:#fff0dc}.ck-kid-trends__cards>div:nth-child(3){background:#e6f7df}.ck-kid-trends__cards span,.ck-kid-trends__cards strong{display:block}.ck-kid-trends__cards span{font-size:40px}.ck-kid-trends__cards strong{margin:8px 0;font-family:var(--ck-font-display);font-size:18px}.ck-kid-trends__cards p{margin:0;color:var(--ck-muted);font-size:13px;font-weight:700}
+.ck-kid-ranking__key{align-self:center;margin:18px 0 14px;padding:8px 14px;border-radius:999px;background:#fff1a9;color:var(--ck-ink);font-size:13px;font-weight:900}.ck-kid-ranking__list{display:grid;gap:13px;margin:0;padding:0;list-style:none}.ck-kid-ranking__list li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:16px;border:3px solid #fff;border-radius:22px;background:#ffe8ec;box-shadow:0 9px 18px rgba(65,89,90,.1)}.ck-kid-ranking__list li.is-second{background:#fff3c9}.ck-kid-ranking__list li.is-third{background:#e7f5ff}.ck-kid-ranking__medal{font-size:34px}.ck-kid-ranking__place,.ck-kid-ranking__amount{display:grid}.ck-kid-ranking__place strong{font-family:var(--ck-font-display);font-size:19px}.ck-kid-ranking__place small,.ck-kid-ranking__amount small{color:var(--ck-muted);font-size:11px;font-weight:800}.ck-kid-ranking__amount{text-align:right}.ck-kid-ranking__amount strong{font-family:var(--ck-font-display);font-size:27px;line-height:1}.ck-kid-ranking__track{grid-column:2 / -1;height:12px;overflow:hidden;border:2px solid #fff;border-radius:999px;background:rgba(255,255,255,.72)}.ck-kid-ranking__track i{display:block;width:100%;height:100%;border-radius:inherit;background:#ff8291}.ck-kid-ranking__list .is-second .ck-kid-ranking__track i{width:93%;background:#f3c84b}.ck-kid-ranking__list .is-third .ck-kid-ranking__track i{width:89%;background:#62b8e8}
+.ck-kid-video{gap:18px}.ck-kid-video .ck-kid-map__title{padding:0 64px 0 8px}.ck-kid-video__player{display:block;width:100%;aspect-ratio:5 / 4;overflow:hidden;border:4px solid #fff;border-radius:24px;background:#f7fcff;box-shadow:0 12px 24px rgba(65,89,90,.13);object-fit:cover}
 .ck-welcome__chart figcaption { display:flex; flex-direction:column; gap:4px; padding:19px 24px 23px; border-top:2px dashed #d7e3dd; background:linear-gradient(90deg,#fffdf5,#f2fbff); }
 .ck-welcome__chart figcaption strong { font-family:var(--ck-font-display); font-size:22px; color:var(--ck-ink); }
 .ck-welcome__chart figcaption span, .ck-welcome__data-source { color: var(--ck-muted); font-size: var(--ck-size-mini); }
@@ -332,7 +363,11 @@ const highlights = [
   .ck-welcome__quiz { grid-template-columns: 1fr; justify-items: start; padding: 22px; }
   .ck-welcome__data { padding: 58px 20px; }
   .ck-welcome__charts { grid-template-columns: 1fr; }
-  .ck-kid-trends__cards { grid-template-columns: 1fr; }
+  .ck-kid-ranking, .ck-kid-video { min-height: 0; padding: 32px 18px 22px; }
+  .ck-kid-ranking__list li { grid-template-columns: auto 1fr; }
+  .ck-kid-ranking__amount { grid-column: 2; text-align: left; }
+  .ck-kid-ranking__track { grid-column: 1 / -1; }
+  .ck-kid-video__player { border-radius: 18px; }
   .ck-welcome__safety-band { grid-template-columns: auto 1fr; min-height: 0; margin: 0; padding: 52px 24px; }
   .ck-welcome__safety-band > p { grid-column: 1 / -1; }
 }

@@ -3,6 +3,19 @@ import { useInvestigation } from "@/stores/investigation";
 import { useFutures } from "@/stores/futures";
 import { findMystery } from "../../core/mysteries.js";
 
+// Hash routing keeps static hosting simple, but people may still type or share
+// a direct path such as `/identify` or `/abc`. Move that path behind the hash
+// before Vue reads it: known paths keep working and unknown ones reach the 404
+// route instead of accidentally opening the homepage.
+if (typeof window !== "undefined" && window.location.pathname !== "/" && !window.location.hash) {
+  const directUrl = new URL(window.location.href);
+  const routePath = `${directUrl.pathname}${directUrl.search}`;
+  directUrl.pathname = "/";
+  directUrl.search = "";
+  directUrl.hash = routePath;
+  window.history.replaceState(window.history.state, "", directUrl);
+}
+
 // `step` drives the five-step indicator. Two screens share step 2 because the
 // prototype splits US-1.2 into "look at the parts" and "say what's wrong".
 const routes = [
@@ -41,7 +54,12 @@ const routes = [
     meta: { standalone: true },
     beforeEnter: to => (findMystery(to.params.id) ? true : { name: "mystery-hub" })
   },
-  { path: "/:pathMatch(.*)*", redirect: "/" }
+  {
+    path: "/:pathMatch(.*)*",
+    name: "not-found",
+    component: () => import("@/views/NotFoundView.vue"),
+    meta: { standalone: true }
+  }
 ];
 
 const router = createRouter({

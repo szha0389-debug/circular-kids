@@ -18,7 +18,8 @@
     { "source": "/safety", "destination": "/" },
     { "source": "/safety/reveal", "destination": "/" },
     { "source": "/safety/compare", "destination": "/" },
-    { "source": "/safety/boundary", "destination": "/" }
+    { "source": "/safety/boundary", "destination": "/" },
+    { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
     {
