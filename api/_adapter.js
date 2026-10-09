@@ -26,8 +26,11 @@ export function vercelHandler(pathFor) {
       return res.status(result.status).json(result.body);
     } catch (error) {
       console.error(error);
+      const errorCode = /^[a-z0-9_]{2,32}$/i.test(String(error?.code || ""))
+        ? String(error.code)
+        : "SERVER_ERROR";
       return res.status(500).json({
-        message: "The service is temporarily unavailable. Your answers remain on this device."
+        message: `The service is temporarily unavailable. Your answers remain on this device. Reference: ${errorCode}`
       });
     }
   };
