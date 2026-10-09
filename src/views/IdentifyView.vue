@@ -72,8 +72,13 @@ function goToList(message = "") {
 }
 
 async function confirmSuggestion() {
-  await store.chooseItem(store.suggestion.itemId);
-  router.push({ name: "problem" });
+  try {
+    await store.chooseItem(store.suggestion.itemId);
+    await router.push({ name: "problem" });
+  } catch (error) {
+    console.error("Could not confirm the suggested item", error);
+    store.say("We could not save that item yet. Please try Confirm again.", "warn");
+  }
 }
 
 function rejectSuggestion() {
@@ -93,8 +98,13 @@ function openCategoryList(categoryId) {
 /** US-1.1: the case only proceeds on a confirmed choice, never a tapped one. */
 async function confirmItem() {
   if (!pickedItem.value) return;
-  await store.chooseItem(pickedItem.value);
-  router.push({ name: "problem" });
+  try {
+    await store.chooseItem(pickedItem.value);
+    await router.push({ name: "problem" });
+  } catch (error) {
+    console.error("Could not confirm the selected item", error);
+    store.say("We could not save that item yet. Please try Confirm again.", "warn");
+  }
 }
 </script>
 
