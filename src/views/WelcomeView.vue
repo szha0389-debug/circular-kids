@@ -171,14 +171,15 @@ const highlights = [
           <div class="ck-kid-video">
             <div class="ck-kid-map__title">
               <strong>Can old things get a new life?</strong>
-              <span>Press play for a 12-second circular story.</span>
+              <span>Watch this 12-second circular story play on repeat.</span>
             </div>
             <video
               class="ck-kid-video__player"
-              controls
+              autoplay
+              loop
               muted
               playsinline
-              preload="metadata"
+              preload="auto"
               poster="/assets/circular-economy-story-poster.png"
               aria-label="A twelve-second animation about Australia's waste. It shows national waste and recovery figures, then follows old electronics and clothing into reuse, repair, sharing and recycling."
             >
