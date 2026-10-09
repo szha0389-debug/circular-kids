@@ -25,7 +25,8 @@ async function request(path, { method = "GET", body, timeout = TIMEOUT_MS } = {}
 
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      throw new ApiError(data.message || "Please try that again.", response.status);
+      const fallback = `Please try that again. (HTTP ${response.status})`;
+      throw new ApiError(data.message || fallback, response.status);
     }
     return data;
   } finally {
