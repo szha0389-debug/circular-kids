@@ -39,28 +39,34 @@ export const api = {
 
   open: () => request("/api/investigations", { method: "POST" }),
 
-  get: id => request(`/api/investigations/${id}`),
+  get: id => investigationRequest(id),
 
-  // POST avoids a 405 issued by protected Vercel preview routes for PATCH.
-  patch: (id, patch) => request(`/api/investigations/${id}`, { method: "POST", body: patch }),
+  patch: (id, patch) => investigationRequest(id, { operation: "PATCH", payload: patch }),
 
-  caseView: id => request(`/api/investigations/${id}/case`),
+  caseView: id => investigationRequest(id, { action: "case" }),
 
-  reveal: id => request(`/api/investigations/${id}/reveal`, { method: "POST" }),
+  reveal: id => investigationRequest(id, { action: "reveal", operation: "POST" }),
 
-  transfer: id => request(`/api/investigations/${id}/transfer`, { method: "POST" }),
+  transfer: id => investigationRequest(id, { action: "transfer", operation: "POST" }),
 
-  safetyActivity: id => request(`/api/investigations/${id}/safety-activity`),
+  safetyActivity: id => investigationRequest(id, { action: "safety-activity" }),
 
-  safetyReveal: id => request(`/api/investigations/${id}/safety-reveal`, { method: "POST" }),
+  safetyReveal: id => investigationRequest(id, { action: "safety-reveal", operation: "POST" }),
 
-  safetyComparison: id => request(`/api/investigations/${id}/safety-comparison`),
+  safetyComparison: id => investigationRequest(id, { action: "safety-comparison" }),
 
-  safetyBoundary: id => request(`/api/investigations/${id}/safety-boundary`, { method: "POST" }),
+  safetyBoundary: id => investigationRequest(id, { action: "safety-boundary", operation: "POST" }),
 
-  safetyStatus: id => request(`/api/investigations/${id}/safety-status`),
+  safetyStatus: id => investigationRequest(id, { action: "safety-status" }),
 
-  complete: id => request(`/api/investigations/${id}/complete`, { method: "POST" })
+  complete: id => investigationRequest(id, { action: "complete", operation: "POST" })
 };
+
+function investigationRequest(id, { action, operation = "GET", payload } = {}) {
+  return request("/api/investigation", {
+    method: "POST",
+    body: { id, action, operation, payload }
+  });
+}
 
 export { ApiError };

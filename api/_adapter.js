@@ -7,13 +7,14 @@ import { findItem } from "../core/catalogue.js";
 
 const store = createDbStore();
 
-export function vercelHandler(pathFor) {
+export function vercelHandler(pathFor, requestFor) {
   return async function handler(req, res) {
     res.setHeader("Cache-Control", "no-store");
     try {
-      const path = pathFor(req);
       const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
-      const result = await handle({ method: req.method, path, body }, store);
+      const path = pathFor(req, body);
+      const request = requestFor?.(req, body) || { method: req.method, body };
+      const result = await handle({ method: request.method, path, body: request.body }, store);
 
       // The hosted deployment enriches a successful handover with dataset
       // evidence. It is added here, not in core, because only this deployment
