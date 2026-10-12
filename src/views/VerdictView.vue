@@ -1,5 +1,6 @@
 <script setup>
-// US-1.4 — Give my own verdict before the site gives one.
+// US-1.4 — Give my own verdict immediately after choosing the item and before
+// the guided investigation can influence that first judgement.
 //
 // This is the epic. Two criteria are load-bearing and both are guarded here as
 // well as in core/investigation.js:
@@ -35,19 +36,19 @@ const canContinue = computed(() => Boolean(choice.value));
 async function record() {
   if (!canContinue.value) return;
   await store.recordVerdict(choice.value);
-  router.push({ name: "reveal" });
+  router.push({ name: "problem" });
 }
 </script>
 
 <template>
   <section>
-    <QuestionMission eyebrow="Your detective verdict" title="What do you think?" description="Based on what you noticed, choose the answer that feels right to you. There is no wrong answer." :icon="store.item?.icon || '🤔'" />
+    <QuestionMission eyebrow="Your first verdict" title="What do you think?" description="Before you follow the investigation clues, choose the answer that feels right to you. There is no wrong answer." :icon="store.item?.icon || '🤔'" />
 
     <div class="ck-note ck-note--purple">
       <span aria-hidden="true">🔒</span>
       <p>
-        You will see what the investigation evidence suggests <strong>after</strong> you
-        submit your own verdict.
+        Your choice comes first. You will see what the evidence suggests
+        <strong>after</strong> you complete the investigation.
       </p>
     </div>
 
@@ -56,7 +57,7 @@ async function record() {
     <p class="ck-hint">“Not Sure” is always a valid choice.</p>
 
     <div class="ck-actions">
-      <button type="button" class="btn btn-quiet" @click="router.push({ name: 'clues' })">← Back</button>
+      <button type="button" class="btn btn-quiet" @click="router.push({ name: 'identify' })">← Back</button>
       <button
         type="button"
         class="btn btn-primary btn--wide"

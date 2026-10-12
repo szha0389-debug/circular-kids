@@ -19,10 +19,10 @@ export const FLOW_STAGES = Object.freeze([
     accent: "coral",
     steps: [
       { id: "identify", label: "Show my item", route: "identify", done: "itemChosen" },
-      { id: "problem", label: "Spot the problem", route: "problem", done: "problemsChosen", needs: "itemChosen" },
+      { id: "verdict", label: "Give my verdict", route: "verdict", done: "verdictRecorded", needs: "itemChosen" },
+      { id: "problem", label: "Spot the problem", route: "problem", done: "problemsChosen", needs: "verdictRecorded" },
       { id: "clues", label: "Follow the clues", route: "clues", done: "cluesAnswered", needs: "problemsChosen" },
-      { id: "verdict", label: "Give my verdict", route: "verdict", done: "verdictRecorded", needs: "problemsChosen" },
-      { id: "reveal", label: "My findings", route: "reveal", done: "investigationDone", needs: "verdictRecorded" }
+      { id: "reveal", label: "My findings", route: "reveal", done: "investigationDone", needs: "cluesAnswered" }
     ]
   },
   {
@@ -136,14 +136,14 @@ export function flowCompletion(stages) {
 // "Ask an adult" still on screen after the child has just said the cable cover
 // is split would be the worst kind of wrong.
 //
-// Each entry reads "this is worked out from that". It is a graph and not a
-// line, because the verdict is a leaf: the safety warning is worked out from
-// the clues, not from what the child concluded about them.
+// Each entry reads "this is worked out from that". A value can have more than
+// one source: the reveal compares the early verdict with the later clue
+// answers. The safety warning still comes from the clues, never the verdict.
 export const DEPENDS_ON = Object.freeze({
   problems: "item",
+  verdict: "item",
   answers: "problems",
-  verdict: "answers",
-  reveal: "verdict",
+  reveal: ["answers", "verdict"],
   safetyResponse: "answers",
   comparisonResponse: "safetyResponse",
   boundary: "comparisonResponse",
@@ -163,7 +163,8 @@ export function invalidatedBy(answer) {
   while (queue.length) {
     const current = queue.shift();
     for (const [name, source] of Object.entries(DEPENDS_ON)) {
-      if (source !== current || stale.includes(name)) continue;
+      const sources = Array.isArray(source) ? source : [source];
+      if (!sources.includes(current) || stale.includes(name)) continue;
       stale.push(name);
       queue.push(name);
     }

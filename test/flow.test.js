@@ -43,6 +43,16 @@ test("a fresh case opens only the first step and the on-device shelf", () => {
   assert.deepEqual(open, ["identify", "rescue-shelf"]);
 });
 
+test("the verdict sits immediately after item selection and before the clues", () => {
+  const investigate = FLOW_STAGES.find(stage => stage.id === "investigate");
+  assert.deepEqual(
+    investigate.steps.map(step => step.id),
+    ["identify", "verdict", "problem", "clues", "reveal"]
+  );
+  const afterItem = flowProgress({ itemChosen: true })[0].steps.filter(step => step.open);
+  assert.deepEqual(afterItem.map(step => step.id), ["identify", "verdict"]);
+});
+
 test("nothing is locked once the case is complete", () => {
   const finished = Object.fromEntries(ALL_STEPS.map(step => [step.done, true]));
   const stages = flowProgress(finished);
@@ -85,9 +95,10 @@ test("changing the item invalidates the whole case", () => {
 
 test("changing an observation invalidates the safety boundary and the future", () => {
   const stale = invalidatedBy("problems");
-  for (const name of ["answers", "verdict", "reveal", "safetyResponse", "comparisonResponse", "boundary", "future", "journey"]) {
+  for (const name of ["answers", "reveal", "safetyResponse", "comparisonResponse", "boundary", "future", "journey"]) {
     assert.ok(stale.includes(name), `changing the problems leaves "${name}" behind`);
   }
+  assert.ok(!stale.includes("verdict"), "the first verdict must survive later observation changes");
 });
 
 test("a clue answer reaches the boundary, because a clue can turn a warning serious", () => {
@@ -96,7 +107,7 @@ test("a clue answer reaches the boundary, because a clue can turn a warning seri
   assert.ok(stale.includes("future"));
 });
 
-test("the verdict is a leaf: it changes the reasoning shown, not the safety boundary", () => {
+test("changing the verdict refreshes the comparison, not the safety boundary", () => {
   assert.deepEqual(invalidatedBy("verdict"), ["reveal"]);
 });
 

@@ -19,16 +19,17 @@ if (typeof window !== "undefined" && window.location.pathname !== "/" && !window
   window.history.replaceState(window.history.state, "", directUrl);
 }
 
-// `step` drives the five-step indicator. Two screens share step 2 because the
-// prototype splits US-1.2 into "look at the parts" and "say what's wrong".
+// `step` follows the five-screen investigation sequence. The child's own
+// verdict comes immediately after their item is confirmed, before any guided
+// observations can influence that first judgement.
 const routes = [
   { path: "/", name: "welcome", component: () => import("@/views/WelcomeView.vue") },
   { path: "/identify", name: "identify", component: () => import("@/views/IdentifyView.vue"), meta: { step: 1 } },
   { path: "/breakdown", redirect: { name: "problem" } },
-  { path: "/problem", name: "problem", component: () => import("@/views/ProblemView.vue"), meta: { step: 2, needs: "item" } },
-  { path: "/clues", name: "clues", component: () => import("@/views/CluesView.vue"), meta: { step: 3, needs: "problems" } },
-  { path: "/verdict", name: "verdict", component: () => import("@/views/VerdictView.vue"), meta: { step: 4, needs: "problems" } },
-  { path: "/reveal", name: "reveal", component: () => import("@/views/RevealView.vue"), meta: { step: 5, needs: "verdict" } },
+  { path: "/verdict", name: "verdict", component: () => import("@/views/VerdictView.vue"), meta: { step: 2, needs: "item" } },
+  { path: "/problem", name: "problem", component: () => import("@/views/ProblemView.vue"), meta: { step: 3, needs: "verdict" } },
+  { path: "/clues", name: "clues", component: () => import("@/views/CluesView.vue"), meta: { step: 4, needs: "problems" } },
+  { path: "/reveal", name: "reveal", component: () => import("@/views/RevealView.vue"), meta: { step: 5, needs: "answers" } },
   // The findings used to sit on a screen of their own after the reveal. They
   // say the same thing, so they now share one screen and this path only keeps
   // older links working.
@@ -83,6 +84,7 @@ const GATES = {
   item: store => store.itemChosen,
   problems: store => store.problemsChosen,
   verdict: store => store.verdictRecorded,
+  answers: store => store.cluesAnswered,
   safetyReady: store => store.safetyReady,
   safetyAnswered: store => store.safetyAnswered,
   comparisonAnswered: store => store.comparisonAnswered,
@@ -93,7 +95,8 @@ const GATES = {
 const FALLBACK = {
   item: "identify",
   problems: "problem",
-  verdict: "clues",
+  verdict: "verdict",
+  answers: "clues",
   safetyReady: "identify",
   safetyAnswered: "safety-activity",
   comparisonAnswered: "safety-comparison",

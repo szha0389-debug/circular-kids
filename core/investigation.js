@@ -97,6 +97,7 @@ export function applyUpdate(record, input = {}, now = Date.now()) {
         // Changing the item invalidates everything chosen against the old one.
         record.problems = [];
         record.answers = [];
+        record.verdict = null;
       }
       record.itemId = item.id;
     }
@@ -156,12 +157,21 @@ export function caseView(record) {
 }
 
 /**
- * The reveal. Refuses to compute anything until a verdict exists — this is the
- * code-level guard for "the site does not answer first".
+ * The reveal. Refuses to compute anything until the child's early verdict and
+ * every later clue answer exist — the code-level guard that prevents the site
+ * from answering before the investigation is complete.
  */
 export function reveal(record) {
   if (!record?.verdict) {
     return { ok: false, message: "Record your own verdict first." };
+  }
+  const questions = questionsFor(record.problems, record.itemId);
+  const cluesComplete =
+    record.problems?.length > 0 &&
+    questions.length > 0 &&
+    questions.every((_, index) => Boolean(record.answers?.[index]));
+  if (!cluesComplete) {
+    return { ok: false, message: "Finish the investigation clues first." };
   }
   const reasoning = reason({ itemId: record.itemId, problems: record.problems, answers: record.answers });
   return {

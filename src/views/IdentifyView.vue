@@ -74,7 +74,7 @@ function goToList(message = "") {
 async function confirmSuggestion() {
   try {
     await store.chooseItem(store.suggestion.itemId);
-    await router.push({ name: "problem" });
+    await router.push({ name: "verdict" });
   } catch (error) {
     console.error("Could not confirm the suggested item", error);
     store.say("We could not save that item yet. Please try Confirm again.", "warn");
@@ -100,7 +100,7 @@ async function confirmItem() {
   if (!pickedItem.value) return;
   try {
     await store.chooseItem(pickedItem.value);
-    await router.push({ name: "problem" });
+    await router.push({ name: "verdict" });
   } catch (error) {
     console.error("Could not confirm the selected item", error);
     store.say("We could not save that item yet. Please try Confirm again.", "warn");

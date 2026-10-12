@@ -14,7 +14,7 @@ const router = useRouter();
 // Every screen of the guided journey, in order. The journey menu replaces the
 // site navigation while the child is inside it.
 const FLOW_ROUTES = [
-  "identify", "problem", "clues", "verdict", "reveal",
+  "identify", "verdict", "problem", "clues", "reveal",
   "safety-activity", "safety-comparison", "safety-boundary",
   "futures-explore", "futures-compare", "futures-result", "item-journey"
 ];
