@@ -87,7 +87,7 @@ function saveToShelf() {
     <p class="ck-journey__uncertain"><strong>Why we say “may”:</strong> {{ journey.uncertainty }}</p>
 
     <div class="ck-actions">
-      <button type="button" class="btn btn-quiet" @click="changeChoice">← Change my choice</button>
+      <button type="button" class="btn btn-quiet" @click="changeChoice">← Replay another future</button>
       <button type="button" class="btn btn-primary" :disabled="saved" @click="saveToShelf">
         {{ saved ? "Saved to My Rescue Shelf ✓" : "Save to My Rescue Shelf" }}
       </button>
