@@ -84,6 +84,19 @@ async function startAgain() {
       </div>
     </div>
 
+    <article class="ck-simple-compare" :class="comparison?.differs ? 'is-different' : 'is-aligned'">
+      <span class="ck-simple-compare__icon" aria-hidden="true">{{ comparison?.differs ? "↔️" : "✓" }}</span>
+      <div>
+        <p class="ck-eyebrow">Simple comparison</p>
+        <h2>{{ comparison?.differs ? "You chose something different" : "Your choice is similar" }}</h2>
+        <p>
+          {{ comparison?.differs
+            ? "That is okay. Keep your answer, then use the Safety Check before deciding what to do."
+            : "Your answer and the system result point to the same next step." }}
+        </p>
+      </div>
+    </article>
+
     <article class="ck-card ck-result">
       <div class="ck-result__picture" :class="{ 'ck-result__picture--empty': !store.hasPhoto }">
         <img v-if="store.hasPhoto" :src="store.photoUrl" alt="The item you investigated" />
@@ -112,19 +125,6 @@ async function startAgain() {
         <p class="ck-compare__detail">{{ systemOutcome.detail }}</p>
       </article>
     </div>
-
-    <article class="ck-simple-compare" :class="comparison?.differs ? 'is-different' : 'is-aligned'">
-      <span class="ck-simple-compare__icon" aria-hidden="true">{{ comparison?.differs ? "↔️" : "✓" }}</span>
-      <div>
-        <p class="ck-eyebrow">Simple comparison</p>
-        <h2>{{ comparison?.differs ? "You chose something different" : "Your choice is similar" }}</h2>
-        <p>
-          {{ comparison?.differs
-            ? "That is okay. Keep your answer, then use the Safety Check before deciding what to do."
-            : "Your answer and the system result point to the same next step." }}
-        </p>
-      </div>
-    </article>
 
     <div v-if="tentative" class="ck-note">
       <span aria-hidden="true">🤔</span>
@@ -173,17 +173,17 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 0; }
   font-weight: 900;
 }
 
-.ck-result { --ck-accent: var(--ck-teal); display: grid; grid-template-columns: minmax(150px,.8fr) 1.2fr; gap: 20px; padding: 18px; margin-bottom: 18px; }
-.ck-result__picture { min-height: 170px; overflow: hidden; border-radius: 18px; background: var(--ck-teal-soft); }
-.ck-result__picture img { width: 100%; height: 100%; min-height: 170px; display: block; object-fit: cover; }
+.ck-result { --ck-accent: var(--ck-teal); display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; padding: 22px; margin-bottom: 22px; }
+.ck-result__picture { width: 54px; height: 54px; overflow: hidden; border-radius: 17px; background: var(--ck-teal-soft); }
+.ck-result__picture img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .ck-result__picture--empty { display: grid; place-items: center; }
-.ck-result__picture--empty span { font-size: 64px; filter: drop-shadow(0 8px 14px rgba(32,35,53,.12)); }
+.ck-result__picture--empty span { font-size: 25px; }
 .ck-result__content { align-self: center; }
-.ck-result__content h2 { margin: 4px 0 14px; font-size: clamp(24px,4vw,32px); }
+.ck-result__content h2 { margin: 0 0 5px; font-size: var(--ck-size-h2); }
 .ck-result dl { display: grid; gap: 10px; margin: 0; }
-.ck-result dl > div { padding: 12px 14px; border-radius: 12px; background: var(--ck-ground); }
+.ck-result dl > div { padding: 0; }
 .ck-result dt { color: var(--ck-muted); font-size: var(--ck-size-mini); font-weight: 800; }
-.ck-result dd { margin: 2px 0 0; color: var(--ck-ink); font-weight: 800; }
+.ck-result dd { margin: 2px 0 0; color: var(--ck-muted); font-size: var(--ck-size-small); }
 
 .ck-compare {
   display: grid;
@@ -210,12 +210,13 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 0; }
 }
 .ck-compare__detail { max-width: 34ch; margin: 8px auto 0; color: var(--ck-muted); font-size: var(--ck-size-mini); line-height: 1.5; }
 
-.ck-simple-compare { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; margin-bottom: 22px; padding: 22px; border: 1px solid var(--ck-border); border-radius: 22px; background: #fff; }
+.ck-simple-compare { display: grid; grid-template-columns: minmax(150px,.8fr) 1.2fr; gap: 20px; align-items: center; margin-bottom: 18px; padding: 18px; border: 1px solid var(--ck-border); border-radius: 22px; background: #fff; }
 .ck-simple-compare.is-aligned { border-top: 5px solid var(--ck-green); }
 .ck-simple-compare.is-different { border-top: 5px solid var(--ck-yellow); }
-.ck-simple-compare__icon { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 17px; background: var(--ck-yellow-soft); font-size: 25px; font-weight: 900; }
-.ck-simple-compare h2 { margin: 0 0 5px; font-size: var(--ck-size-h2); }
-.ck-simple-compare p { margin: 0; color: var(--ck-muted); font-size: var(--ck-size-small); }
+.ck-simple-compare__icon { display: grid; place-items: center; min-height: 170px; border-radius: 18px; background: var(--ck-yellow-soft); font-size: 64px; font-weight: 900; }
+.ck-simple-compare.is-aligned .ck-simple-compare__icon { background: var(--ck-green-soft); color: var(--ck-green); }
+.ck-simple-compare h2 { margin: 4px 0 14px; font-size: clamp(24px,4vw,32px); }
+.ck-simple-compare p { margin: 0; color: var(--ck-muted); font-size: var(--ck-size-body); }
 .ck-simple-compare .ck-eyebrow { margin-bottom: 4px; }
 
 .ck-boundary {
@@ -239,7 +240,7 @@ h1 { font-size: var(--ck-size-h1); margin-bottom: 0; }
 .ck-result-state p { color: var(--ck-muted); }
 
 @media (max-width: 600px) {
-  .ck-result { grid-template-columns: 1fr; }
-  .ck-result__picture, .ck-result__picture img { min-height: 190px; max-height: 260px; }
+  .ck-simple-compare { grid-template-columns: 1fr; }
+  .ck-simple-compare__icon { min-height: 130px; }
 }
 </style>
