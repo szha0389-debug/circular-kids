@@ -85,7 +85,7 @@ const highlights = [
       <div class="ck-welcome__visual" aria-hidden="true">
         <img
           class="ck-welcome__hero-image"
-          src="/assets/circular-kids-hero.png"
+          src="/assets/circular-kids-hero-v2.png"
           alt=""
         />
         <div class="ck-welcome__visual-orbit one">♻️</div>
