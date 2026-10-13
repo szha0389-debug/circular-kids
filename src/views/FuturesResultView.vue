@@ -53,7 +53,7 @@ function finish() {
     </article>
 
     <div class="ck-actions">
-      <button class="btn btn-quiet" @click="router.push({ name: 'futures-compare' })">← Change my choice</button>
+      <button class="btn btn-quiet" @click="router.push({ name: 'futures-explore' })">← Change my choice</button>
       <button class="btn btn-primary" :disabled="saved" @click="saveToShelf">
         {{ saved ? "Saved to My Rescue Shelf ✓" : "Save to My Rescue Shelf" }}
       </button>
