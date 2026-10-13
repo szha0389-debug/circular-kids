@@ -21,6 +21,10 @@ const FLOW_ROUTES = [
 const inFlow = computed(() => FLOW_ROUTES.includes(String(route.name)));
 const inQuiz = computed(() => ["mystery-hub", "mystery"].includes(String(route.name)));
 const inShelf = computed(() => route.name === "rescue-shelf");
+// The shelf is stage 5 of the journey menu, so the menu stays beside it. It is
+// also reachable straight from the header without an open case, so unlike the
+// flow screens it keeps the site navigation rather than replacing it.
+const showJourneyMenu = computed(() => inFlow.value || inShelf.value);
 const hasStorybookBackdrop = computed(() =>
   Boolean(route.meta?.step || route.meta?.safetyStep) ||
   ["futures-explore", "futures-compare", "futures-result", "item-journey", "rescue-shelf"].includes(String(route.name)) ||
@@ -119,10 +123,10 @@ async function goToHomeSection(sectionId) {
   </header>
 
   <main id="main" class="ck-main" :class="{ 'ck-main--storybook': hasStorybookBackdrop }">
-    <div class="ck-column" :class="{ 'ck-column--flow': inFlow }">
+    <div class="ck-column" :class="{ 'ck-column--flow': showJourneyMenu }">
       <!-- Where am I, what is done, what is next — beside the task on a laptop,
            folded into one bar on a phone. -->
-      <FlowProgress v-if="inFlow" />
+      <FlowProgress v-if="showJourneyMenu" />
 
       <div class="ck-flow-body">
       <p
