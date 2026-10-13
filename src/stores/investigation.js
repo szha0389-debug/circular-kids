@@ -1,9 +1,9 @@
 // The case, client side.
 //
 // Two things this store deliberately does NOT hold:
-//   - the site's reasoning before the verdict is recorded. `reveal` is fetched
-//     only after `recordVerdict` has succeeded, so no screen can render an
-//     assessment early even by accident (US-1.4).
+//   - the site's reasoning before both the child's early verdict and the later
+//     clue answers are recorded. `reveal` is fetched only after the clues are
+//     complete, so no screen can render an assessment early by accident.
 //   - the photo, anywhere persistent. It lives as an object URL and is revoked
 //     when the case closes or the page unloads.
 
@@ -78,6 +78,9 @@ export const useInvestigation = defineStore("investigation", {
     itemChosen: state => Boolean(state.item),
     problemsChosen: state => state.problems.length > 0,
     verdictRecorded: state => Boolean(state.verdict),
+    cluesAnswered: state =>
+      state.questions.length > 0 &&
+      state.questions.every((_, index) => Boolean(state.answers[index])),
     safetyReady: state => Boolean(state.id && state.item),
     safetyAnswered: state => Boolean(state.safetyResponse),
     comparisonAnswered: state => Boolean(state.comparisonResponse),
@@ -155,7 +158,7 @@ export const useInvestigation = defineStore("investigation", {
             this.problemOptions = view.problems;
             this.questions = view.questions;
           }
-          if (record.verdict) {
+          if (record.verdict && this.cluesAnswered) {
             this.reveal = await api.reveal(record.id);
           }
           const status = await api.safetyStatus(record.id);
@@ -250,7 +253,7 @@ export const useInvestigation = defineStore("investigation", {
       this.busy = true;
       try {
         const changed = itemId !== this.item?.id;
-        await api.patch(this.id, { itemId, stage: "breakdown" });
+        await api.patch(this.id, { itemId, stage: "verdict" });
         const view = await api.caseView(this.id);
         this.item = view.item;
         this.breakdown = view.breakdown;
@@ -304,31 +307,37 @@ export const useInvestigation = defineStore("investigation", {
     },
 
     async saveAnswers() {
-      const changed = !sameAnswers(this.answers, this.sentAnswers);
-      const given = [...this.answers];
-      await api.patch(this.id, { answers: given, stage: "verdict" });
-      // A clue can turn a warning serious, so the boundary is worked out from
-      // these answers as much as the reasoning is.
-      if (changed) this.forgetAfter("answers");
-      this.answers = given;
-      this.sentAnswers = given;
-    },
-
-    /** US-1.4. The reveal is fetched only once this has succeeded. */
-    async recordVerdict(value) {
       this.busy = true;
       try {
-        await api.patch(this.id, { verdict: value, stage: "reveal" });
-        this.forgetAfter("verdict");
-        this.verdict = value;
+        const changed = !sameAnswers(this.answers, this.sentAnswers);
+        const given = [...this.answers];
+        await api.patch(this.id, { answers: given, stage: "reveal" });
+        // A clue can turn a warning serious, so the boundary is worked out from
+        // these answers as much as the reasoning is. The child's earlier
+        // verdict remains intact because it was made before these clues.
+        if (changed) this.forgetAfter("answers");
+        this.answers = given;
+        this.sentAnswers = given;
         this.reveal = await api.reveal(this.id);
       } finally {
         this.busy = false;
       }
     },
 
+    /** US-1.4. Record the child's first judgement, then begin the clues. */
+    async recordVerdict(value) {
+      this.busy = true;
+      try {
+        await api.patch(this.id, { verdict: value, stage: "breakdown" });
+        this.forgetAfter("verdict");
+        this.verdict = value;
+      } finally {
+        this.busy = false;
+      }
+    },
+
     async restoreReveal() {
-      if (!this.id || !this.verdict) return null;
+      if (!this.id || !this.verdict || !this.cluesAnswered) return null;
       this.busy = true;
       try {
         this.reveal = await api.reveal(this.id);

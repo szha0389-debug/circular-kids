@@ -7,9 +7,25 @@
 import { neon } from "@neondatabase/serverless";
 import { applyUpdate, createRecord } from "../core/investigation.js";
 
+let investigationSchemaReady = null;
+
 function sql() {
   if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is not configured");
   return neon(process.env.DATABASE_URL);
+}
+
+async function ensureInvestigationSchema(db) {
+  if (!investigationSchemaReady) {
+    investigationSchemaReady = (async () => {
+      await db`ALTER TABLE investigations ADD COLUMN IF NOT EXISTS safety_response TEXT`;
+      await db`ALTER TABLE investigations ADD COLUMN IF NOT EXISTS comparison_response TEXT`;
+      await db`ALTER TABLE investigations ADD COLUMN IF NOT EXISTS safety_boundary TEXT`;
+    })().catch(error => {
+      investigationSchemaReady = null;
+      throw error;
+    });
+  }
+  await investigationSchemaReady;
 }
 
 function shape(row) {
@@ -45,11 +61,35 @@ export function createDbStore() {
     },
 
     async update(id, input) {
-      const current = await this.get(id);
+      const db = sql();
+      const rows = await db`SELECT * FROM investigations WHERE id = ${id} LIMIT 1`;
+      const current = shape(rows[0]);
       if (!current) return null;
       // Validation and field whitelisting happen in core, not in SQL.
       const next = applyUpdate(current, input);
-      const rows = await sql()`
+
+      const safetyChanged = ["safetyResponse", "comparisonResponse"].some(key =>
+        Object.prototype.hasOwnProperty.call(input || {}, key)
+      );
+
+      if (!safetyChanged) {
+        // Keep Epic 1 independent from the later safety migration. An older
+        // database can therefore confirm an item immediately, even before its
+        // additive Epic 2 columns have been created.
+        const updatedRows = await db`
+          UPDATE investigations SET
+            item_id = ${next.itemId},
+            problems = ${JSON.stringify(next.problems)},
+            answers = ${JSON.stringify(next.answers)},
+            verdict = ${next.verdict},
+            stage = ${next.stage},
+            updated_at = NOW()
+          WHERE id = ${id} RETURNING *`;
+        return shape(updatedRows[0]);
+      }
+
+      await ensureInvestigationSchema(db);
+      const updatedRows = await db`
         UPDATE investigations SET
           item_id = ${next.itemId},
           problems = ${JSON.stringify(next.problems)},
@@ -61,7 +101,7 @@ export function createDbStore() {
           stage = ${next.stage},
           updated_at = NOW()
         WHERE id = ${id} RETURNING *`;
-      return shape(rows[0]);
+      return shape(updatedRows[0]);
     },
 
     async complete(id) {

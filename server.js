@@ -35,6 +35,11 @@ const CSP =
   "default-src 'self'; img-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; " +
   "script-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
 
+const INVESTIGATION_ACTIONS = new Set([
+  "case", "reveal", "complete", "transfer", "safety-activity", "safety-reveal",
+  "safety-comparison", "safety-boundary", "safety-status"
+]);
+
 function sendJson(res, status, body) {
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
@@ -128,6 +133,24 @@ const server = http.createServer(async (req, res) => {
 
     if (url.pathname === "/api/image-recognition" || url.pathname === "/api/ai/health") {
       return proxyAi(req, res, url);
+    }
+
+    // The hosted app uses one fixed function route and places the real method,
+    // case id and action in a JSON envelope. Mirror that adapter locally so the
+    // same browser client works in development and after deployment.
+    if (url.pathname === "/api/investigation") {
+      if (req.method !== "POST") {
+        return sendJson(res, 405, { message: "That action is not available." });
+      }
+      const envelope = await readBody(req);
+      const id = String(envelope.id || "");
+      const action = INVESTIGATION_ACTIONS.has(envelope.action) ? `/${envelope.action}` : "";
+      const result = await handle({
+        method: String(envelope.operation || "GET").toUpperCase(),
+        path: `/api/investigations/${id}${action}`,
+        body: envelope.payload || {}
+      }, store);
+      return sendJson(res, result.status, result.body);
     }
 
     if (url.pathname.startsWith("/api/")) {

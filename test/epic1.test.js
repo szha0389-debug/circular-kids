@@ -256,6 +256,8 @@ test("US-1.4 'not sure' is recorded as a given verdict, not as a skip", () => {
   const record = createRecord("notsure");
   applyUpdate(record, { itemId: "mug", problems: ["cracked"], verdict: "not-sure" });
   assert.equal(record.verdict, "not-sure");
+  assert.equal(reveal(record).ok, false, "an early verdict must not reveal the site's answer");
+  applyUpdate(record, { answers: ["small", "one-area", "yes"] });
   assert.equal(reveal(record).ok, true);
   assert.equal(transferPayload(record).ok, true);
 });
@@ -282,7 +284,7 @@ test("US-1.4 an invented verdict value is refused", () => {
 test("US-1.5 the reveal states what the clues suggest in plain words", () => {
   const record = createRecord("plain");
   applyUpdate(record, { itemId: "tshirt", problems: ["hole"] });
-  applyUpdate(record, { answers: ["tiny", "strong"], verdict: "still-useful" });
+  applyUpdate(record, { answers: ["tiny", "strong", "yes"], verdict: "still-useful" });
   const result = reveal(record);
   assert.match(result.reasoning.conclusion, /^[A-Z][a-z]/);
   assert.ok(result.reasoning.conclusion.length < 140);
@@ -291,7 +293,7 @@ test("US-1.5 the reveal states what the clues suggest in plain words", () => {
 test("US-1.5 when the two differ, one clue is named and nothing more is said", () => {
   const record = createRecord("differ");
   applyUpdate(record, { itemId: "headphones", problems: ["cable-damaged"] });
-  applyUpdate(record, { answers: ["large", "yes"], verdict: "still-useful" });
+  applyUpdate(record, { answers: ["large", "yes", "yes"], verdict: "still-useful" });
   const { comparison } = reveal(record);
   assert.equal(comparison.differs, true);
   assert.ok(comparison.clue.question, "the clue that pulls the other way is named");
@@ -371,15 +373,23 @@ test("API the catalogue, case and reveal route through one shared handler", asyn
   assert.equal(catalogue.body.categories.length, 6);
 
   await handle(
-    { method: "PATCH", path: `/api/investigations/${id}`, body: { itemId: "backpack", problems: ["zip-stuck"] } },
+    { method: "POST", path: `/api/investigations/${id}`, body: { itemId: "backpack", problems: ["zip-stuck"] } },
     store
   );
 
-  const early = await handle({ method: "POST", path: `/api/investigations/${id}/reveal` }, store);
-  assert.equal(early.status, 409, "the reveal is refused before a verdict");
+  const beforeVerdict = await handle({ method: "POST", path: `/api/investigations/${id}/reveal` }, store);
+  assert.equal(beforeVerdict.status, 409, "the reveal is refused before a verdict");
 
   await handle(
-    { method: "PATCH", path: `/api/investigations/${id}`, body: { answers: ["no", "few"], verdict: "partly-useful" } },
+    { method: "PATCH", path: `/api/investigations/${id}`, body: { verdict: "partly-useful" } },
+    store
+  );
+
+  const beforeClues = await handle({ method: "POST", path: `/api/investigations/${id}/reveal` }, store);
+  assert.equal(beforeClues.status, 409, "the early verdict does not reveal the system answer");
+
+  await handle(
+    { method: "PATCH", path: `/api/investigations/${id}`, body: { answers: ["no", "few", "yes"] } },
     store
   );
 

@@ -24,7 +24,7 @@ onMounted(async () => {
   try {
     if (!store.reveal) await store.restoreReveal();
   } catch {
-    loadError.value = "Your result could not load. Go back and choose your verdict again.";
+    loadError.value = "Your result could not load. Go back and check your clue answers again.";
     return;
   }
   // Handing the case to Epic 2 is what closes this stage. It used to wait for a
@@ -148,8 +148,8 @@ async function startAgain() {
     <span aria-hidden="true">{{ loadError ? "↩️" : "🔎" }}</span>
     <h1>{{ loadError ? "We could not open your result" : "Loading your result…" }}</h1>
     <p>{{ loadError || "Your answers are being checked." }}</p>
-    <button v-if="loadError" type="button" class="btn btn-primary" @click="router.push({ name: 'verdict' })">
-      Back to My Verdict
+    <button v-if="loadError" type="button" class="btn btn-primary" @click="router.push({ name: 'clues' })">
+      Back to My Clues
     </button>
   </section>
 </template>

@@ -3,8 +3,8 @@
 //
 // The most important rule on this screen is a negative one: **nothing here
 // reacts to an answer.** No tick of approval, no colour that means anything, no
-// running summary, no encouragement. A reaction would leak the conclusion before
-// the child commits to a verdict in US-1.4, which is the point of the epic.
+// running summary, no encouragement. A reaction would leak the site's
+// conclusion before the final comparison.
 //
 // This is the one place the build departs from the Figma prototype, which gives
 // a chosen "Yes" a green fill, "No" a coral fill, and "Not Sure" a purple one,
@@ -15,8 +15,8 @@
 // All three clues live on one screen. One question per screen meant three waits
 // and three page loads for three taps, which read as a long interrogation; here
 // the child can see how short it is and answer at their own pace. The old
-// "your answers are recorded" screen between the clues and the verdict is gone
-// with it — finishing the clues is not news, so it goes straight on.
+// "your answers are recorded" screen is unnecessary; finishing the clues goes
+// straight to the comparison with the verdict already recorded earlier.
 
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -51,7 +51,7 @@ async function finish() {
   }
   error.value = "";
   await store.saveAnswers();
-  router.push({ name: "verdict" });
+  router.push({ name: "reveal" });
 }
 
 function back() {
@@ -73,7 +73,7 @@ function back() {
       <p>No answer is right or wrong here. Tap Skip on anything you cannot tell by looking.</p>
     </div>
 
-    <!-- Progress through the questions — never progress towards a verdict. -->
+    <!-- Progress through the questions without reacting to any answer. -->
     <div class="ck-clue__head">
       <p class="ck-eyebrow">{{ answered }} of {{ total }} answered</p>
       <div class="ck-bar" role="presentation">
@@ -100,8 +100,8 @@ function back() {
 
     <div class="ck-actions">
       <button type="button" class="btn btn-quiet" @click="back">← Back</button>
-      <button type="button" class="btn btn-primary btn--wide" :disabled="!complete" @click="finish">
-        Give My Verdict →
+      <button type="button" class="btn btn-primary btn--wide" :disabled="!complete || store.busy" @click="finish">
+        See My Findings →
       </button>
     </div>
   </section>

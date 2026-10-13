@@ -2,17 +2,34 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import { useInvestigation } from "@/stores/investigation";
 import { useFutures } from "@/stores/futures";
 import { findMystery } from "../../core/mysteries.js";
+import { chunkRecoveryUrl, isChunkLoadError } from "./chunkRecovery.js";
 
-// `step` drives the five-step indicator. Two screens share step 2 because the
-// prototype splits US-1.2 into "look at the parts" and "say what's wrong".
+const CHUNK_RECOVERY_KEY = "circular-kids-chunk-recovery";
+
+// Hash routing keeps static hosting simple, but people may still type or share
+// a direct path such as `/identify` or `/abc`. Move that path behind the hash
+// before Vue reads it: known paths keep working and unknown ones reach the 404
+// route instead of accidentally opening the homepage.
+if (typeof window !== "undefined" && window.location.pathname !== "/" && !window.location.hash) {
+  const directUrl = new URL(window.location.href);
+  const routePath = `${directUrl.pathname}${directUrl.search}`;
+  directUrl.pathname = "/";
+  directUrl.search = "";
+  directUrl.hash = routePath;
+  window.history.replaceState(window.history.state, "", directUrl);
+}
+
+// `step` follows the five-screen investigation sequence. The child's own
+// verdict comes immediately after their item is confirmed, before any guided
+// observations can influence that first judgement.
 const routes = [
   { path: "/", name: "welcome", component: () => import("@/views/WelcomeView.vue") },
   { path: "/identify", name: "identify", component: () => import("@/views/IdentifyView.vue"), meta: { step: 1 } },
   { path: "/breakdown", redirect: { name: "problem" } },
-  { path: "/problem", name: "problem", component: () => import("@/views/ProblemView.vue"), meta: { step: 2, needs: "item" } },
-  { path: "/clues", name: "clues", component: () => import("@/views/CluesView.vue"), meta: { step: 3, needs: "problems" } },
-  { path: "/verdict", name: "verdict", component: () => import("@/views/VerdictView.vue"), meta: { step: 4, needs: "problems" } },
-  { path: "/reveal", name: "reveal", component: () => import("@/views/RevealView.vue"), meta: { step: 5, needs: "verdict" } },
+  { path: "/verdict", name: "verdict", component: () => import("@/views/VerdictView.vue"), meta: { step: 2, needs: "item" } },
+  { path: "/problem", name: "problem", component: () => import("@/views/ProblemView.vue"), meta: { step: 3, needs: "verdict" } },
+  { path: "/clues", name: "clues", component: () => import("@/views/CluesView.vue"), meta: { step: 4, needs: "problems" } },
+  { path: "/reveal", name: "reveal", component: () => import("@/views/RevealView.vue"), meta: { step: 5, needs: "answers" } },
   // The findings used to sit on a screen of their own after the reveal. They
   // say the same thing, so they now share one screen and this path only keeps
   // older links working.
@@ -41,7 +58,12 @@ const routes = [
     meta: { standalone: true },
     beforeEnter: to => (findMystery(to.params.id) ? true : { name: "mystery-hub" })
   },
-  { path: "/:pathMatch(.*)*", redirect: "/" }
+  {
+    path: "/:pathMatch(.*)*",
+    name: "not-found",
+    component: () => import("@/views/NotFoundView.vue"),
+    meta: { standalone: true }
+  }
 ];
 
 const router = createRouter({
@@ -62,6 +84,7 @@ const GATES = {
   item: store => store.itemChosen,
   problems: store => store.problemsChosen,
   verdict: store => store.verdictRecorded,
+  answers: store => store.cluesAnswered,
   safetyReady: store => store.safetyReady,
   safetyAnswered: store => store.safetyAnswered,
   comparisonAnswered: store => store.comparisonAnswered,
@@ -72,7 +95,8 @@ const GATES = {
 const FALLBACK = {
   item: "identify",
   problems: "problem",
-  verdict: "clues",
+  verdict: "verdict",
+  answers: "clues",
   safetyReady: "identify",
   safetyAnswered: "safety-activity",
   comparisonAnswered: "safety-comparison",
@@ -90,6 +114,35 @@ router.beforeEach(async to => {
   if (!needs) return true;
   if (GATES[needs](store)) return true;
   return { name: FALLBACK[needs] };
+});
+
+// A branch alias can switch to a new Vercel deployment while an older page is
+// still open. Its next lazy route then points at an old hashed file that the
+// alias no longer serves. Reload once at the requested route so the browser
+// picks up the new index and matching assets instead of leaving a button stuck.
+router.onError((error, to) => {
+  if (typeof window === "undefined" || !isChunkLoadError(error)) return;
+
+  const target = to?.fullPath || window.location.hash.slice(1) || "/";
+  let previousTarget = "";
+  try {
+    previousTarget = sessionStorage.getItem(CHUNK_RECOVERY_KEY) || "";
+  } catch {
+    // Storage may be unavailable; reloading the matching route is still safe.
+  }
+
+  if (previousTarget === target) {
+    try { sessionStorage.removeItem(CHUNK_RECOVERY_KEY); } catch {}
+    useInvestigation().say("This page could not finish updating. Please refresh and try again.", "warn");
+    return;
+  }
+
+  try { sessionStorage.setItem(CHUNK_RECOVERY_KEY, target); } catch {}
+  window.location.replace(chunkRecoveryUrl(window.location.href, target));
+});
+
+router.afterEach(() => {
+  try { sessionStorage.removeItem(CHUNK_RECOVERY_KEY); } catch {}
 });
 
 export default router;

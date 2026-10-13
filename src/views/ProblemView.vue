@@ -86,7 +86,7 @@ async function next() {
     <p v-if="error" class="ck-error" role="alert">{{ error }}</p>
 
     <div class="ck-actions">
-      <button type="button" class="btn btn-quiet" @click="router.push({ name: 'identify' })">
+      <button type="button" class="btn btn-quiet" @click="router.push({ name: 'verdict' })">
         ← Back
       </button>
       <button type="button" class="btn btn-primary btn--wide" :disabled="!store.problems.length || store.busy" @click="next">
