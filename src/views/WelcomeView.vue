@@ -15,6 +15,7 @@ function playStoryVideo() {
   if (!storyVideo.value) return;
 
   storyVideo.value.muted = true;
+  storyVideo.value.playbackRate = 0.75;
   void storyVideo.value.play().catch(() => {
     // Some browsers suspend background media; autoplay retries when it can play again.
   });
@@ -57,11 +58,6 @@ const stages = computed(() => [
 ]);
 function openStage(stage) { if (stage.enabled) router.push({ name: stage.route }); }
 
-const highlights = [
-  { value: "5", label: "guided steps" },
-  { value: "0", label: "photos stored" },
-  { value: "3.0 Mt", label: "plastic waste generated · 2022–23" }
-];
 </script>
 
 <template>
@@ -96,45 +92,6 @@ const highlights = [
           <strong>Small clues can reveal a new future.</strong>
         </article>
       </div>
-    </div>
-
-    <div class="ck-welcome__metrics" aria-label="Activity highlights">
-      <div v-for="item in highlights" :key="item.label">
-        <strong>{{ item.value }}</strong>
-        <span>{{ item.label }}</span>
-      </div>
-    </div>
-    <p class="ck-welcome__metrics-source">
-      Waste evidence: Australia generated about 3.0 million tonnes of plastic waste in 2022–23.
-      <a href="https://www.dcceew.gov.au/environment/protection/waste/publications/national-waste-resource-recovery-reporting/glance-2024" target="_blank" rel="noopener noreferrer">View the Australian Government source</a>.
-    </p>
-
-    <div id="how-it-works" class="ck-welcome__section">
-      <div class="ck-welcome__epic-heading">
-        <p class="ck-eyebrow">Choose your next activity</p>
-        <h2>One item. Five stages.</h2>
-        <p>Finish one stage, return here, then choose when you are ready for the next.</p>
-      </div>
-      <div class="ck-welcome__epics">
-        <article v-for="stage in stages" :key="stage.tag" class="ck-epic" :class="{ 'is-done': stage.done, 'is-locked': !stage.enabled }">
-          <span v-if="stage.done" class="ck-epic__done">✓ Done</span>
-          <span class="ck-epic__icon" aria-hidden="true">{{ stage.icon }}</span>
-          <p class="ck-epic__tag">{{ stage.tag }}</p>
-          <h3>{{ stage.title }}</h3>
-          <p class="ck-epic__text">{{ stage.text }}</p>
-          <button type="button" :disabled="!stage.enabled" @click="openStage(stage)">{{ stage.enabled ? stage.action : "Complete the previous Stage" }} <span v-if="stage.enabled">→</span></button>
-        </article>
-      </div>
-
-      <aside class="ck-welcome__quiz">
-        <span class="ck-welcome__quiz-icon" aria-hidden="true">🕵️</span>
-        <div>
-          <p class="ck-eyebrow">Anytime activity</p>
-          <h3>Spot a Circular Mystery</h3>
-          <p>Short picture challenges with no timer and no score. They need no item and no open case — play them whenever you like.</p>
-        </div>
-        <RouterLink :to="{ name: 'mystery-hub' }" class="btn btn-primary">Choose a mystery →</RouterLink>
-      </aside>
     </div>
 
     <section class="ck-welcome__data" aria-labelledby="waste-data-title">
@@ -185,7 +142,7 @@ const highlights = [
           <div class="ck-kid-video">
             <div class="ck-kid-map__title">
               <strong>Can old things get a new life?</strong>
-              <span>Watch this 12-second circular story play on repeat.</span>
+              <span>Watch this circular story play slowly on repeat.</span>
             </div>
             <video
               ref="storyVideo"
@@ -197,7 +154,7 @@ const highlights = [
               preload="auto"
               @canplay="playStoryVideo"
               poster="/assets/circular-economy-story-poster.png"
-              aria-label="A twelve-second animation about Australia's waste. It shows national waste and recovery figures, then follows old electronics and clothing into reuse, repair, sharing and recycling."
+              aria-label="A short animation about Australia's waste. It shows national waste and recovery figures, then follows old electronics and clothing into reuse, repair, sharing and recycling."
             >
               <source src="/assets/circular-economy-story.mp4" type="video/mp4">
               Your browser cannot play this video.
@@ -213,6 +170,34 @@ const highlights = [
         <a href="https://www.abc.net.au/news/2025-06-29/op-shops-recycling-circular-economy-repurpose-old-things-reuse/105457796" target="_blank" rel="noopener noreferrer">the circular economy</a>.
       </p>
     </section>
+
+    <div id="how-it-works" class="ck-welcome__section">
+      <div class="ck-welcome__epic-heading">
+        <p class="ck-eyebrow">Choose your next activity</p>
+        <h2>One item. Five stages.</h2>
+        <p>Finish one stage, return here, then choose when you are ready for the next.</p>
+      </div>
+      <div class="ck-welcome__epics">
+        <article v-for="stage in stages" :key="stage.tag" class="ck-epic" :class="{ 'is-done': stage.done, 'is-locked': !stage.enabled }">
+          <span v-if="stage.done" class="ck-epic__done">✓ Done</span>
+          <span class="ck-epic__icon" aria-hidden="true">{{ stage.icon }}</span>
+          <p class="ck-epic__tag">{{ stage.tag }}</p>
+          <h3>{{ stage.title }}</h3>
+          <p class="ck-epic__text">{{ stage.text }}</p>
+          <button type="button" :disabled="!stage.enabled" @click="openStage(stage)">{{ stage.enabled ? stage.action : "Complete the previous Stage" }} <span v-if="stage.enabled">→</span></button>
+        </article>
+      </div>
+
+      <aside class="ck-welcome__quiz">
+        <span class="ck-welcome__quiz-icon" aria-hidden="true">🕵️</span>
+        <div>
+          <p class="ck-eyebrow">Anytime activity</p>
+          <h3>Spot a Circular Mystery</h3>
+          <p>Short picture challenges with no timer and no score. They need no item and no open case — play them whenever you like.</p>
+        </div>
+        <RouterLink :to="{ name: 'mystery-hub' }" class="btn btn-primary">Choose a mystery →</RouterLink>
+      </aside>
+    </div>
 
     <div id="safety-first" class="ck-welcome__safety-band">
       <span aria-hidden="true">🛡️</span>
@@ -274,18 +259,7 @@ const highlights = [
   box-shadow: 0 12px 30px rgba(104,169,185,.22);
 }
 .ck-welcome__safety { max-width: 48ch; margin: 18px 0 0; font-size: var(--ck-size-mini); color: var(--ck-muted); }
-.ck-welcome__metrics { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 920px; margin: -42px auto 0; position: relative; z-index: 2; overflow: hidden; background: var(--ck-surface); border-radius: 20px; box-shadow: var(--ck-shadow-lift); }
-.ck-welcome__metrics::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: linear-gradient(90deg, var(--ck-yellow), var(--ck-teal), var(--ck-blue), var(--ck-purple), var(--ck-green)); }
-.ck-welcome__metrics div { padding: 24px; text-align: center; border-right: 1px solid var(--ck-border); }
-.ck-welcome__metrics div:nth-child(1) { background: var(--ck-yellow-soft); }
-.ck-welcome__metrics div:nth-child(2) { background: var(--ck-teal-soft); }
-.ck-welcome__metrics div:nth-child(3) { background: var(--ck-purple-soft); }
-.ck-welcome__metrics div:last-child { border: 0; }
-.ck-welcome__metrics strong, .ck-welcome__metrics span { display: block; }
-.ck-welcome__metrics strong { font-family: var(--ck-font-display); font-size: 28px; }
-.ck-welcome__metrics span { color: var(--ck-muted); font-size: 12px; font-weight: 800; }
-.ck-welcome__metrics-source { max-width: 920px; margin: 12px auto 0; padding-inline: 18px; color: var(--ck-muted); font-size: 12px; text-align: center; }
-.ck-welcome__metrics-source a, .ck-welcome__data-source a { color: inherit; font-weight: 900; text-underline-offset: 3px; }
+.ck-welcome__data-source a { color: inherit; font-weight: 900; text-underline-offset: 3px; }
 .ck-welcome__section {
   scroll-margin-top: 68px;
   min-height: 620px;
@@ -373,8 +347,6 @@ const highlights = [
   .ck-welcome__copy { padding: 54px 24px 42px; }
   .ck-welcome__title { font-size: clamp(40px, 12vw, 58px); }
   .ck-welcome__visual { min-height: 380px; margin: 0 16px 24px; padding: 0 20px 24px; border-radius: 26px; }
-  .ck-welcome__metrics { margin: -22px 16px 60px; }
-  .ck-welcome__metrics div { padding: 18px 8px; }
   .ck-welcome__section { min-height: 0; margin-top: 42px; padding: 58px 20px; }
   .ck-epic { flex-basis: 100%; max-width: none; }
   .ck-welcome__quiz { grid-template-columns: 1fr; justify-items: start; padding: 22px; }
